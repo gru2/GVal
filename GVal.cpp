@@ -132,7 +132,7 @@ public:
 	enum GValType { GVT_NULL, GVT_BOOL, GVT_INT, GVT_LONG_LONG, GVT_FLOAT, GVT_DOUBLE,
 		GVT_MULTI_ARRAY, GVT_MAP, GVT_GENERIC };
 
-	GVal();
+	GVal() : type(GVT_NULL) { }
 	GVal(const GVal &x);
 	~GVal();
 
@@ -144,8 +144,10 @@ public:
 
 	GVal operator[] (size_t x) const { return *this; }
 
-
 	void copyContentFrom(const GVal &x) {}
+	void reset();
+	size_t size();
+	void resize(size_t x);
 protected:
 	int type;
 	union
@@ -176,6 +178,40 @@ protected:
 };
 
 //#endif
+
+// ---------------GVal.cpp
+//#include <GVal.h>
+
+GVal::GVal(const GVal &x)
+{
+    type = x.type;
+    switch(type)
+    {
+        case GVT_NULL:
+            break;
+        case GVT_BOOL:
+            boolValue = x.boolValue;
+            break;
+        case GVT_INT:
+            intValue = x.intValue;
+            break;
+        case GVT_LONG_LONG:
+            longLongValue = x.longLongValue;
+            break;
+        case GVT_FLOAT:
+            floatValue = x.floatValue;
+            break;
+        case GVT_DOUBLE:
+            doubleValue = x.doubleValue;
+            break;
+    }
+}
+
+void GVal::reset()
+{
+    genericValue.reset();
+    type = GVT_NULL;
+}
 
 #include <iostream>
 
