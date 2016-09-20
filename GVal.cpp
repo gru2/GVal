@@ -136,13 +136,13 @@ public:
 	GVal(const GVal &x);
 	~GVal();
 
-	GVal &operator = (const GVal &x) {}
-	bool operator < (const GVal &x) const {}
+	GVal &operator = (const GVal &x) { return *this; }
+	bool operator < (const GVal &x) const { return false; }
 
 	int getType() const { return type; }
 	void setType(int x) { type = x; }
 
-	GVal operator[] (size_t x) const {}
+	GVal operator[] (size_t x) const { return *this; }
 
 
 	void copyContentFrom(const GVal &x) {}
@@ -163,7 +163,7 @@ class GValMultiArray
 {
 protected:
 	int entryType;
-	SmallVector<8, unsigned> dimensions;
+	SmallVector<unsigned, 8> dimensions;
 	void *data;
 };
 
