@@ -133,18 +133,22 @@ public:
 		GVT_MULTI_ARRAY, GVT_MAP, GVT_GENERIC };
 
 	GVal() : type(GVT_NULL) { }
-	GVal(const GVal &x);
-	~GVal();
+	GVal(const GVal &x) {
+	    copyContentFrom(x);
+	}
+	~GVal() {
+	    reset();
+	}
 
-	GVal &operator = (const GVal &x) { return *this; }
-	bool operator < (const GVal &x) const { return false; }
+	GVal &operator = (const GVal &x);
+	bool operator < (const GVal &x) const;
 
 	int getType() const { return type; }
 	void setType(int x) { type = x; }
 
 	GVal operator[] (size_t x) const { return *this; }
 
-	void copyContentFrom(const GVal &x) {}
+	void copyContentFrom(const GVal &x);
 	void reset();
 	size_t size();
 	void resize(size_t x);
@@ -182,35 +186,72 @@ protected:
 // ---------------GVal.cpp
 //#include <GVal.h>
 
-GVal::GVal(const GVal &x)
+GVal &GVal::operator = (const GVal &x)
 {
-    type = x.type;
-    switch(type)
-    {
-        case GVT_NULL:
-            break;
-        case GVT_BOOL:
-            boolValue = x.boolValue;
-            break;
-        case GVT_INT:
-            intValue = x.intValue;
-            break;
-        case GVT_LONG_LONG:
-            longLongValue = x.longLongValue;
-            break;
-        case GVT_FLOAT:
-            floatValue = x.floatValue;
-            break;
-        case GVT_DOUBLE:
-            doubleValue = x.doubleValue;
-            break;
-    }
+	copyContentFrom(x);
+	return *this;
+}
+bool GVal::operator < (const GVal &x) const
+{
+	if (type != x.type)
+		return type < x.type;
+	switch (type)
+	{
+		case GVT_NULL:
+			return false;
+		case GVT_BOOL:
+			return boolValue < x.boolValue;
+		case GVT_INT:
+			return intValue < x.intValue;
+		case GVT_LONG_LONG:
+			return longLongValue < x.longLongValue;
+		case GVT_FLOAT:
+			return floatValue < x.floatValue;
+		case GVT_DOUBLE:
+			return doubleValue < x.doubleValue;
+		case GVT_MULTI_ARRAY:
+			
+		case GVT_MAP:
+			return genericValue < x.genericValue; // TODO
+			break;
+	}
+	return false;
+}
+
+void GVal::copyContentFrom(const GVal &x)
+{
+	reset();
+	type = x.type;
+	switch(type)
+	{
+		case GVT_NULL:
+			break;
+		case GVT_BOOL:
+			boolValue = x.boolValue;
+			break;
+		case GVT_INT:
+			intValue = x.intValue;
+			break;
+		case GVT_LONG_LONG:
+			longLongValue = x.longLongValue;
+			break;
+		case GVT_FLOAT:
+			floatValue = x.floatValue;
+			break;
+		case GVT_DOUBLE:
+			doubleValue = x.doubleValue;
+			break;
+		case GVT_MULTI_ARRAY:
+		case GVT_MAP:
+			genericValue = x.genericValue;
+			break;
+	}
 }
 
 void GVal::reset()
 {
-    genericValue.reset();
-    type = GVT_NULL;
+	genericValue.reset();
+	type = GVT_NULL;
 }
 
 #include <iostream>
@@ -218,4 +259,6 @@ void GVal::reset()
 int main(int argc, char *argv[])
 {
 	std::cout << "GVal test.\n";
+	
+	GVal val;
 }
