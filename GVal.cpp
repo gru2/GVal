@@ -1,3 +1,19 @@
+#ifndef __PROGRESS_REPORTER_H
+#define __PROGRESS_REPORTER_H
+
+#include <string>
+
+class ProgressReporter
+{
+public:
+	void error(const std::string &msg);
+};
+
+#endif
+
+//#include <ProgressReporter.h>
+
+
 #ifndef __SMALL_VECTOR_H
 #define __SMALL_VECTOR_H
 
@@ -134,10 +150,10 @@ public:
 
 	GVal() : type(GVT_NULL) { }
 	GVal(const GVal &x) {
-	    copyContentFrom(x);
+		copyContentFrom(x);
 	}
 	~GVal() {
-	    reset();
+		reset();
 	}
 
 	GVal &operator = (const GVal &x);
@@ -252,6 +268,24 @@ void GVal::reset()
 {
 	genericValue.reset();
 	type = GVT_NULL;
+}
+
+size_t GVal::size()
+{
+	switch(type)
+	{
+		case GVT_MULTI_ARRAY:
+			return static_cast<GValMultiArray *>(r.get())->size();
+		case GVT_MAP:
+			return static_cast<GValMap *>(r.get())->size();
+			break;
+		default:
+			error("type does not support size");
+	}
+}
+
+void GVal::resize(size_t x)
+{
 }
 
 #include <iostream>
