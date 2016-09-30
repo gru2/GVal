@@ -12,7 +12,14 @@ public:
 #endif
 
 //#include <ProgressReporter.h>
+#include <stdio.h>
+#include <stdlib.h>
 
+void ProgressReporter::error(const std::string &msg)
+{
+	printf("error:%s\n", msg.c_str());
+	exit(1);
+}
 
 #ifndef __SMALL_VECTOR_H
 #define __SMALL_VECTOR_H
@@ -146,7 +153,7 @@ class GVal
 {
 public:
 	enum GValType { GVT_NULL, GVT_BOOL, GVT_INT, GVT_LONG_LONG, GVT_FLOAT, GVT_DOUBLE,
-		GVT_MULTI_ARRAY, GVT_MAP, GVT_GENERIC };
+		GVT_STRING, GVT_MULTI_ARRAY, GVT_MAP, GVT_GENERIC };
 
 	GVal() : type(GVT_NULL) { }
 	GVal(const GVal &x) {
@@ -186,17 +193,17 @@ public:
 	void setFloat(float x) {
 		reset();
 		type = GVT_FLOAT;
-		intFloat = x;
+		floatValue = x;
 	}
 	void setDouble(double x) {
 		reset();
 		type = GVT_DOUBLE;
-		intFloat = x;
+		doubleValue = x;
 	}
 	void setString(const std::string &x) {
 		reset();
 		type = GVT_STRING;
-		intString = x;
+		stringValue = x;
 	}
 
 protected:
@@ -257,6 +264,8 @@ bool GVal::operator < (const GVal &x) const
 			return floatValue < x.floatValue;
 		case GVT_DOUBLE:
 			return doubleValue < x.doubleValue;
+		case GVT_STRING:
+			return stringValue < x.stringValue;
 		case GVT_MULTI_ARRAY:
 			
 		case GVT_MAP:
@@ -289,6 +298,8 @@ void GVal::copyContentFrom(const GVal &x)
 		case GVT_DOUBLE:
 			doubleValue = x.doubleValue;
 			break;
+		case GVT_STRING:
+			stringValue = x.stringValue;
 		case GVT_MULTI_ARRAY:
 		case GVT_MAP:
 			genericValue = x.genericValue;
@@ -299,6 +310,7 @@ void GVal::copyContentFrom(const GVal &x)
 void GVal::reset()
 {
 	genericValue.reset();
+	stringValue.reset();
 	type = GVT_NULL;
 }
 
