@@ -168,6 +168,37 @@ public:
 	void reset();
 	size_t size();
 	void resize(size_t x);
+
+	void setNull() {
+		reset();
+		type = GVT_NULL;
+	}
+	void setBool(bool x) {
+		reset();
+		type = GVT_BOOL;
+		boolValue = x;
+	}
+	void setInt(int x) {
+		reset();
+		type = GVT_INT;
+		intValue = x;
+	}
+	void setFloat(float x) {
+		reset();
+		type = GVT_FLOAT;
+		intFloat = x;
+	}
+	void setDouble(double x) {
+		reset();
+		type = GVT_DOUBLE;
+		intFloat = x;
+	}
+	void setString(const std::string &x) {
+		reset();
+		type = GVT_STRING;
+		intString = x;
+	}
+
 protected:
 	int type;
 	union
@@ -179,6 +210,7 @@ protected:
 		double doubleValue;
 	};
 	std::shared_ptr<void> genericValue;
+	SmallString<32> stringValue;
 };
 
 class GValMultiArray
