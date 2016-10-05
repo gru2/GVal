@@ -218,18 +218,25 @@ protected:
 	};
 	std::shared_ptr<void> genericValue;
 	std::string stringValue;
+	ProgressReporter progressReporter;
+
+	void error(const std::string &msg);
 };
 
 class GValMultiArray
 {
+public:
+	size_t size();
 protected:
 	int entryType;
-	SmallVector<unsigned, 8> dimensions;
+	SmallVector<size_t, 4> dimensions;
 	void *data;
 };
 
 class GValMap
 {
+public:
+	size_t size() { return data.size(); }
 protected:
 	int keyType;
 	int valueType;
@@ -310,7 +317,7 @@ void GVal::copyContentFrom(const GVal &x)
 void GVal::reset()
 {
 	genericValue.reset();
-	stringValue.reset();
+	stringValue.clear();
 	type = GVT_NULL;
 }
 
@@ -319,9 +326,9 @@ size_t GVal::size()
 	switch(type)
 	{
 		case GVT_MULTI_ARRAY:
-			return static_cast<GValMultiArray *>(r.get())->size();
+			return static_cast<GValMultiArray *>(genericValue.get())->size();
 		case GVT_MAP:
-			return static_cast<GValMap *>(r.get())->size();
+			return static_cast<GValMap *>(genericValue.get())->size();
 			break;
 		default:
 			error("type does not support size");
@@ -331,6 +338,24 @@ size_t GVal::size()
 void GVal::resize(size_t x)
 {
 }
+
+void GVal::error(const std::string &msg)
+{
+	progressReporter.error(msg);
+}
+
+size_t GValMultiArray::size()
+{
+	int nDims = dimensions.size();
+	if (nDims == 0)
+		return 0;
+	size_t s = dimensions[0];
+	for (int i = 1; i < nDims; i++)
+		s *= dimensions[i];
+	return s;
+}
+
+//GValTest.cpp
 
 #include <iostream>
 
