@@ -152,7 +152,7 @@ void SmallVector<T, N>::grow(int n)
 class GVal
 {
 public:
-	enum GValType { GVT_NULL, GVT_BOOL, GVT_INT, GVT_LONG_LONG, GVT_FLOAT, GVT_DOUBLE,
+	enum GValType { GVT_NULL, GVT_BOOL, GVT_INT, GVT_LONG, GVT_FLOAT, GVT_DOUBLE,
 		GVT_STRING, GVT_MULTI_ARRAY, GVT_MAP, GVT_GENERIC };
 
 	GVal() : type(GVT_NULL) { }
@@ -190,6 +190,11 @@ public:
 		type = GVT_INT;
 		intValue = x;
 	}
+	void setLong(long long x) {
+		reset();
+		type = GVT_LONG;
+		longValue = x;
+	}
 	void setFloat(float x) {
 		reset();
 		type = GVT_FLOAT;
@@ -206,13 +211,47 @@ public:
 		stringValue = x;
 	}
 
+	bool isNull() {
+		return type == GVT_NULL;
+	}
+	bool asBool() {
+		if (type != GVT_BOOL)
+			error("Bool type expected.");
+		return boolValue;
+	}
+	int asInt() {
+		if (type != GVT_INT)
+			error("Int type expected.");
+		return intValue;
+	}
+	long long asLong() {
+		if (type != GVT_LONG)
+			error("Long type expected.");
+		return longValue;
+	}
+	int asFloat() {
+		if (type != GVT_FLOAT)
+			error("Float type expected.");
+		return floatValue;
+	}
+	int asDouble() {
+		if (type != GVT_DOUBLE)
+			error("Double type expected.");
+		return doubleValue;
+	}
+	std::string &asString() {
+		if (type != GVT_STRING)
+			error("String type expected.");
+		return stringValue;
+	}
+
 protected:
 	int type;
 	union
 	{
 		bool boolValue;
 		int intValue;
-		long long longLongValue;
+		long long longValue;
 		float floatValue;
 		double doubleValue;
 	};
@@ -265,8 +304,8 @@ bool GVal::operator < (const GVal &x) const
 			return boolValue < x.boolValue;
 		case GVT_INT:
 			return intValue < x.intValue;
-		case GVT_LONG_LONG:
-			return longLongValue < x.longLongValue;
+		case GVT_LONG:
+			return longValue < x.longValue;
 		case GVT_FLOAT:
 			return floatValue < x.floatValue;
 		case GVT_DOUBLE:
@@ -296,8 +335,8 @@ void GVal::copyContentFrom(const GVal &x)
 		case GVT_INT:
 			intValue = x.intValue;
 			break;
-		case GVT_LONG_LONG:
-			longLongValue = x.longLongValue;
+		case GVT_LONG:
+			longValue = x.longValue;
 			break;
 		case GVT_FLOAT:
 			floatValue = x.floatValue;
