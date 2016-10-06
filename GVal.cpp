@@ -169,12 +169,49 @@ public:
 	int getType() const { return type; }
 	void setType(int x) { type = x; }
 
-	GVal operator[] (size_t x) const { return *this; }
+	GVal operator[] (size_t i) const { return get(i); }
+	GVal operator[] (const std::string &key) const { get(key); }
+	GVal operator(size_t i0, size_t i1) const { return get(i0, i1); }
+	GVal operator(size_t i0, size_t i1, size_t i2) const { return get(i0, i1, i2); }
+	GVal operator(size_t i0, size_t i1, size_t i2, size_t i3) const { return get(i0, i1, i2, i3); }
+
+	GVal get(size_t i0) const;
+	GVal get(size_t i0, size_t i1) const;
+	GVal get(size_t i0, size_t i1, size_t i2) const;
+	GVal get(size_t i0, size_t i1, size_t i2, size_t i3) const;
+	void set(size_t i0, const GVal &x);
+	void set(size_t i0, size_t i1, const GVal &x);
+	void set(size_t i0, size_t i1, size_t i2, const GVal &x);
+	void set(size_t i0, size_t i1, size_t i2, size_t i3, const GVal &x);
+	GVal get(const SmallVector &i) const;
+	GVal get(size_t *i, int dim) const;
+	GVal get(const std::string &key) const;
+	GVal get(const GVal &key) const;
+	GVal set(const SmallVector &i, GVal &x);
+	GVal set(size_t *i, int dim, GVal &x);
+	GVal set(const std::string &key, GVal &x);
+	GVal set(GVal &key, GVal &x);
 
 	void copyContentFrom(const GVal &x);
 	void reset();
-	size_t size();
+	size_t size() const;
+	size_t size(int dim) const { return dimensions()[dim]; }
+	const SmallVector &dimensions() const;
+	size_t numberOfDimensions() const { return dimensions.size(); }
 	void resize(size_t x);
+	void resize(const SmallVector &x);
+	void resize(size_t *i, int dim);
+
+	void reshape(const SmallVector &x);
+	void reshape(size_t *i, int dim);
+
+	void pushBack(const GVal &x);
+	GVal back() const;
+	GVal pop();
+
+	GVal keys() const;
+	bool check(const std::string &key) const;
+	bool check(GVal &key) const;
 
 	void setNull() {
 		reset();
@@ -210,36 +247,44 @@ public:
 		type = GVT_STRING;
 		stringValue = x;
 	}
+	void setMultiArray(size_t i, int type_);
+	void setMultiArray(size_t i0, size_t i1, int type_);
+	void setMultiArray(size_t i0, size_t i1, size_t i2, int type_);
+	void setMultiArray(size_t i0, size_t i1, size_t i2, size_t i3, int type_);
+	void setMultiArray(const SmallVector &x, int type_);
+	void setMultiArray(size_t *i, size_t dim, int type_);
+	void setMap();
+	void setMap(int keyType_, int valueType_);
 
-	bool isNull() {
+	bool isNull() const {
 		return type == GVT_NULL;
 	}
-	bool asBool() {
+	bool asBool() const {
 		if (type != GVT_BOOL)
 			error("Bool type expected.");
 		return boolValue;
 	}
-	int asInt() {
+	int asInt() const {
 		if (type != GVT_INT)
 			error("Int type expected.");
 		return intValue;
 	}
-	long long asLong() {
+	long long asLong() const {
 		if (type != GVT_LONG)
 			error("Long type expected.");
 		return longValue;
 	}
-	int asFloat() {
+	int asFloat() const {
 		if (type != GVT_FLOAT)
 			error("Float type expected.");
 		return floatValue;
 	}
-	int asDouble() {
+	int asDouble() const {
 		if (type != GVT_DOUBLE)
 			error("Double type expected.");
 		return doubleValue;
 	}
-	std::string &asString() {
+	std::string &asString() const {
 		if (type != GVT_STRING)
 			error("String type expected.");
 		return stringValue;
