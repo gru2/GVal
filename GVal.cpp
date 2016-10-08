@@ -171,9 +171,9 @@ public:
 
 	GVal operator[] (size_t i) const { return get(i); }
 	GVal operator[] (const std::string &key) const { get(key); }
-	GVal operator(size_t i0, size_t i1) const { return get(i0, i1); }
-	GVal operator(size_t i0, size_t i1, size_t i2) const { return get(i0, i1, i2); }
-	GVal operator(size_t i0, size_t i1, size_t i2, size_t i3) const { return get(i0, i1, i2, i3); }
+	GVal operator() (size_t i0, size_t i1) const { return get(i0, i1); }
+	GVal operator() (size_t i0, size_t i1, size_t i2) const { return get(i0, i1, i2); }
+	GVal operator() (size_t i0, size_t i1, size_t i2, size_t i3) const { return get(i0, i1, i2, i3); }
 
 	GVal get(size_t i0) const;
 	GVal get(size_t i0, size_t i1) const;
