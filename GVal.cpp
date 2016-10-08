@@ -183,11 +183,11 @@ public:
 	void set(size_t i0, size_t i1, const GVal &x);
 	void set(size_t i0, size_t i1, size_t i2, const GVal &x);
 	void set(size_t i0, size_t i1, size_t i2, size_t i3, const GVal &x);
-	GVal get(const SmallVector &i) const;
+	GVal get(const SmallVector<size_t, 4> &i) const;
 	GVal get(size_t *i, int dim) const;
 	GVal get(const std::string &key) const;
 	GVal get(const GVal &key) const;
-	GVal set(const SmallVector &i, GVal &x);
+	GVal set(const SmallVector<size_t, 4> &i, GVal &x);
 	GVal set(size_t *i, int dim, GVal &x);
 	GVal set(const std::string &key, GVal &x);
 	GVal set(GVal &key, GVal &x);
@@ -196,13 +196,13 @@ public:
 	void reset();
 	size_t size() const;
 	size_t size(int dim) const { return dimensions()[dim]; }
-	const SmallVector &dimensions() const;
+	const SmallVector<size_t, 4> &dimensions() const;
 	size_t numberOfDimensions() const { return dimensions.size(); }
 	void resize(size_t x);
-	void resize(const SmallVector &x);
+	void resize(const SmallVector<size_t, 4> &x);
 	void resize(size_t *i, int dim);
 
-	void reshape(const SmallVector &x);
+	void reshape(const SmallVector<size_t, 4> &x);
 	void reshape(size_t *i, int dim);
 
 	void pushBack(const GVal &x);
@@ -251,7 +251,7 @@ public:
 	void setMultiArray(size_t i0, size_t i1, int type_);
 	void setMultiArray(size_t i0, size_t i1, size_t i2, int type_);
 	void setMultiArray(size_t i0, size_t i1, size_t i2, size_t i3, int type_);
-	void setMultiArray(const SmallVector &x, int type_);
+	void setMultiArray(const SmallVector<size_t, 4> &x, int type_);
 	void setMultiArray(size_t *i, size_t dim, int type_);
 	void setMap();
 	void setMap(int keyType_, int valueType_);
@@ -364,6 +364,62 @@ bool GVal::operator < (const GVal &x) const
 			break;
 	}
 	return false;
+}
+
+GVal GVal::get(size_t i0) const
+{
+	if (type != GVT_MULTI_ARRAY)
+	{
+		error("multi array type expected.");
+		return GVal();
+	}
+	return static_cast<GValMultiArray *>(genericValue.get())->get(&i0, 1);
+}
+GVal GVal::get(size_t i0, size_t i1) const
+{
+	// TODO
+}
+GVal GVal::get(size_t i0, size_t i1, size_t i2) const
+{
+}
+GVal GVal::get(size_t i0, size_t i1, size_t i2, size_t i3) const
+{
+}
+void GVal::set(size_t i0, const GVal &x)
+{
+}
+void GVal::set(size_t i0, size_t i1, const GVal &x)
+{
+}
+void GVal::set(size_t i0, size_t i1, size_t i2, const GVal &x)
+{
+}
+void GVal::set(size_t i0, size_t i1, size_t i2, size_t i3, const GVal &x)
+{
+}
+GVal GVal::get(const SmallVector<size_t, 4> &i) const
+{
+}
+GVal GVal::get(size_t *i, int dim) const
+{
+}
+GVal GVal::get(const std::string &key) const
+{
+}
+GVal GVal::get(const GVal &key) const
+{
+}
+GVal GVal::set(const SmallVector<size_t, 4> &i, GVal &x)
+{
+}
+GVal GVal::set(size_t *i, int dim, GVal &x)
+{
+}
+GVal GVal::set(const std::string &key, GVal &x)
+{
+}
+GVal GVal::set(GVal &key, GVal &x)
+{
 }
 
 void GVal::copyContentFrom(const GVal &x)
