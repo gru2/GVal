@@ -377,31 +377,90 @@ GVal GVal::get(size_t i0) const
 }
 GVal GVal::get(size_t i0, size_t i1) const
 {
-	// TODO
+	if (type != GVT_MULTI_ARRAY)
+	{
+		error("multi array type expected.");
+		return GVal();
+	}
+	size_t i[2];
+	i[0] = i0;
+	i[1] = i1;
+	return static_cast<GValMultiArray *>(genericValue.get())->get(i, 2);
 }
 GVal GVal::get(size_t i0, size_t i1, size_t i2) const
 {
+	if (type != GVT_MULTI_ARRAY)
+	{
+		error("multi array type expected.");
+		return GVal();
+	}
+	size_t i[3];
+	i[0] = i0;
+	i[1] = i1;
+	i[2] = i2;
+	return static_cast<GValMultiArray *>(genericValue.get())->get(i, 3);
 }
 GVal GVal::get(size_t i0, size_t i1, size_t i2, size_t i3) const
 {
+	if (type != GVT_MULTI_ARRAY)
+	{
+		error("multi array type expected.");
+		return GVal();
+	}
+	size_t i[4];
+	i[0] = i0;
+	i[1] = i1;
+	i[2] = i2;
+	i[3] = i3;
+	return static_cast<GValMultiArray *>(genericValue.get())->get(i, 4);
 }
 void GVal::set(size_t i0, const GVal &x)
 {
+	if (type != GVT_MULTI_ARRAY)
+	{
+		error("multi array type expected.");
+		return GVal();
+	}
 }
 void GVal::set(size_t i0, size_t i1, const GVal &x)
 {
+	if (type != GVT_MULTI_ARRAY)
+	{
+		error("multi array type expected.");
+		return GVal();
+	}
 }
 void GVal::set(size_t i0, size_t i1, size_t i2, const GVal &x)
 {
+	if (type != GVT_MULTI_ARRAY)
+	{
+		error("multi array type expected.");
+		return GVal();
+	}
 }
 void GVal::set(size_t i0, size_t i1, size_t i2, size_t i3, const GVal &x)
 {
+	if (type != GVT_MULTI_ARRAY)
+	{
+		error("multi array type expected.");
+		return GVal();
+	}
 }
 GVal GVal::get(const SmallVector<size_t, 4> &i) const
 {
+	if (type != GVT_MULTI_ARRAY)
+	{
+		error("multi array type expected.");
+		return GVal();
+	}
 }
 GVal GVal::get(size_t *i, int dim) const
 {
+	if (type != GVT_MULTI_ARRAY)
+	{
+		error("multi array type expected.");
+		return GVal();
+	}
 }
 GVal GVal::get(const std::string &key) const
 {
@@ -411,9 +470,19 @@ GVal GVal::get(const GVal &key) const
 }
 GVal GVal::set(const SmallVector<size_t, 4> &i, GVal &x)
 {
+	if (type != GVT_MULTI_ARRAY)
+	{
+		error("multi array type expected.");
+		return GVal();
+	}
 }
 GVal GVal::set(size_t *i, int dim, GVal &x)
 {
+	if (type != GVT_MULTI_ARRAY)
+	{
+		error("multi array type expected.");
+		return GVal();
+	}
 }
 GVal GVal::set(const std::string &key, GVal &x)
 {
