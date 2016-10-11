@@ -421,6 +421,7 @@ void GVal::set(size_t i0, const GVal &x)
 		error("multi array type expected.");
 		return GVal();
 	}
+	return static_cast<GValMultiArray *>(genericValue.get())->set(&i0, 1, x);
 }
 void GVal::set(size_t i0, size_t i1, const GVal &x)
 {
@@ -429,6 +430,10 @@ void GVal::set(size_t i0, size_t i1, const GVal &x)
 		error("multi array type expected.");
 		return GVal();
 	}
+	size_t i[2];
+	i[0] = i0;
+	i[1] = i1;
+	return static_cast<GValMultiArray *>(genericValue.get())->set(&i, 2, x);
 }
 void GVal::set(size_t i0, size_t i1, size_t i2, const GVal &x)
 {
@@ -437,6 +442,11 @@ void GVal::set(size_t i0, size_t i1, size_t i2, const GVal &x)
 		error("multi array type expected.");
 		return GVal();
 	}
+	size_t i[3];
+	i[0] = i0;
+	i[1] = i1;
+	i[2] = i2;
+	return static_cast<GValMultiArray *>(genericValue.get())->set(&i, 3, x);
 }
 void GVal::set(size_t i0, size_t i1, size_t i2, size_t i3, const GVal &x)
 {
