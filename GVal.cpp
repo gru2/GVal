@@ -311,10 +311,15 @@ class GValMultiArray
 {
 public:
 	size_t size();
+	GVal get(size_t *i, int dim);
+	void set(size_t *i, int dim, const GVal &x);
 protected:
 	int entryType;
 	SmallVector<size_t, 4> dimensions;
 	void *data;
+
+	size_t getEntrySize(int type);
+	size_t calculateOffset(size_t *i, int dim);
 };
 
 class GValMap
@@ -614,6 +619,84 @@ size_t GValMultiArray::size()
 	for (int i = 1; i < nDims; i++)
 		s *= dimensions[i];
 	return s;
+}
+
+GVal GValMultiArray::get(size_t *i, int dim)
+{
+	size_t offset = calculateOffset(i, dim);
+	char *p = (char *)data + offset;
+	GVal r;
+	switch (entryType)
+	{
+	case GVT_BOOL:
+		return *static_cast<bool>(p);
+	case GVT_INT:
+		return *static_cast<int>(p);
+	case GVT_LONG:
+		return *static_cast<long long>(p);
+	case GVT_FLOAT:
+		return *static_cast<float>(p);
+	case GVT_DOUBLE:
+		return *static_cast<double>(p);
+	default:
+		return *static_cast<GVAl>(p);
+	}
+	return r;
+}
+
+void GValMultiArray::set(size_t *i, int dim, const GVal &x)
+{
+	size_t offset = calculateOffset(i, dim);
+	char *p = (char *)data + offset;
+	switch (entryType)
+	{
+	case GVT_BOOL:
+		*static_cast<bool>(p) = x.asBool();
+	case GVT_INT:
+		*static_cast<int>(p) = x.asInt();
+	case GVT_LONG:
+		*static_cast<long long>(p) = x.asLong();
+	case GVT_FLOAT:
+		*static_cast<float>(p) = x.asFloat();
+	case GVT_DOUBLE:
+		*static_cast<double>(p) = x.asDouble();
+	default:
+		*static_cast<GVal>(p) = x;
+	}
+}
+
+size_t GValMultiArray::getEntrySize(int type)
+{
+	switch (type) {
+	case GVT_BOOL:
+		return sizeof(bool);
+	case GVT_INT:
+		return sizeof(int);
+	case GVT_LONG:
+		return sizeof(long long);
+	case GVT_FLOAT:
+		return sizeof(float);
+	case GVT_DOUBLE:
+		return sizeof(double);
+	default:
+		return sizeof(GVal);
+	}
+}
+
+size_t GValMultiArray::calculateOffset(size_t *i, int dim)
+{
+	size_t offsetIndex = 0;
+
+	size_t s = 1;
+	for (int j = dim - 1; j >= 0; j--)
+	{
+		offsetIndex += s * i[j];
+		s *= dimensions[j];
+	}
+
+	size_t entrySize = getEntrySize(entryType);
+	size_t offset = offsetIndex * entrySize;
+	return offset;
 }
 
 //GValTest.cpp
