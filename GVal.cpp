@@ -198,16 +198,25 @@ public:
 	size_t size(int dim) const { return dimensions()[dim]; }
 	const SmallVector<size_t, 4> &dimensions() const;
 	size_t numberOfDimensions() const { return dimensions.size(); }
-	void resize(size_t x);
+	void resize(size_t i0);
+	void resize(size_t i0, size_t i1);
+	void resize(size_t i0, size_t i1, size_t i2);
+	void resize(size_t i0, size_t i1, size_t i2, size_t i3);
 	void resize(const SmallVector<size_t, 4> &x);
 	void resize(size_t *i, int dim);
 
+	void reshape(size_t i0);
+	void reshape(size_t i0, size_t i1);
+	void reshape(size_t i0, size_t i1, size_t i2);
+	void reshape(size_t i0, size_t i1, size_t i2, size_t i3);
 	void reshape(const SmallVector<size_t, 4> &x);
 	void reshape(size_t *i, int dim);
 
-	void pushBack(const GVal &x);
+	GVal front() const;
 	GVal back() const;
-	GVal pop();
+
+	void pushBack(const GVal &x);
+	GVal popBack();
 
 	GVal keys() const;
 	bool check(const std::string &key) const;
@@ -310,12 +319,24 @@ protected:
 class GValMultiArray
 {
 public:
+	GValMultiArray();
+	~GValMultiArray();
+
+	void reset();
+
 	size_t size();
 	GVal get(size_t *i, int dim);
 	void set(size_t *i, int dim, const GVal &x);
+	void pushBack(const GVal &x);
+	GVal popBack();
+	void grow();
+
+	int getEntryType() const { return entryType; }
+	void allocateArray(size_t *i, int dim, int entryType_);
 protected:
 	int entryType;
 	SmallVector<size_t, 4> dimensions;
+	size_t capacity;
 	void *data;
 
 	size_t getEntrySize(int type);
@@ -605,20 +626,47 @@ void GVal::resize(size_t x)
 {
 }
 
-void GVal::error(const std::string &msg)
+void GVal::setMultiArray(size_t i, int type_)
 {
-	progressReporter.error(msg);
+	setMultiArray(&i, 1, type_);
 }
-
-size_t GValMultiArray::size()
+void GVal::setMultiArray(size_t i0, size_t i1, int type_)
 {
-	int nDims = dimensions.size();
-	if (nDims == 0)
-		return 0;
-	size_t s = dimensions[0];
-	for (int i = 1; i < nDims; i++)
-		s *= dimensions[i];
-	return s;
+	size_t i[2];
+	i[0] = i0;
+	i[1] = i1;
+	setMultiArray(&i, 2, type_);
+}
+void GVal::setMultiArray(size_t i0, size_t i1, size_t i2, int type_)
+{
+	size_t i[3];
+	i[0] = i0;
+	i[1] = i1;
+	i[2] = i2;
+	setMultiArray(&i, 3, type_);
+}
+void GVal::setMultiArray(size_t i0, size_t i1, size_t i2, size_t i3, int type_)
+{
+	size_t i[4];
+	i[0] = i0;
+	i[1] = i1;
+	i[2] = i2;
+	i[3] = i3;
+	setMultiArray(&i, 4, type_);
+}
+void GVal::setMultiArray(const SmallVector<size_t, 4> &x, int type_)
+{
+	size_t s = x.size();
+	size_t *p = x.begin();
+	setMultiArray(&p, s, type_);
+}
+void GVal::setMultiArray(size_t *i, size_t dim, int type_)
+{
+	reset();
+	type = GVT_MULTI_ARRAY;
+	GValMultiArray *array = new GValMultiArray;
+	genericValue = shared_ptr<GValMultiArray>(array);
+	array->setType(type_);
 }
 
 GVal GValMultiArray::get(size_t *i, int dim)
@@ -663,6 +711,24 @@ void GValMultiArray::set(size_t *i, int dim, const GVal &x)
 	default:
 		*static_cast<GVal>(p) = x;
 	}
+}
+
+void GValMultiArray::allocateArray(size_t *i, int dim, int entryType_)
+{
+	size_t requiredCapacity = 1;
+	for(int j = 0; j < dim; j++)
+		requiredCapacity *= i[j];
+	size_t entrySize = getEntrySize(entryType_);
+	requiredCapacity *= entrySize;
+	if (capacity < requiredCapacity)
+	{
+		reset();
+		data = new char[requiredCapacity];
+		capacity = requiredCapacity;
+	}
+	dimensions.resize(dim);
+	for(int j = 0; j < dim; j++)
+		dimensions[j] = i[j];
 }
 
 size_t GValMultiArray::getEntrySize(int type)
