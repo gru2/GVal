@@ -722,17 +722,26 @@ void GValMultiArray::set(size_t *i, int dim, const GVal &x)
 
 void GValMultiArray::allocateArray(size_t *i, int dim, int entryType_)
 {
-	size_t entryCount = 1;
+	size_t newEntrysCount = 1;
 	for(int j = 0; j < dim; j++)
-		entryCount *= i[j];
+		newEntrysCount *= i[j];
 	size_t entrySize = getEntrySize(entryType_);
-	int requiredCapacity = entryCount * entrySize;
+	int requiredCapacity = newEntrysCount * entrySize;
 	if (capacity < requiredCapacity)
 	{
-		size_t oldSize = size();
+		size_t newCapacity = capacity << 1;
+		if (requiredCapacity > newCapacity)
+			newCapacity = requiredCapacity;
+		size_t oldEntrysCount = size();
 		void *oldData = data;
 		data = new char[requiredCapacity];
-		memcpy(data, oldData, oldSize * entrySize);
+		if (useNativeStorage(entryType))
+		{
+
+		}
+
+
+		memcpy(data, oldData, oldEntrysCount * entrySize);
 		capacity = requiredCapacity;
 	}
 	dimensions.resize(dim);
