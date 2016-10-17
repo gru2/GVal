@@ -341,6 +341,9 @@ protected:
 
 	size_t getEntrySize(int type);
 	size_t calculateOffset(size_t *i, int dim);
+	void createObjects(GVal *objs, size_t count);
+	void destroyObjects(GVal *objs, size_t count);
+	void copyObjects(GVal *objs, size_t count);
 };
 
 class GValMap
@@ -763,6 +766,38 @@ size_t GValMultiArray::calculateOffset(size_t *i, int dim)
 	size_t entrySize = getEntrySize(entryType);
 	size_t offset = offsetIndex * entrySize;
 	return offset;
+}
+
+void GValMultiArray::createObjects(GVal *objs, size_t count)
+{
+	GVal *p = objs;
+	for (size i = 0; i < count; i++)
+	{
+		new GVal(p) ();
+		p++;
+	}
+}
+
+void GValMultiArray::destroyObjects(GVal *objs, size_t count)
+{
+	GVal *p = objs;
+	for (size i = 0; i < count; i++)
+	{
+		p->~GVal();
+		p++;
+	}
+}
+
+void GValMultiArray::copyObjects(GVal *dst, GVal *src, size_t count)
+{
+	GVal *d = dst;
+	GVal *s = src;
+	for (size i = 0; i < count; i++)
+	{
+		new GVal(d) (*s);
+		d++;
+		s++;
+	}
 }
 
 //GValTest.cpp
