@@ -718,11 +718,11 @@ void GValMultiArray::set(size_t *i, int dim, const GVal &x)
 
 void GValMultiArray::allocateArray(size_t *i, int dim, int entryType_)
 {
-	size_t requiredCapacity = 1;
+	size_t entryCount = 1;
 	for(int j = 0; j < dim; j++)
-		requiredCapacity *= i[j];
+		entryCount *= i[j];
 	size_t entrySize = getEntrySize(entryType_);
-	requiredCapacity *= entrySize;
+	int requiredCapacity = entryCount * entrySize;
 	if (capacity < requiredCapacity)
 	{
 		reset();
