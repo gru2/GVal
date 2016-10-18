@@ -346,7 +346,7 @@ protected:
 	size_t calculateOffset(size_t *i, int dim);
 	void createObjects(GVal *objs, size_t count);
 	void destroyObjects(GVal *objs, size_t count);
-	void copyObjects(GVal *objs, size_t count);
+	void copyObjects(GVal *dst, GVal *src, size_t count);
 };
 
 class GValMap
@@ -720,33 +720,64 @@ void GValMultiArray::set(size_t *i, int dim, const GVal &x)
 	}
 }
 
-void GValMultiArray::allocateArray(size_t *i, int dim, int entryType_)
+void GValMultiArray::resizeAndSetEntryType(size_t *i, int dim, int newEntryType)
 {
+	// Calculate requred storage size for the new array.
 	size_t newEntrysCount = 1;
 	for(int j = 0; j < dim; j++)
 		newEntrysCount *= i[j];
-	size_t entrySize = getEntrySize(entryType_);
-	int requiredCapacity = newEntrysCount * entrySize;
+	size_t newEntrySize = getEntrySize(newEntryType);
+	int requiredCapacity = newEntrysCount * newEntrySize;
+
+	// Check if a new storage is required.
 	if (capacity < requiredCapacity)
 	{
+		// Allocate the new storage and copy data if required.
 		size_t newCapacity = capacity << 1;
 		if (requiredCapacity > newCapacity)
 			newCapacity = requiredCapacity;
 		size_t oldEntrysCount = size();
 		void *oldData = data;
-		data = new char[requiredCapacity];
-		if (useNativeStorage(entryType))
-		{
+		data = new char[newCapacity];
 
+		if (newEntryType != GVT_GENERIC && entryType != GVT_GENERIC)
+		{
+			if (newEntryType == entryType)
+				memcpy(data, oldData, oldEntrysCount * newEntrySize);
 		}
 
+		if (newEntryType == GVT_GENERIC && entryType == GVT_GENERIC)
+			copyObjects(data, oldData, oldEntrysCount);
 
-		memcpy(data, oldData, oldEntrysCount * entrySize);
-		capacity = requiredCapacity;
+		if (newEntryType != GVT_GENERIC && entryType == GVT_GENERIC)
+		{
+			destroyObjects(oldData, oldEntrysCount);
+			entryType = newEntryType;
+		}
+
+		capacity = newCapacity;
 	}
+
+	// Construct or destruct objects if needed.
+	size_t oldObjectsCount = 0;
+	size_t newObjectsCount = 0;
+	if (entryType == GVT_GENERIC)
+		oldObjectsCount = oldEntrysCount;
+	if (newEntryType == GVT_GENERIC)
+		newObjectsCount = newEntrysCount;
+
+	if (newObjectsCount > oldObjectsCount)
+		constructObjects(data + oldObjectsCount, newObjectsCount - oldObjectsCount);
+	if (newObjectsCount < oldObjectsCount)
+		destructObjects(data + newObjectsCount, oldObjectsCount - newObjectsCount);
+
+	// Set dimensions.
 	dimensions.resize(dim);
 	for(int j = 0; j < dim; j++)
 		dimensions[j] = i[j];
+
+	// Set the new entry type.
+	entryType = newEntryType;
 }
 
 size_t GValMultiArray::getEntrySize(int type)
