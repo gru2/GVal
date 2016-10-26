@@ -335,7 +335,7 @@ public:
 	GVal popBack();
 
 	int getEntryType() const { return entryType; }
-	void allocateArray(size_t *i, int dim, int entryType_);
+	void resizeAndSetEntryType(size_t *i, int dim, int entryType_);
 protected:
 	int entryType;
 	SmallVector<size_t, 4> dimensions;
@@ -718,6 +718,36 @@ void GValMultiArray::set(size_t *i, int dim, const GVal &x)
 	default:
 		*static_cast<GVal>(p) = x;
 	}
+}
+
+GVal GValMultiArray::front() const
+{
+	size_t index = 0;
+	GVal r = get(&index, 1);
+	return r;
+}
+
+GVal GValMultiArray::back() const
+{
+	size_t index = size() - 1;
+	GVal r = get(&index, 1);
+	return r;
+}
+
+void GValMultiArray::pushBack(const GVal & x)
+{
+	size_t index = size();
+	size_t newSize = index + 1;
+	resizeAndSetEntryType(&newSize, 1, entryType);
+	set(&index, 1, x);
+}
+
+GVal GValMultiArray::popBack()
+{
+	size_t index = size() - 1;
+	GVal r = get(&index, 1);
+	resizeAndSetEntryType(&index, 1, entryType);
+	return r;
 }
 
 void GValMultiArray::resizeAndSetEntryType(size_t *i, int dim, int newEntryType)
