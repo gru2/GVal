@@ -630,6 +630,84 @@ size_t GVal::size()
 
 void GVal::resize(size_t x)
 {
+	resize(&x, 1);
+}
+
+void GVal::resize(size_t i0, size_t i1)
+{
+	size_t i[2];
+	i[0] = i0;
+	i[1] = i1;
+	resize(i, 2);
+}
+
+void GVal::resize(size_t i0, size_t i1, size_t i2)
+{
+	size_t i[3];
+	i[0] = i0;
+	i[1] = i1;
+	i[2] = i2;
+	resize(i, 3);
+}
+
+void GVal::resize(size_t i0, size_t i1, size_t i2, size_t i3)
+{
+	size_t i[4];
+	i[0] = i0;
+	i[1] = i1;
+	i[2] = i2;
+	i[3] = i3;
+	resize(i, 4);
+}
+
+void GVal::resize(const SmallVector<size_t, 4>& x)
+{
+	size_t s = i.size();
+	size_t *p = i.begin();
+	resize(p, s);
+}
+
+void GVal::resize(size_t * i, int dim)
+{
+	if (type != GVT_MULTI_ARRAY)
+	{
+		error("type does not support resize");
+		return;
+	}
+
+	GValMultiArray *ma = static_cast<GValMultiArray *>(genericValue.get());
+	int entryType = ma->getEntryType();
+	ma->resizeAndSetType(i, dim, entryType);
+}
+
+void GVal::reshape(size_t i0)
+{
+	resize(i0);
+}
+
+void GVal::reshape(size_t i0, size_t i1)
+{
+	resize(i0, i1);
+}
+
+void GVal::reshape(size_t i0, size_t i1, size_t i2)
+{
+	resize(i0, i1, i2);
+}
+
+void GVal::reshape(size_t i0, size_t i1, size_t i2, size_t i3)
+{
+	resize(i0, i1, i2, i3);
+}
+
+void GVal::reshape(const SmallVector<size_t, 4>& x)
+{
+	resize(x);
+}
+
+void GVal::reshape(size_t * i, int dim)
+{
+	resize(i, dim);
 }
 
 void GVal::setMultiArray(size_t i, int entryType)
@@ -734,7 +812,7 @@ GVal GValMultiArray::back() const
 	return r;
 }
 
-void GValMultiArray::pushBack(const GVal & x)
+void GValMultiArray::pushBack(const GVal &x)
 {
 	size_t index = size();
 	size_t newSize = index + 1;
