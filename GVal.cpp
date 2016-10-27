@@ -195,9 +195,9 @@ public:
 	void copyContentFrom(const GVal &x);
 	void reset();
 	size_t size() const;
-	size_t size(int dim) const { return dimensions()[dim]; }
-	const SmallVector<size_t, 4> &dimensions() const;
-	size_t numberOfDimensions() const { return dimensions.size(); }
+	size_t size(int dim) const { return shape()[dim]; }
+	const SmallVector<size_t, 4> &shape() const;
+	size_t numberOfDimensions() const { return shape.size(); }
 	void resize(size_t i0);
 	void resize(size_t i0, size_t i1);
 	void resize(size_t i0, size_t i1, size_t i2);
@@ -338,7 +338,7 @@ public:
 	void resizeAndSetEntryType(size_t *i, int dim, int entryType_);
 protected:
 	int entryType;
-	SmallVector<size_t, 4> dimensions;
+	SmallVector<size_t, 4> shape;
 	size_t capacity;
 	void *data;
 
@@ -894,10 +894,10 @@ void GValMultiArray::resizeAndSetEntryType(size_t *i, int dim, int newEntryType)
 	if (newObjectsCount < oldObjectsCount)
 		destructObjects(data + newObjectsCount, oldObjectsCount - newObjectsCount);
 
-	// Set dimensions.
-	dimensions.resize(dim);
+	// Set shape.
+	shape.resize(dim);
 	for(int j = 0; j < dim; j++)
-		dimensions[j] = i[j];
+		shape[j] = i[j];
 
 	// Set the new entry type.
 	entryType = newEntryType;
@@ -929,7 +929,7 @@ size_t GValMultiArray::calculateOffset(size_t *i, int dim)
 	for (int j = dim - 1; j >= 0; j--)
 	{
 		offsetIndex += s * i[j];
-		s *= dimensions[j];
+		s *= shape[j];
 	}
 
 	size_t entrySize = getEntrySize(entryType);
