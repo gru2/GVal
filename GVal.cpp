@@ -107,6 +107,10 @@ public:
 	{
 		return data[i];
 	}
+	const T &operator [](unsigned i) const
+	{
+		return data[i];
+	}
 
 protected:
 	void grow(int n);
@@ -197,7 +201,7 @@ public:
 	size_t size() const;
 	size_t size(int dim) const { return shape()[dim]; }
 	const SmallVector<size_t, 4> &shape() const;
-	size_t numberOfDimensions() const { return shape.size(); }
+	size_t numberOfDimensions() const { return shape().size(); }
 	void resize(size_t i0);
 	void resize(size_t i0, size_t i1);
 	void resize(size_t i0, size_t i1, size_t i2);
