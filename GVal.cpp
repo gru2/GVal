@@ -297,7 +297,7 @@ public:
 			error("Double type expected.");
 		return doubleValue;
 	}
-	std::string &asString() const {
+	const std::string &asString() const {
 		if (type != GVT_STRING)
 			error("String type expected.");
 		return stringValue;
@@ -317,7 +317,7 @@ protected:
 	std::string stringValue;
 	ProgressReporter progressReporter;
 
-	void error(const std::string &msg);
+	void error(const std::string &msg) const;
 };
 
 class GValMultiArray
@@ -357,6 +357,9 @@ class GValMap
 {
 public:
 	size_t size() { return data.size(); }
+
+	GVal get(const GVal &key);
+	void set(const GVal &key, const GVal &value);
 protected:
 	int keyType;
 	int valueType;
@@ -459,7 +462,7 @@ void GVal::set(size_t i0, const GVal &x)
 	if (type != GVT_MULTI_ARRAY)
 	{
 		error("multi array type expected.");
-		return GVal();
+		return;
 	}
 	static_cast<GValMultiArray *>(genericValue.get())->set(&i0, 1, x);
 }
@@ -469,12 +472,12 @@ void GVal::set(size_t i0, size_t i1, const GVal &x)
 	if (type != GVT_MULTI_ARRAY)
 	{
 		error("multi array type expected.");
-		return GVal();
+		return;
 	}
 	size_t i[2];
 	i[0] = i0;
 	i[1] = i1;
-	static_cast<GValMultiArray *>(genericValue.get())->set(&i, 2, x);
+	static_cast<GValMultiArray *>(genericValue.get())->set(i, 2, x);
 }
 
 void GVal::set(size_t i0, size_t i1, size_t i2, const GVal &x)
@@ -482,13 +485,13 @@ void GVal::set(size_t i0, size_t i1, size_t i2, const GVal &x)
 	if (type != GVT_MULTI_ARRAY)
 	{
 		error("multi array type expected.");
-		return GVal();
+		return;
 	}
 	size_t i[3];
 	i[0] = i0;
 	i[1] = i1;
 	i[2] = i2;
-	static_cast<GValMultiArray *>(genericValue.get())->set(&i, 3, x);
+	static_cast<GValMultiArray *>(genericValue.get())->set(i, 3, x);
 }
 
 void GVal::set(size_t i0, size_t i1, size_t i2, size_t i3, const GVal &x)
@@ -496,14 +499,14 @@ void GVal::set(size_t i0, size_t i1, size_t i2, size_t i3, const GVal &x)
 	if (type != GVT_MULTI_ARRAY)
 	{
 		error("multi array type expected.");
-		return GVal();
+		return;
 	}
 	size_t i[4];
 	i[0] = i0;
 	i[1] = i1;
 	i[2] = i2;
 	i[3] = i3;
-	static_cast<GValMultiArray *>(genericValue.get())->set(&i, 4, x);
+	static_cast<GValMultiArray *>(genericValue.get())->set(i, 4, x);
 }
 
 GVal GVal::get(const SmallVector<size_t, 4> &i) const
@@ -555,7 +558,7 @@ void GVal::set(const SmallVector<size_t, 4> &i, GVal &x)
 	if (type != GVT_MULTI_ARRAY)
 	{
 		error("multi array type expected.");
-		return GVal();
+		return;
 	}
 	size_t s = i.size();
 	size_t *p = i.begin();
@@ -567,7 +570,7 @@ void GVal::set(size_t *i, int dim, GVal &x)
 	if (type != GVT_MULTI_ARRAY)
 	{
 		error("multi array type expected.");
-		return GVal();
+		return;
 	}
 	static_cast<GValMultiArray *>(genericValue.get())->set(i, dim, x);
 }
@@ -577,7 +580,7 @@ void GVal::set(const std::string &key, GVal &x)
 	if (type != GVT_MAP)
 	{
 		error("multi array type expected.");
-		return GVal();
+		return;
 	}
 	GVal key_;
 	key_.setString(key);
@@ -589,7 +592,7 @@ void GVal::set(GVal &key, GVal &x)
 	if (type != GVT_MAP)
 	{
 		error("multi array type expected.");
-		return GVal();
+		return;
 	}
 	static_cast<GValMap *>(genericValue.get())->set(key, x);
 }
@@ -633,7 +636,7 @@ void GVal::reset()
 	type = GVT_NULL;
 }
 
-size_t GVal::size()
+size_t GVal::size() const
 {
 	switch(type)
 	{
@@ -681,8 +684,8 @@ void GVal::resize(size_t i0, size_t i1, size_t i2, size_t i3)
 
 void GVal::resize(const SmallVector<size_t, 4>& x)
 {
-	size_t s = i.size();
-	size_t *p = i.begin();
+	size_t s = x.size();
+	size_t *p = x.begin();
 	resize(p, s);
 }
 
@@ -696,7 +699,7 @@ void GVal::resize(size_t * i, int dim)
 
 	GValMultiArray *ma = static_cast<GValMultiArray *>(genericValue.get());
 	int entryType = ma->getEntryType();
-	ma->resizeAndSetType(i, dim, entryType);
+	ma->resizeAndSetEntryType(i, dim, entryType);
 }
 
 void GVal::reshape(size_t i0)
@@ -738,7 +741,7 @@ void GVal::setMultiArray(size_t i0, size_t i1, int entryType)
 	size_t i[2];
 	i[0] = i0;
 	i[1] = i1;
-	setMultiArray(&i, 2, entryType);
+	setMultiArray(i, 2, entryType);
 }
 void GVal::setMultiArray(size_t i0, size_t i1, size_t i2, int entryType)
 {
@@ -746,7 +749,7 @@ void GVal::setMultiArray(size_t i0, size_t i1, size_t i2, int entryType)
 	i[0] = i0;
 	i[1] = i1;
 	i[2] = i2;
-	setMultiArray(&i, 3, entryType);
+	setMultiArray(i, 3, entryType);
 }
 void GVal::setMultiArray(size_t i0, size_t i1, size_t i2, size_t i3, int entryType)
 {
@@ -755,22 +758,27 @@ void GVal::setMultiArray(size_t i0, size_t i1, size_t i2, size_t i3, int entryTy
 	i[1] = i1;
 	i[2] = i2;
 	i[3] = i3;
-	setMultiArray(&i, 4, entryType);
+	setMultiArray(i, 4, entryType);
 }
 void GVal::setMultiArray(const SmallVector<size_t, 4> &x, int entryType)
 {
 	size_t s = x.size();
 	size_t *p = x.begin();
-	setMultiArray(&p, s, entryType);
+	setMultiArray(p, s, entryType);
 }
 void GVal::setMultiArray(size_t *i, size_t dim, int entryType)
 {
 	reset();
 	type = GVT_MULTI_ARRAY;
 	GValMultiArray *array = new GValMultiArray;
-	genericValue = shared_ptr<GValMultiArray>(array);
+	genericValue = std::shared_ptr<GValMultiArray>(array);
 	array->setType(entryType);
 	array->allocateArray(i, dim, entryType);
+}
+
+void GVal::error(const std::string & msg) const
+{
+	progressReporter.error();
 }
 
 GVal GValMultiArray::get(size_t *i, int dim)
@@ -972,6 +980,17 @@ void GValMultiArray::copyObjects(GVal *dst, GVal *src, size_t count)
 		s++;
 	}
 }
+
+GVal GValMap::get(const GVal &key)
+{
+	return data[key];
+}
+
+void GValMap::set(const GVal &key, const GVal &value)
+{
+	data[key] = value;
+}
+
 
 //GValTest.cpp
 
