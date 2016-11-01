@@ -6,7 +6,7 @@
 class ProgressReporter
 {
 public:
-	void error(const std::string &msg);
+	void error(const std::string &msg) const;
 };
 
 #endif
@@ -15,7 +15,7 @@ public:
 #include <stdio.h>
 #include <stdlib.h>
 
-void ProgressReporter::error(const std::string &msg)
+void ProgressReporter::error(const std::string &msg) const
 {
 	printf("error:%s\n", msg.c_str());
 	exit(1);
@@ -328,8 +328,8 @@ public:
 
 	void reset();
 
-	size_t size();
-	GVal get(size_t *i, int dim);
+	size_t size() const;
+	GVal get(size_t *i, int dim) const;
 	void set(size_t *i, int dim, const GVal &x);
 
 	GVal front() const;
@@ -346,8 +346,8 @@ protected:
 	size_t capacity;
 	void *data;
 
-	size_t getEntrySize(int type);
-	size_t calculateOffset(size_t *i, int dim);
+	size_t getEntrySize(int type) const;
+	size_t calculateOffset(size_t *i, int dim) const;
 	void createObjects(GVal *objs, size_t count);
 	void destroyObjects(GVal *objs, size_t count);
 	void copyObjects(GVal *dst, GVal *src, size_t count);
@@ -370,6 +370,7 @@ protected:
 
 // ---------------GVal.cpp
 //#include <GVal.h>
+#include <string.h>
 
 GVal &GVal::operator = (const GVal &x)
 {
@@ -772,34 +773,76 @@ void GVal::setMultiArray(size_t *i, size_t dim, int entryType)
 	type = GVT_MULTI_ARRAY;
 	GValMultiArray *array = new GValMultiArray;
 	genericValue = std::shared_ptr<GValMultiArray>(array);
-	array->setType(entryType);
-	array->allocateArray(i, dim, entryType);
+	array->resizeAndSetEntryType(i, dim, entryType);
 }
 
 void GVal::error(const std::string & msg) const
 {
-	progressReporter.error();
+	progressReporter.error(msg);
 }
 
-GVal GValMultiArray::get(size_t *i, int dim)
+GValMultiArray::GValMultiArray()
+{
+	entryType = GVal::GVT_GENERIC;
+	data = 0;
+	capacity = 0;
+}
+
+GValMultiArray::~GValMultiArray()
+{
+	reset();
+}
+
+void GValMultiArray::reset()
+{
+	if (entryType == GVal::GVT_GENERIC)
+	{
+		size_t n = size();
+		destroyObjects(static_cast<GVal *>(data), n);
+	}
+	if (data)
+	{
+		delete[] static_cast<char *>(data);
+		data = nullptr;
+	}
+}
+
+size_t GValMultiArray::size() const
+{
+	int nDims = shape.size();
+	if (nDims == 0)
+		return 0;
+	size_t s = 1;
+	for (size_t i = 0; i < nDims; i++)
+		s *= shape[i];
+	return s;
+}
+
+GVal GValMultiArray::get(size_t *i, int dim) const
 {
 	size_t offset = calculateOffset(i, dim);
-	char *p = (char *)data + offset;
+	char *p1 = (char *)data + offset;
+	void *p = static_cast<void *>(p1);
 	GVal r;
 	switch (entryType)
 	{
-	case GVT_BOOL:
-		return *static_cast<bool>(p);
-	case GVT_INT:
-		return *static_cast<int>(p);
-	case GVT_LONG:
-		return *static_cast<long long>(p);
-	case GVT_FLOAT:
-		return *static_cast<float>(p);
-	case GVT_DOUBLE:
-		return *static_cast<double>(p);
+	case GVal::GVT_BOOL:
+		r.setBool(*static_cast<bool *>(p));
+		break;
+	case GVal::GVT_INT:
+		r.setInt(*static_cast<int *>(p));
+		break;
+	case GVal::GVT_LONG:
+		r.setLong(*static_cast<long long *>(p));
+		break;
+	case GVal::GVT_FLOAT:
+		r.setFloat(*static_cast<float *>(p));
+		break;
+	case GVal::GVT_DOUBLE:
+		r.setDouble(*static_cast<double *>(p));
+		break;
 	default:
-		return *static_cast<GVAl>(p);
+		return *static_cast<GVal *>(p);
 	}
 	return r;
 }
@@ -807,21 +850,22 @@ GVal GValMultiArray::get(size_t *i, int dim)
 void GValMultiArray::set(size_t *i, int dim, const GVal &x)
 {
 	size_t offset = calculateOffset(i, dim);
-	char *p = (char *)data + offset;
+	char *p1 = (char *)data + offset;
+	void *p = static_cast<void *>(p1);
 	switch (entryType)
 	{
-	case GVT_BOOL:
-		*static_cast<bool>(p) = x.asBool();
-	case GVT_INT:
-		*static_cast<int>(p) = x.asInt();
-	case GVT_LONG:
-		*static_cast<long long>(p) = x.asLong();
-	case GVT_FLOAT:
-		*static_cast<float>(p) = x.asFloat();
-	case GVT_DOUBLE:
-		*static_cast<double>(p) = x.asDouble();
+	case GVal::GVT_BOOL:
+		*static_cast<bool *>(p) = x.asBool();
+	case GVal::GVT_INT:
+		*static_cast<int *>(p) = x.asInt();
+	case GVal::GVT_LONG:
+		*static_cast<long long *>(p) = x.asLong();
+	case GVal::GVT_FLOAT:
+		*static_cast<float *>(p) = x.asFloat();
+	case GVal::GVT_DOUBLE:
+		*static_cast<double *>(p) = x.asDouble();
 	default:
-		*static_cast<GVal>(p) = x;
+		*static_cast<GVal *>(p) = x;
 	}
 }
 
@@ -875,18 +919,18 @@ void GValMultiArray::resizeAndSetEntryType(size_t *i, int dim, int newEntryType)
 		void *oldData = data;
 		data = new char[newCapacity];
 
-		if (newEntryType != GVT_GENERIC && entryType != GVT_GENERIC)
+		if (newEntryType != GVal::GVT_GENERIC && entryType != GVal::GVT_GENERIC)
 		{
 			if (newEntryType == entryType)
 				memcpy(data, oldData, oldEntrysCount * newEntrySize);
 		}
 
-		if (newEntryType == GVT_GENERIC && entryType == GVT_GENERIC)
-			copyObjects(data, oldData, oldEntrysCount);
+		if (newEntryType == GVal::GVT_GENERIC && entryType == GVal::GVT_GENERIC)
+			copyObjects(static_cast<GVal *>(data), static_cast<GVal *>(oldData), oldEntrysCount);
 
-		if (newEntryType != GVT_GENERIC && entryType == GVT_GENERIC)
+		if (newEntryType != GVal::GVT_GENERIC && entryType == GVal::GVT_GENERIC)
 		{
-			destroyObjects(oldData, oldEntrysCount);
+			destroyObjects(static_cast<GVal *>(oldData), oldEntrysCount);
 			entryType = newEntryType;
 		}
 
@@ -896,9 +940,9 @@ void GValMultiArray::resizeAndSetEntryType(size_t *i, int dim, int newEntryType)
 	// Construct or destruct objects if needed.
 	size_t oldObjectsCount = 0;
 	size_t newObjectsCount = 0;
-	if (entryType == GVT_GENERIC)
+	if (entryType == GVal::GVT_GENERIC)
 		oldObjectsCount = oldEntrysCount;
-	if (newEntryType == GVT_GENERIC)
+	if (newEntryType == GVal::GVT_GENERIC)
 		newObjectsCount = newEntrysCount;
 
 	if (newObjectsCount > oldObjectsCount)
@@ -915,25 +959,25 @@ void GValMultiArray::resizeAndSetEntryType(size_t *i, int dim, int newEntryType)
 	entryType = newEntryType;
 }
 
-size_t GValMultiArray::getEntrySize(int type)
+size_t GValMultiArray::getEntrySize(int type) const
 {
 	switch (type) {
-	case GVT_BOOL:
+	case GVal::GVT_BOOL:
 		return sizeof(bool);
-	case GVT_INT:
+	case GVal::GVT_INT:
 		return sizeof(int);
-	case GVT_LONG:
+	case GVal::GVT_LONG:
 		return sizeof(long long);
-	case GVT_FLOAT:
+	case GVal::GVT_FLOAT:
 		return sizeof(float);
-	case GVT_DOUBLE:
+	case GVal::GVT_DOUBLE:
 		return sizeof(double);
 	default:
 		return sizeof(GVal);
 	}
 }
 
-size_t GValMultiArray::calculateOffset(size_t *i, int dim)
+size_t GValMultiArray::calculateOffset(size_t *i, int dim) const
 {
 	size_t offsetIndex = 0;
 
@@ -952,7 +996,7 @@ size_t GValMultiArray::calculateOffset(size_t *i, int dim)
 void GValMultiArray::createObjects(GVal *objs, size_t count)
 {
 	GVal *p = objs;
-	for (size i = 0; i < count; i++)
+	for (size_t i = 0; i < count; i++)
 	{
 		new GVal(p) ();
 		p++;
@@ -962,7 +1006,7 @@ void GValMultiArray::createObjects(GVal *objs, size_t count)
 void GValMultiArray::destroyObjects(GVal *objs, size_t count)
 {
 	GVal *p = objs;
-	for (size i = 0; i < count; i++)
+	for (size_t i = 0; i < count; i++)
 	{
 		p->~GVal();
 		p++;
@@ -973,7 +1017,7 @@ void GValMultiArray::copyObjects(GVal *dst, GVal *src, size_t count)
 {
 	GVal *d = dst;
 	GVal *s = src;
-	for (size i = 0; i < count; i++)
+	for (size_t i = 0; i < count; i++)
 	{
 		new GVal(d) (*s);
 		d++;
