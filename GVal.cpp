@@ -113,7 +113,7 @@ public:
 	}
 
 protected:
-	void grow(int n);
+	void grow(unsigned n);
 	unsigned size_;
 	unsigned capacity;
 	T *data;
@@ -121,7 +121,7 @@ protected:
 };
 
 template<typename T, unsigned N>
-void SmallVector<T, N>::grow(int n)
+void SmallVector<T, N>::grow(unsigned n)
 {
 	if (n <= capacity)
 		return;
@@ -287,12 +287,12 @@ public:
 			error("Long type expected.");
 		return longValue;
 	}
-	int asFloat() const {
+	float asFloat() const {
 		if (type != GVT_FLOAT)
 			error("Float type expected.");
 		return floatValue;
 	}
-	int asDouble() const {
+	double asDouble() const {
 		if (type != GVT_DOUBLE)
 			error("Double type expected.");
 		return doubleValue;
@@ -519,7 +519,7 @@ GVal GVal::get(const SmallVector<size_t, 4> &i) const
 	}
 	size_t s = i.size();
 	size_t *p = i.begin();
-	return static_cast<GValMultiArray *>(genericValue.get())->get(p, s);
+	return static_cast<GValMultiArray *>(genericValue.get())->get(p, (int)s);
 }
 
 GVal GVal::get(size_t *i, int dim) const
@@ -563,7 +563,7 @@ void GVal::set(const SmallVector<size_t, 4> &i, GVal &x)
 	}
 	size_t s = i.size();
 	size_t *p = i.begin();
-	static_cast<GValMultiArray *>(genericValue.get())->set(p, s, x);
+	static_cast<GValMultiArray *>(genericValue.get())->set(p, (int)s, x);
 }
 
 void GVal::set(size_t *i, int dim, GVal &x)
@@ -687,7 +687,7 @@ void GVal::resize(const SmallVector<size_t, 4>& x)
 {
 	size_t s = x.size();
 	size_t *p = x.begin();
-	resize(p, s);
+	resize(p, (int)s);
 }
 
 void GVal::resize(size_t * i, int dim)
@@ -773,7 +773,7 @@ void GVal::setMultiArray(size_t *i, size_t dim, int entryType)
 	type = GVT_MULTI_ARRAY;
 	GValMultiArray *array = new GValMultiArray;
 	genericValue = std::shared_ptr<GValMultiArray>(array);
-	array->resizeAndSetEntryType(i, dim, entryType);
+	array->resizeAndSetEntryType(i, (int)dim, entryType);
 }
 
 void GVal::error(const std::string & msg) const
@@ -813,7 +813,7 @@ size_t GValMultiArray::size() const
 	if (nDims == 0)
 		return 0;
 	size_t s = 1;
-	for (size_t i = 0; i < nDims; i++)
+	for (int i = 0; i < nDims; i++)
 		s *= shape[i];
 	return s;
 }
@@ -906,7 +906,9 @@ void GValMultiArray::resizeAndSetEntryType(size_t *i, int dim, int newEntryType)
 	for(int j = 0; j < dim; j++)
 		newEntrysCount *= i[j];
 	size_t newEntrySize = getEntrySize(newEntryType);
-	int requiredCapacity = newEntrysCount * newEntrySize;
+	size_t requiredCapacity = newEntrysCount * newEntrySize;
+
+	size_t oldEntrysCount = size();
 
 	// Check if a new storage is required.
 	if (capacity < requiredCapacity)
@@ -915,7 +917,6 @@ void GValMultiArray::resizeAndSetEntryType(size_t *i, int dim, int newEntryType)
 		size_t newCapacity = capacity << 1;
 		if (requiredCapacity > newCapacity)
 			newCapacity = requiredCapacity;
-		size_t oldEntrysCount = size();
 		void *oldData = data;
 		data = new char[newCapacity];
 
@@ -946,9 +947,9 @@ void GValMultiArray::resizeAndSetEntryType(size_t *i, int dim, int newEntryType)
 		newObjectsCount = newEntrysCount;
 
 	if (newObjectsCount > oldObjectsCount)
-		constructObjects(data + oldObjectsCount, newObjectsCount - oldObjectsCount);
+		createObjects((GVal *)data + oldObjectsCount, newObjectsCount - oldObjectsCount);
 	if (newObjectsCount < oldObjectsCount)
-		destructObjects(data + newObjectsCount, oldObjectsCount - newObjectsCount);
+		destroyObjects((GVal *)data + newObjectsCount, oldObjectsCount - newObjectsCount);
 
 	// Set shape.
 	shape.resize(dim);
@@ -998,7 +999,7 @@ void GValMultiArray::createObjects(GVal *objs, size_t count)
 	GVal *p = objs;
 	for (size_t i = 0; i < count; i++)
 	{
-		new GVal(p) ();
+		new (p) GVal;
 		p++;
 	}
 }
@@ -1019,7 +1020,7 @@ void GValMultiArray::copyObjects(GVal *dst, GVal *src, size_t count)
 	GVal *s = src;
 	for (size_t i = 0; i < count; i++)
 	{
-		new GVal(d) (*s);
+		new (d) GVal (*s);
 		d++;
 		s++;
 	}
@@ -1043,6 +1044,6 @@ void GValMap::set(const GVal &key, const GVal &value)
 int main(int argc, char *argv[])
 {
 	std::cout << "GVal test.\n";
-	
+
 	GVal val;
 }
