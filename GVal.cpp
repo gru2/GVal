@@ -1,375 +1,4 @@
-#ifndef __PROGRESS_REPORTER_H
-#define __PROGRESS_REPORTER_H
-
-#include <string>
-
-class ProgressReporter
-{
-public:
-	void error(const std::string &msg) const;
-};
-
-#endif
-
-//#include <ProgressReporter.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-void ProgressReporter::error(const std::string &msg) const
-{
-	printf("error:%s\n", msg.c_str());
-	exit(1);
-}
-
-#ifndef __SMALL_VECTOR_H
-#define __SMALL_VECTOR_H
-
-template<typename T, unsigned N>
-class SmallVector
-{
-public:
-	SmallVector<T, N>()
-	{
-		size_ = 0;
-		capacity = N;
-		data = &localStorage[0];
-	}
-	SmallVector<T, N>(unsigned n)
-	{
-		size_ = 0;
-		capacity = N;
-		data = &localStorage[0];
-		if (n <= N)
-		{
-			size_ = n;
-			return;
-		}
-		grow(n);
-		size_ = n;
-	}
-	SmallVector<T, N>(const SmallVector<T, N> &x)
-	{
-		capacity = N;
-		data = &localStorage[0];
-		if (x.size_ > N)
-		{
-			size_ = 0;
-			grow(x.size_);
-		}
-		size_ = x.size_;
-		for (unsigned i = 0; i < x.size_; i++)
-			data[i] = x.data[i];
-	}
-	~SmallVector<T, N>()
-	{
-		if (capacity > N)
-			delete [] data;
-	}
-
-	const SmallVector<T, N> &operator=(const SmallVector<T, N> &x)
-	{
-		if (capacity < x.size_)
-			grow(x.size_);
-		size_ = x.size_;
-		for (unsigned i = 0; i < x.size_; i++)
-			data[i] = x.data[i];
-	}
-
-	unsigned size() const { return size_; }
-	T *begin() const
-	{
-		return data;
-	}
-	T *end() const
-	{
-		return data + size_;
-	}
-	void resize(unsigned n)
-	{
-		if (capacity < n)
-			grow(n);
-		size_ = n;
-	}
-	void clear()
-	{
-		resize(0);
-	}
-	void push_back(const T &x)
-	{
-		resize(size_ + 1);
-		data[size_ - 1] = x;
-	}
-	void pop_back()
-	{
-		resize(size_ - 1);
-	}
-	T &operator [](unsigned i)
-	{
-		return data[i];
-	}
-	const T &operator [](unsigned i) const
-	{
-		return data[i];
-	}
-
-protected:
-	void grow(unsigned n);
-	unsigned size_;
-	unsigned capacity;
-	T *data;
-	T localStorage[N];
-};
-
-template<typename T, unsigned N>
-void SmallVector<T, N>::grow(unsigned n)
-{
-	if (n <= capacity)
-		return;
-
-	unsigned newCapacity = n;
-	if ((capacity << 1) > newCapacity)
-		newCapacity = capacity << 1;
-
-	T *newData = new T[newCapacity];
-
-	for (unsigned i=0; i < size_; i++)
-		newData[i] = data[i];
-
-	if (capacity > N)
-		delete [] data;
-
-	capacity = newCapacity;
-	data = newData;
-}
-
-#endif
-
-
-
-//#ifndef __GVAL_H
-//#define __GVAL_H
-
-#include <cstdint>
-#include <memory>
-#include <map>
-
-class GVal
-{
-public:
-	enum GValType { GVT_NULL, GVT_BOOL, GVT_INT, GVT_LONG, GVT_FLOAT, GVT_DOUBLE,
-		GVT_STRING, GVT_MULTI_ARRAY, GVT_MAP, GVT_GENERIC };
-
-	GVal() : type(GVT_NULL) { }
-	GVal(const GVal &x) {
-		copyContentFrom(x);
-	}
-	~GVal() {
-		reset();
-	}
-
-	GVal &operator = (const GVal &x);
-	bool operator < (const GVal &x) const;
-
-	int getType() const { return type; }
-	void setType(int x) { type = x; }
-
-	GVal operator[] (size_t i) const { return get(i); }
-	GVal operator[] (const std::string &key) const { return get(key); }
-	GVal operator() (size_t i0, size_t i1) const { return get(i0, i1); }
-	GVal operator() (size_t i0, size_t i1, size_t i2) const { return get(i0, i1, i2); }
-	GVal operator() (size_t i0, size_t i1, size_t i2, size_t i3) const { return get(i0, i1, i2, i3); }
-
-	GVal get(size_t i0) const;
-	GVal get(size_t i0, size_t i1) const;
-	GVal get(size_t i0, size_t i1, size_t i2) const;
-	GVal get(size_t i0, size_t i1, size_t i2, size_t i3) const;
-	void set(size_t i0, const GVal &x);
-	void set(size_t i0, size_t i1, const GVal &x);
-	void set(size_t i0, size_t i1, size_t i2, const GVal &x);
-	void set(size_t i0, size_t i1, size_t i2, size_t i3, const GVal &x);
-	GVal get(const SmallVector<size_t, 4> &i) const;
-	GVal get(size_t *i, int dim) const;
-	GVal get(const std::string &key) const;
-	GVal get(const GVal &key) const;
-	void set(const SmallVector<size_t, 4> &i, GVal &x);
-	void set(size_t *i, int dim, GVal &x);
-	void set(const std::string &key, GVal &x);
-	void set(GVal &key, GVal &x);
-
-	void copyContentFrom(const GVal &x);
-	void reset();
-	size_t size() const;
-	size_t size(int dim) const { return shape()[dim]; }
-	const SmallVector<size_t, 4> &shape() const;
-	size_t numberOfDimensions() const { return shape().size(); }
-	void resize(size_t i0);
-	void resize(size_t i0, size_t i1);
-	void resize(size_t i0, size_t i1, size_t i2);
-	void resize(size_t i0, size_t i1, size_t i2, size_t i3);
-	void resize(const SmallVector<size_t, 4> &x);
-	void resize(size_t *i, int dim);
-
-	void reshape(size_t i0);
-	void reshape(size_t i0, size_t i1);
-	void reshape(size_t i0, size_t i1, size_t i2);
-	void reshape(size_t i0, size_t i1, size_t i2, size_t i3);
-	void reshape(const SmallVector<size_t, 4> &x);
-	void reshape(size_t *i, int dim);
-
-	GVal front() const;
-	GVal back() const;
-
-	void pushBack(const GVal &x);
-	GVal popBack();
-
-	GVal keys() const;
-	bool check(const std::string &key) const;
-	bool check(GVal &key) const;
-
-	void setNull() {
-		reset();
-		type = GVT_NULL;
-	}
-	void setBool(bool x) {
-		reset();
-		type = GVT_BOOL;
-		boolValue = x;
-	}
-	void setInt(int x) {
-		reset();
-		type = GVT_INT;
-		intValue = x;
-	}
-	void setLong(long long x) {
-		reset();
-		type = GVT_LONG;
-		longValue = x;
-	}
-	void setFloat(float x) {
-		reset();
-		type = GVT_FLOAT;
-		floatValue = x;
-	}
-	void setDouble(double x) {
-		reset();
-		type = GVT_DOUBLE;
-		doubleValue = x;
-	}
-	void setString(const std::string &x) {
-		reset();
-		type = GVT_STRING;
-		stringValue = x;
-	}
-	void setMultiArray(size_t i, int entryType);
-	void setMultiArray(size_t i0, size_t i1, int entryType);
-	void setMultiArray(size_t i0, size_t i1, size_t i2, int entryType);
-	void setMultiArray(size_t i0, size_t i1, size_t i2, size_t i3, int entryType);
-	void setMultiArray(const SmallVector<size_t, 4> &x, int entryType);
-	void setMultiArray(size_t *i, size_t dim, int entryType);
-	void setMap();
-	void setMap(int keyType_, int valueType_);
-
-	bool isNull() const {
-		return type == GVT_NULL;
-	}
-	bool asBool() const {
-		if (type != GVT_BOOL)
-			error("Bool type expected.");
-		return boolValue;
-	}
-	int asInt() const {
-		if (type != GVT_INT)
-			error("Int type expected.");
-		return intValue;
-	}
-	long long asLong() const {
-		if (type != GVT_LONG)
-			error("Long type expected.");
-		return longValue;
-	}
-	float asFloat() const {
-		if (type != GVT_FLOAT)
-			error("Float type expected.");
-		return floatValue;
-	}
-	double asDouble() const {
-		if (type != GVT_DOUBLE)
-			error("Double type expected.");
-		return doubleValue;
-	}
-	const std::string &asString() const {
-		if (type != GVT_STRING)
-			error("String type expected.");
-		return stringValue;
-	}
-
-protected:
-	int type;
-	union
-	{
-		bool boolValue;
-		int intValue;
-		long long longValue;
-		float floatValue;
-		double doubleValue;
-	};
-	std::shared_ptr<void> genericValue;
-	std::string stringValue;
-	ProgressReporter progressReporter;
-
-	void error(const std::string &msg) const;
-};
-
-class GValMultiArray
-{
-public:
-	GValMultiArray();
-	~GValMultiArray();
-
-	void reset();
-
-	size_t size() const;
-	GVal get(size_t *i, int dim) const;
-	void set(size_t *i, int dim, const GVal &x);
-
-	GVal front() const;
-	GVal back() const;
-
-	void pushBack(const GVal &x);
-	GVal popBack();
-
-	int getEntryType() const { return entryType; }
-	void resizeAndSetEntryType(size_t *i, int dim, int entryType_);
-protected:
-	int entryType;
-	SmallVector<size_t, 4> shape;
-	size_t capacity;
-	void *data;
-
-	size_t getEntrySize(int type) const;
-	size_t calculateOffset(size_t *i, int dim) const;
-	void createObjects(GVal *objs, size_t count);
-	void destroyObjects(GVal *objs, size_t count);
-	void copyObjects(GVal *dst, GVal *src, size_t count);
-};
-
-class GValMap
-{
-public:
-	size_t size() { return data.size(); }
-
-	GVal get(const GVal &key);
-	void set(const GVal &key, const GVal &value);
-protected:
-	int keyType;
-	int valueType;
-	std::map<GVal, GVal> data;
-};
-
-//#endif
-
-// ---------------GVal.cpp
-//#include <GVal.h>
+#include <GVal.h>
 #include <string.h>
 
 GVal &GVal::operator = (const GVal &x)
@@ -510,7 +139,7 @@ void GVal::set(size_t i0, size_t i1, size_t i2, size_t i3, const GVal &x)
 	static_cast<GValMultiArray *>(genericValue.get())->set(i, 4, x);
 }
 
-GVal GVal::get(const SmallVector<size_t, 4> &i) const
+GVal GVal::get(const GValSmallVector<size_t, 4> &i) const
 {
 	if (type != GVT_MULTI_ARRAY)
 	{
@@ -554,7 +183,7 @@ GVal GVal::get(const GVal &key) const
 	return static_cast<GValMap *>(genericValue.get())->get(key);
 }
 
-void GVal::set(const SmallVector<size_t, 4> &i, GVal &x)
+void GVal::set(const GValSmallVector<size_t, 4> &i, GVal &x)
 {
 	if (type != GVT_MULTI_ARRAY)
 	{
@@ -648,6 +277,7 @@ size_t GVal::size() const
 			break;
 		default:
 			error("type does not support size");
+			return 0;
 	}
 }
 
@@ -683,7 +313,7 @@ void GVal::resize(size_t i0, size_t i1, size_t i2, size_t i3)
 	resize(i, 4);
 }
 
-void GVal::resize(const SmallVector<size_t, 4>& x)
+void GVal::resize(const GValSmallVector<size_t, 4>& x)
 {
 	size_t s = x.size();
 	size_t *p = x.begin();
@@ -723,7 +353,7 @@ void GVal::reshape(size_t i0, size_t i1, size_t i2, size_t i3)
 	resize(i0, i1, i2, i3);
 }
 
-void GVal::reshape(const SmallVector<size_t, 4>& x)
+void GVal::reshape(const GValSmallVector<size_t, 4>& x)
 {
 	resize(x);
 }
@@ -761,7 +391,7 @@ void GVal::setMultiArray(size_t i0, size_t i1, size_t i2, size_t i3, int entryTy
 	i[3] = i3;
 	setMultiArray(i, 4, entryType);
 }
-void GVal::setMultiArray(const SmallVector<size_t, 4> &x, int entryType)
+void GVal::setMultiArray(const GValSmallVector<size_t, 4> &x, int entryType)
 {
 	size_t s = x.size();
 	size_t *p = x.begin();
@@ -778,7 +408,7 @@ void GVal::setMultiArray(size_t *i, size_t dim, int entryType)
 
 void GVal::error(const std::string & msg) const
 {
-	progressReporter.error(msg);
+	GValProgressReporter.error(msg);
 }
 
 GValMultiArray::GValMultiArray()
@@ -1034,16 +664,4 @@ GVal GValMap::get(const GVal &key)
 void GValMap::set(const GVal &key, const GVal &value)
 {
 	data[key] = value;
-}
-
-
-//GValTest.cpp
-
-#include <iostream>
-
-int main(int argc, char *argv[])
-{
-	std::cout << "GVal test.\n";
-
-	GVal val;
 }
