@@ -1,5 +1,6 @@
 #include <GVal.h>
 #include <string.h>
+#include <iostream>
 
 GVal &GVal::operator = (const GVal &x)
 {
@@ -27,7 +28,6 @@ bool GVal::operator < (const GVal &x) const
 		case GVT_STRING:
 			return stringValue < x.stringValue;
 		case GVT_MULTI_ARRAY:
-			
 		case GVT_MAP:
 			return genericValue < x.genericValue; // TODO
 			break;
@@ -252,6 +252,7 @@ void GVal::copyContentFrom(const GVal &x)
 			break;
 		case GVT_STRING:
 			stringValue = x.stringValue;
+			break;
 		case GVT_MULTI_ARRAY:
 		case GVT_MAP:
 			genericValue = x.genericValue;
@@ -479,23 +480,31 @@ GVal GValMultiArray::get(size_t *i, int dim) const
 
 void GValMultiArray::set(size_t *i, int dim, const GVal &x)
 {
+	std::cout << "GValMultiArray::set(*i = " << *i << ", dim = " << dim << ",..)\n";
 	size_t offset = calculateOffset(i, dim);
 	char *p1 = (char *)data + offset;
 	void *p = static_cast<void *>(p1);
+	std::cout << "entryType = " << entryType << "\n";
 	switch (entryType)
 	{
 	case GVal::GVT_BOOL:
 		*static_cast<bool *>(p) = x.asBool();
+		break;
 	case GVal::GVT_INT:
 		*static_cast<int *>(p) = x.asInt();
+		break;
 	case GVal::GVT_LONG:
 		*static_cast<long long *>(p) = x.asLong();
+		break;
 	case GVal::GVT_FLOAT:
 		*static_cast<float *>(p) = x.asFloat();
+		break;
 	case GVal::GVT_DOUBLE:
 		*static_cast<double *>(p) = x.asDouble();
+		break;
 	default:
 		*static_cast<GVal *>(p) = x;
+		break;
 	}
 }
 

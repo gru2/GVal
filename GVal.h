@@ -16,6 +16,7 @@ public:
 	};
 
 	GVal() : type(GVT_NULL) { }
+	GVal(int x) : type(GVT_INT) { intValue = x; }
 	GVal(const GVal &x) {
 		copyContentFrom(x);
 	}

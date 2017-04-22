@@ -30,13 +30,28 @@ SUTF_TEST(testGValSmallVector)
 
 SUTF_TEST(testGVal)
 {
-	GVal val;
-	val.setBool(true);
-	Sutf::test(val.asBool(), "Test set/get true.");
-	val.setBool(false);
-	Sutf::test(!val.asBool(), "Test set/get false.");
-	val.setInt(10);
-	Sutf::test(val.asInt() == 10, "Test set/get int.");
+	GVal v;
+	v.setBool(true);
+	Sutf::test(v.asBool(), "Test set/get true.");
+	v.setBool(false);
+	Sutf::test(!v.asBool(), "Test set/get false.");
+	v.setInt(10);
+	Sutf::test(v.asInt() == 10, "Test set/get int.");
+	std::cout << "(0)\n";
+	v.setMultiArray(3, GVal::GVT_INT);
+	std::cout << "(1)\n";
+	v.set(0, GVal(10));
+	std::cout << "(2)\n";
+	v.set(1, GVal(20));
+	std::cout << "(3)\n";
+	v.set(2, GVal(30));
+	std::cout << "(4)\n";
+	Sutf::test(v[0].asInt() == 10);
+	std::cout << "(5)\n";
+	Sutf::test(v[1].asInt() == 20);
+	std::cout << "(6)\n";
+	Sutf::test(v[2].asInt() == 30);
+	std::cout << "(7)\n";
 }
 
 int main(int argc, char *argv[])
