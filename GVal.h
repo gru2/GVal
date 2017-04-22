@@ -171,7 +171,7 @@ protected:
 	};
 	std::shared_ptr<void> genericValue;
 	std::string stringValue;
-	GValProgressReporter GValProgressReporter;
+	GValProgressReporter progressReporter;
 
 	void error(const std::string &msg) const;
 };

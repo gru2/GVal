@@ -408,7 +408,7 @@ void GVal::setMultiArray(size_t *i, size_t dim, int entryType)
 
 void GVal::error(const std::string & msg) const
 {
-	GValProgressReporter.error(msg);
+	progressReporter.error(msg);
 }
 
 GValMultiArray::GValMultiArray()
