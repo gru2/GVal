@@ -17,6 +17,8 @@ public:
 
 	GVal() : type(GVT_NULL) { }
 	GVal(int x) : type(GVT_INT) { intValue = x; }
+	GVal(const std::string &x) : type(GVT_STRING) { stringValue = x; }
+	GVal(const char *x) : type(GVT_STRING) { stringValue = std::string(x); }
 	GVal(const GVal &x) {
 		copyContentFrom(x);
 	}
@@ -32,6 +34,7 @@ public:
 
 	GVal operator[] (size_t i) const { return get(i); }
 	GVal operator[] (const std::string &key) const { return get(key); }
+	GVal operator[] (const GVal &key) const { return get(key); }
 	GVal operator() (size_t i0, size_t i1) const { return get(i0, i1); }
 	GVal operator() (size_t i0, size_t i1, size_t i2) const { return get(i0, i1, i2); }
 	GVal operator() (size_t i0, size_t i1, size_t i2, size_t i3) const { return get(i0, i1, i2, i3); }

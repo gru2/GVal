@@ -52,6 +52,12 @@ SUTF_TEST(testGVal)
 	std::cout << "(6)\n";
 	Sutf::test(v[2].asInt() == 30);
 	std::cout << "(7)\n";
+	v.setMap();
+	std::cout << "(8)\n";
+	v[GVal("pera")] = GVal(23);
+	std::cout << "(9)\n";
+	Sutf::test(v[GVal("pera")].asInt() == 23);
+	std::cout << "(10)\n";
 }
 
 int main(int argc, char *argv[])

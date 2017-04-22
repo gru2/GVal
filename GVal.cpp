@@ -407,6 +407,14 @@ void GVal::setMultiArray(size_t *i, size_t dim, int entryType)
 	array->resizeAndSetEntryType(i, (int)dim, entryType);
 }
 
+void GVal::setMap()
+{
+	reset();
+	type = GVT_MAP;
+	GValMap *map = new GValMap;
+	genericValue = std::shared_ptr<GValMap>(map);
+}
+
 void GVal::error(const std::string & msg) const
 {
 	progressReporter.error(msg);
