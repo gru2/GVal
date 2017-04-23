@@ -38,8 +38,11 @@ std::string toString(const GVal &x)
 		case GVal::GVT_STRING:
 			return x.asString();
 		case GVal::GVT_MULTI_ARRAY:
+			return "TODO"; // TODO
 		case GVal::GVT_MAP:
+			return "TODO"; // TODO
 		case GVal::GVT_GENERIC:
+			return "GENERIC";
 		default:
 			return "TODO"; // TODO
 		break;
