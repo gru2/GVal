@@ -31,6 +31,7 @@ SUTF_TEST(testGValSmallVector)
 
 SUTF_TEST(testGValUtils)
 {
+	Sutf::test(toString(GVal("abc")) == "abc");
 	Sutf::test(toString(GVal(10)) == "10");
 }
 

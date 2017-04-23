@@ -21,13 +21,27 @@ std::string toString(const GVal &x)
 			return std::to_string(v);
 		}
 		case GVal::GVT_LONG:
+		{
+			long long v = x.asLong();
+			return std::to_string(v);
+		}
 		case GVal::GVT_FLOAT:
+		{
+			float v = x.asLong();
+			return std::to_string(v);
+		}
 		case GVal::GVT_DOUBLE:
+		{
+			double v = x.asLong();
+			return std::to_string(v);
+		}
 		case GVal::GVT_STRING:
+			return x.asString();
 		case GVal::GVT_MULTI_ARRAY:
 		case GVal::GVT_MAP:
 		case GVal::GVT_GENERIC:
 		default:
+			return "TODO"; // TODO
 		break;
 	}
 }
