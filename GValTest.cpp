@@ -1,5 +1,6 @@
 #include <GVal.h>
 #include <GValSmallVector.h>
+#include <GValUtils.h>
 #include <iostream>
 #include <assert.h>
 #include <Sutf.h>
@@ -28,6 +29,11 @@ SUTF_TEST(testGValSmallVector)
 	Sutf::test(v[3] == 373);
 }
 
+SUTF_TEST(testGValUtils)
+{
+	Sutf::test(toString(GVal(10)) == "10");
+}
+
 SUTF_TEST(testGVal)
 {
 	GVal v;
@@ -54,7 +60,7 @@ SUTF_TEST(testGVal)
 	std::cout << "(7)\n";
 	v.setMap();
 	std::cout << "(8)\n";
-	v[GVal("pera")] = GVal(23);
+	v.set(std::string("pera"), GVal(23));
 	std::cout << "(9)\n";
 	Sutf::test(v[GVal("pera")].asInt() == 23);
 	std::cout << "(10)\n";

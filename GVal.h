@@ -51,10 +51,10 @@ public:
 	GVal get(size_t *i, int dim) const;
 	GVal get(const std::string &key) const;
 	GVal get(const GVal &key) const;
-	void set(const GValSmallVector<size_t, 4> &i, GVal &x);
-	void set(size_t *i, int dim, GVal &x);
-	void set(const std::string &key, GVal &x);
-	void set(GVal &key, GVal &x);
+	void set(const GValSmallVector<size_t, 4> &i, const GVal &x);
+	void set(size_t *i, int dim, const GVal &x);
+	void set(const std::string &key, const GVal &x);
+	void set(const GVal &key, const GVal &x);
 
 	void copyContentFrom(const GVal &x);
 	void reset();
@@ -139,7 +139,9 @@ public:
 	}
 	int asInt() const {
 		if (type != GVT_INT)
-			error("Int type expected.");
+		{
+			error("Int type expected but found type " + typeToString(type) + ".");
+		}
 		return intValue;
 	}
 	long long asLong() const {
@@ -163,6 +165,9 @@ public:
 		return stringValue;
 	}
 
+	void error(const std::string &msg) const;
+	static std::string typeToString(int type_);
+
 protected:
 	int type;
 	union
@@ -176,8 +181,6 @@ protected:
 	std::shared_ptr<void> genericValue;
 	std::string stringValue;
 	GValProgressReporter progressReporter;
-
-	void error(const std::string &msg) const;
 };
 
 class GValMultiArray

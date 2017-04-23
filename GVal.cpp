@@ -183,7 +183,7 @@ GVal GVal::get(const GVal &key) const
 	return static_cast<GValMap *>(genericValue.get())->get(key);
 }
 
-void GVal::set(const GValSmallVector<size_t, 4> &i, GVal &x)
+void GVal::set(const GValSmallVector<size_t, 4> &i, const GVal &x)
 {
 	if (type != GVT_MULTI_ARRAY)
 	{
@@ -195,7 +195,7 @@ void GVal::set(const GValSmallVector<size_t, 4> &i, GVal &x)
 	static_cast<GValMultiArray *>(genericValue.get())->set(p, (int)s, x);
 }
 
-void GVal::set(size_t *i, int dim, GVal &x)
+void GVal::set(size_t *i, int dim, const GVal &x)
 {
 	if (type != GVT_MULTI_ARRAY)
 	{
@@ -205,7 +205,7 @@ void GVal::set(size_t *i, int dim, GVal &x)
 	static_cast<GValMultiArray *>(genericValue.get())->set(i, dim, x);
 }
 
-void GVal::set(const std::string &key, GVal &x)
+void GVal::set(const std::string &key, const GVal &x)
 {
 	if (type != GVT_MAP)
 	{
@@ -217,7 +217,7 @@ void GVal::set(const std::string &key, GVal &x)
 	static_cast<GValMap *>(genericValue.get())->set(key_, x);
 }
 
-void GVal::set(GVal &key, GVal &x)
+void GVal::set(const GVal &key, const GVal &x)
 {
 	if (type != GVT_MAP)
 	{
@@ -418,6 +418,36 @@ void GVal::setMap()
 void GVal::error(const std::string & msg) const
 {
 	progressReporter.error(msg);
+}
+
+std::string GVal::typeToString(int type_)
+{
+	switch(type_)
+	{
+		case GVT_NULL:
+			return "Null";
+		case GVT_BOOL:
+			return "Bool";
+		case GVT_INT:
+			return "Int";
+		case GVT_LONG:
+			return "Long";
+		case GVT_FLOAT:
+			return "Float";
+		case GVT_DOUBLE:
+			return "Double";
+		case GVT_STRING:
+			return "String";
+		case GVT_MULTI_ARRAY:
+			return "MultiArray";
+		case GVT_MAP:
+			return "Map";
+		case GVT_GENERIC:
+			return "Generic";
+		default:
+			//return "Unknown(" + std::to_string("
+			return "Unknown()";
+	}
 }
 
 GValMultiArray::GValMultiArray()
@@ -675,7 +705,11 @@ void GValMultiArray::copyObjects(GVal *dst, GVal *src, size_t count)
 
 GVal GValMap::get(const GVal &key)
 {
-	return data[key];
+	std::cout << "GValMap::get(type=" << key.getType() << ")... \n";
+	std::map<GVal, GVal>::iterator it = data.find(key);
+	if (it == data.end())
+		key.error("unable to find key.");
+	return it->second;
 }
 
 void GValMap::set(const GVal &key, const GVal &value)

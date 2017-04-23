@@ -6,8 +6,8 @@ TARGETS = GValTest
 
 all: $(TARGETS)
 
-GValTest: GValTest.o GVal.o GValProgressReporter.o Sutf.o
-	g++ -o GValTest GValTest.o GVal.o GValProgressReporter.o Sutf.o
+GValTest: GValTest.o GVal.o GValProgressReporter.o GValUtils.o Sutf.o
+	g++ -o GValTest GValTest.o GVal.o GValProgressReporter.o GValUtils.o Sutf.o
 
 %.o: %.cpp
 	g++ -c $(CPPFLAGS) $< -o $@
