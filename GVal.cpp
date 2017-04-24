@@ -518,11 +518,11 @@ GVal GValMultiArray::get(size_t *i, int dim) const
 
 void GValMultiArray::set(size_t *i, int dim, const GVal &x)
 {
-	std::cout << "GValMultiArray::set(*i = " << *i << ", dim = " << dim << ",..)\n";
+	//std::cout << "GValMultiArray::set(*i = " << *i << ", dim = " << dim << ",..)\n";
 	size_t offset = calculateOffset(i, dim);
 	char *p1 = (char *)data + offset;
 	void *p = static_cast<void *>(p1);
-	std::cout << "entryType = " << entryType << "\n";
+	//std::cout << "entryType = " << entryType << "\n";
 	switch (entryType)
 	{
 	case GVal::GVT_BOOL:
@@ -705,7 +705,7 @@ void GValMultiArray::copyObjects(GVal *dst, GVal *src, size_t count)
 
 GVal GValMap::get(const GVal &key)
 {
-	std::cout << "GValMap::get(type=" << key.getType() << ")... \n";
+	//std::cout << "GValMap::get(type=" << key.getType() << ")... \n";
 	std::map<GVal, GVal>::iterator it = data.find(key);
 	if (it == data.end())
 		key.error("unable to find key.");

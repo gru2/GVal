@@ -1,4 +1,5 @@
 #include <GValUtils.h>
+#include <toString.h>
 
 std::string toString(const GVal &x)
 {
@@ -18,22 +19,22 @@ std::string toString(const GVal &x)
 		case GVal::GVT_INT:
 		{
 			int v = x.asInt();
-			return std::to_string(v);
+			return toString(v);
 		}
 		case GVal::GVT_LONG:
 		{
 			long long v = x.asLong();
-			return std::to_string(v);
+			return toString(v);
 		}
 		case GVal::GVT_FLOAT:
 		{
-			float v = x.asLong();
-			return std::to_string(v);
+			float v = x.asFloat();
+			return toString(v);
 		}
 		case GVal::GVT_DOUBLE:
 		{
-			double v = x.asLong();
-			return std::to_string(v);
+			double v = x.asDouble();
+			return toString(v);
 		}
 		case GVal::GVT_STRING:
 			return x.asString();
