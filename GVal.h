@@ -35,7 +35,7 @@ public:
 	void setType(int x) { type = x; }
 
 	GVal operator[] (size_t i) const { return get(i); }
-	GVal operator[] (const std::string &key) const { return get(key); }
+	//GVal operator[] (const std::string &key) const { return get(key); }
 	GVal operator[] (const GVal &key) const { return get(key); }
 	GVal operator() (size_t i0, size_t i1) const { return get(i0, i1); }
 	GVal operator() (size_t i0, size_t i1, size_t i2) const { return get(i0, i1, i2); }

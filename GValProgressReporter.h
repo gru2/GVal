@@ -7,6 +7,7 @@ class GValProgressReporter
 {
 public:
 	void error(const std::string &msg) const;
+	void warning(const std::string &msg) const;
 };
 
 #endif
