@@ -92,22 +92,65 @@ GVal GValParser::parse()
 	case GValParserToken::TT_DOUBLE:
 	case GValParserToken::TT_STRING:
 		return token.value;
+	case '{':
+		return parseMap();
 	default:
 		break;
-
 	}
 	return GVal();
+}
+
+GVal GValParser::parseMap()
+{
+	GVal v;
+	v.setMap();
+	for (;;)
+	{
+		GValParserToken token = lex();
+		if (token.type == '}')
+			return v;
+		parseSlot(token, v);
+	}
+	return v;
+}
+
+void GValParser::expectToken(int expectedTokenType)
+{
+	GValParserToken token = lex();
+	if (token.type == expectedTokenType)
+		return;
+	error("sintax error: expected token " + toString(expectedTokenType) + ", buf found token " + toString(token.type));
+}
+
+void GValParser::parseSlot(const GValParserToken &token, GVal &v)
+{
+	GVal key = parse();
+	expectToken('=');
+	GVal value = parse();
+	expectToken(';');
+	v.set(key, value);
 }
 
 GValParserToken GValParser::lex()
 {
 	skipWhiteSpaceAndComments();
-	bool r = tryParseString();
-	if (r)
-	{
+	if (tryParseString())
 		return GValParserToken(GValParserToken::TT_STRING, lexerValue);
+	if (tryParseNumber())
+	{
+		if (lexerValue.getType() == GVal::GVT_INT)
+			return GValParserToken(GValParserToken::TT_INT, lexerValue);
+		if (lexerValue.getType() == GVal::GVT_FLOAT)
+			return GValParserToken(GValParserToken::TT_FLOAT, lexerValue);
+		if (lexerValue.getType() == GVal::GVT_DOUBLE)
+			return GValParserToken(GValParserToken::TT_DOUBLE, lexerValue);
 	}
-	return GValParserToken();
+	if (tryParseKeyword("true"))
+		return GValParserToken(GValParserToken::TT_TRUE, GVal());
+	if (tryParseKeyword("false"))
+		return GValParserToken(GValParserToken::TT_FALSE, GVal());
+	int c = getChar();
+	return GValParserToken(c, GVal());
 }
 
 void GValParser::skipWhiteSpaceAndComments()
@@ -181,25 +224,135 @@ bool GValParser::tryParseString()
 	int c = getChar();
 	if (c == '\'')
 	{
-		tmpChars.clear();
+		buffer.clear();
 		for (;;)
 		{
-			int c = getChar();
+			c = getChar();
 			if (c == EOF)
 			{
 				error("premature end of file: unfinished string.");
-				lexerValue = GVal(std::string(&tmpChars[0], tmpChars.size()));
+				lexerValue = GVal(std::string(&buffer[0], buffer.size()));
 				return true;
 			}
 			if (c == '\'')
 			{
-				lexerValue = GVal(std::string(&tmpChars[0], tmpChars.size()));
+				lexerValue = GVal(std::string(&buffer[0], buffer.size()));
 				return true;
 			}
-			tmpChars.push_back((char)c);
+			buffer.push_back((char)c);
 		}
 	}
+	returnChar(c);
 	return false;
+}
+
+//   +-----------------------P1
+//   |        +--------------P2
+//   | P1.5   |       +------P3
+//   v  v     v       v   v--P4
+// N+ [. [N*]] [e[+|-] N+] [f]
+bool GValParser::tryParseNumber()
+{
+	int c = getChar();
+	bool floatingPointDetected = false;
+	bool isFloat = false;
+	if (c < '0' || c > '9')
+	{
+		returnChar(c);
+		return false;
+	}
+	buffer.clear();
+	for (;;)
+	{
+		advanceChar(c);
+		if (c < '0' || c > '9')
+			break;
+	}
+	// P1
+	if (c == '.')
+	{
+		advanceChar(c);
+		floatingPointDetected = true;
+		// P1.5
+		if (c >= '0' && c <= '9')
+		{
+			for (;;)
+			{
+				advanceChar(c);
+				if (c < '0' || c > '9')
+					break;
+			}
+		}
+	}
+	// P2
+	if (c == 'E' || c == 'e')
+	{
+		advanceChar(c);
+		if (c == '+' || c == '-')
+			advanceChar(c);
+		// P3
+		if (c >= '0' && c <= '9')
+		{
+			for (;;)
+			{
+				advanceChar(c);
+				if (c < '0' || c > '9')
+					break;
+			}
+		}
+		else
+		{
+			// TODO - Handle cases like 1.5e (without completed exponent).
+		}
+	}
+	// P4
+	if (c == 'f')
+	{
+		advanceChar(c);
+		isFloat = true;
+	}
+	returnChar(c);
+	if (floatingPointDetected)
+	{
+		if (isFloat)
+			lexerValue.setFloat((float)atof(&buffer[0]));
+		else
+			lexerValue.setDouble(atof(&buffer[0]));
+	}
+	else
+	{
+		lexerValue.setInt(atoi(&buffer[0]));
+	}
+	return true;
+}
+
+bool GValParser::tryParseKeyword(const std::string &keyword)
+{
+	int n = (int)keyword.size();
+	buffer.clear();
+	for (int i = 0; i < n; i++)
+	{
+		int c = getChar();
+		buffer.push_back(c);
+		int t = keyword[i];
+		if (c != t)
+		{
+			int m = (int)buffer.size();
+			for (int i = 0; i < m; i++)
+			{
+				int t = buffer[m - i - 1];
+				returnChar(t);
+			}
+			return false;
+		}
+	}
+	return true;
+}
+
+void GValParser::advanceChar(int &c)
+{
+	buffer.push_back(c);
+	c = getChar();
 }
 
 void GValParser::warning(const std::string &msg)

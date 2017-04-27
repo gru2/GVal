@@ -71,12 +71,60 @@ SUTF_TEST(testGValParser00)
 	Sutf::test(v.asString() == "foo");
 }
 
+SUTF_TEST(testGValParser001)
+{
+	std::string s = "1";
+	GValParser parser;
+	GVal v = parser.parseString(s);
+	Sutf::test(v.asInt() == 1);
+}
+
+SUTF_TEST(testGValParser002)
+{
+	std::string s = "2.0";
+	GValParser parser;
+	GVal v = parser.parseString(s);
+	Sutf::test(v.asDouble() == 2.0);
+}
+
+SUTF_TEST(testGValParser003)
+{
+	std::string s = "2.0e10";
+	GValParser parser;
+	GVal v = parser.parseString(s);
+	Sutf::test(v.asDouble() == 2.0e10);
+}
+
+SUTF_TEST(testGValParser004)
+{
+	std::string s = "132.67e-10";
+	GValParser parser;
+	GVal v = parser.parseString(s);
+	Sutf::test(v.asDouble() == 132.67e-10);
+}
+
+SUTF_TEST(testGValParser005)
+{
+	std::string s = "true";
+	GValParser parser;
+	GVal v = parser.parseString(s);
+	Sutf::test(v.asBool() == true);
+}
+
+SUTF_TEST(testGValParser006)
+{
+	std::string s = "false";
+	GValParser parser;
+	GVal v = parser.parseString(s);
+	Sutf::test(v.asBool() == false);
+}
+
 SUTF_TEST(testGValParser01)
 {
 	std::string s =
 		"{"
-		"	a = 'foo';"
-		"	b = 123;"
+		"	'a' = 'foo';"
+		"	'b' = 123;"
 		"}";
 	GValParser parser;
 	GVal v = parser.parseString(s);
@@ -106,7 +154,7 @@ SUTF_TEST(testGValParser03)
 
 SUTF_TEST(testGValParser04)
 {
-	std::string s = "MAD(2, 2)[[1.0, 2.5, ], [5.25, -2.125]]";
+	std::string s = "MAD(2, 2)[[1.0, 2.5], [5.25, -2.125]]";
 	GValParser parser;
 	GVal v = parser.parseString(s);
 	Sutf::test(v(0, 0).asDouble() == 1.0);
@@ -118,5 +166,7 @@ SUTF_TEST(testGValParser04)
 int main(int argc, char *argv[])
 {
 	Sutf::runTests(argc, argv);
+	//testGValParser001();
+	//testGValParser002();
 	return 0;
 }

@@ -6,6 +6,7 @@
 #include <map>
 #include <GValSmallVector.h>
 #include <GValProgressReporter.h>
+#include <toString.h>
 
 class GVal
 {
@@ -16,6 +17,7 @@ public:
 	};
 
 	GVal() : type(GVT_NULL) { }
+	GVal(bool x) : type(GVT_BOOL) { boolValue = x; }
 	GVal(int x) : type(GVT_INT) { intValue = x; }
 	GVal(float x) : type(GVT_FLOAT) { floatValue = x; }
 	GVal(double x) : type(GVT_DOUBLE) { doubleValue = x; }

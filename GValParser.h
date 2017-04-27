@@ -13,7 +13,7 @@ public:
 	GValParserToken();
 	GValParserToken(int type_, const GVal &value_);
 
-	enum TokenType { TT_TRUE, TT_FALSE, TT_INT, TT_FLOAT, TT_DOUBLE, TT_STRING };
+	enum TokenType { TT_TRUE = 256, TT_FALSE, TT_INT, TT_FLOAT, TT_DOUBLE, TT_STRING };
 	int type;
 	GVal value;
 };
@@ -36,7 +36,11 @@ public:
 	void returnChar(int c);
 	int getCharFromStream();
 
+	// parser
 	GVal parse();
+	GVal parseMap();
+	void expectToken(int expectedTokenType);
+	void parseSlot(const GValParserToken &token, GVal &v);
 
 	// lexer
 	GValParserToken lex();
@@ -44,11 +48,14 @@ public:
 	bool skipWhiteSpace();
 	bool skipComments();
 	bool tryParseString();
+	bool tryParseNumber();
+	bool tryParseKeyword(const std::string &keyword);
+	void advanceChar(int &c);
 
 	void warning(const std::string &msg);
 	void error(const std::string &msg);
 
-	std::vector<char> tmpChars;
+	std::vector<char> buffer;
 	GVal lexerValue;
 	ParserState parserState;
 	GValProgressReporter progressReporter;
