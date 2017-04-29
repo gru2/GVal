@@ -5,6 +5,7 @@
 #include <iostream>
 #include <assert.h>
 #include <Sutf.h>
+#include <math.h>
 
 SUTF_TEST(testGValSmallVector)
 {
@@ -39,7 +40,7 @@ SUTF_TEST(testGValUtils)
 	std::string s = toString(GVal(ref));
 	double test = atof(s.c_str());
 	double tol = 1.0e-14;
-	Sutf::test(std::abs(ref - test) < tol);
+	Sutf::test(fabs(ref - test) < tol);
 }
 
 SUTF_TEST(testGVal)

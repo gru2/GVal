@@ -4,10 +4,13 @@ CPPFLAGS = $(OPT_FLAGS) -I. -std=c++11
 
 TARGETS = GValTest 
 
+GVAL_TEST_OBJS=GValTest.o GVal.o GValProgressReporter.o GValUtils.o Sutf.o \
+GValParser.o toString.o
+
 all: $(TARGETS)
 
-GValTest: GValTest.o GVal.o GValProgressReporter.o GValUtils.o Sutf.o
-	g++ -o GValTest GValTest.o GVal.o GValProgressReporter.o GValUtils.o Sutf.o
+GValTest: $(GVAL_TEST_OBJS)
+	g++ -o GValTest $(GVAL_TEST_OBJS)
 
 %.o: %.cpp
 	g++ -c $(CPPFLAGS) $< -o $@
