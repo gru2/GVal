@@ -78,6 +78,7 @@ SUTF_TEST(testGValParseInt)
 	GValParser parser;
 	GVal v = parser.parseString(s);
 	Sutf::test(v.asInt() == 1);
+	std::cout << v.asInt() << "\n";
 }
 
 SUTF_TEST(testGValParseDouble01)
@@ -86,6 +87,7 @@ SUTF_TEST(testGValParseDouble01)
 	GValParser parser;
 	GVal v = parser.parseString(s);
 	Sutf::test(v.asDouble() == 2.0);
+	std::cout << v.asDouble() << "\n";
 }
 
 SUTF_TEST(testGValParseDouble02)

@@ -3,6 +3,7 @@
 
 GValParserToken::GValParserToken()
 {
+	type = TT_NULL;
 }
 
 GValParserToken::GValParserToken(int type_, const GVal & value_)
@@ -31,6 +32,7 @@ GVal GValParserToken::getValue()
 GValParser::GValParser()
 {
 	parserState = PS_NOT_OPENED;
+	inputStringPosition = 0;
 	inputStream = 0;
 }
 
@@ -361,6 +363,7 @@ bool GValParser::tryParseNumber()
 		isFloat = true;
 	}
 	returnChar(c);
+	buffer.push_back(0);
 	if (floatingPointDetected)
 	{
 		if (isFloat)

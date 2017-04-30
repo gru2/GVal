@@ -13,7 +13,8 @@ public:
 	GValParserToken();
 	GValParserToken(int type_, const GVal &value_);
 
-	enum TokenType { TT_TRUE = 256, TT_FALSE, TT_INT, TT_FLOAT, TT_DOUBLE, TT_STRING };
+	enum TokenType { TT_NULL = 256, TT_TRUE = 256, TT_FALSE, TT_INT, TT_FLOAT,
+		TT_DOUBLE, TT_STRING };
 	int type;
 	GVal value;
 
@@ -64,7 +65,7 @@ public:
 	ParserState parserState;
 	GValProgressReporter progressReporter;
 	std::string inputString;
-	int inputStringPosition = 0;
+	int inputStringPosition;
 	std::vector<int> returnedChars;
 	std::vector<GValParserToken> returnedTokens;
 	FILE *inputStream;
