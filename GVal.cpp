@@ -1,6 +1,7 @@
 #include <GVal.h>
 #include <string.h>
 #include <iostream>
+#include <toString.h>
 
 GVal &GVal::operator = (const GVal &x)
 {
@@ -362,6 +363,46 @@ void GVal::reshape(const GValSmallVector<size_t, 4>& x)
 void GVal::reshape(size_t * i, int dim)
 {
 	resize(i, dim);
+}
+
+GVal GVal::front() const
+{
+	return GVal(); // TODO
+}
+
+GVal GVal::back() const
+{
+	return GVal(); // TODO
+}
+
+void GVal::pushBack(const GVal &x)
+{
+	if (type != GVT_MULTI_ARRAY)
+	{
+		error("type " + toString(type) + " does not support pushBack");
+		return;
+	}
+	static_cast<GValMultiArray *>(genericValue.get())->pushBack(x);
+}
+
+GVal GVal::popBack()
+{
+	return GVal(); // TODO
+}
+
+GVal GVal::keys() const
+{
+	return GVal(); // TODO
+}
+
+bool GVal::check(const std::string &key) const
+{
+	return check(GVal(key));
+}
+
+bool GVal::check(const GVal &key) const
+{
+	return false; // TODO
 }
 
 void GVal::setMultiArray(size_t i, int entryType)

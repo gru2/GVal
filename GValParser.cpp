@@ -11,6 +11,23 @@ GValParserToken::GValParserToken(int type_, const GVal & value_)
 	value = value_;
 }
 
+bool GValParserToken::isLiteral()
+{
+	if (type == TT_TRUE || type == TT_FALSE || type == TT_INT ||
+		type == TT_FLOAT || type == TT_DOUBLE || type == TT_STRING)
+		return true;
+	return false;
+}
+
+GVal GValParserToken::getValue()
+{
+	if (type == TT_TRUE)
+		return GVal(true);
+	if (type == TT_FALSE)
+		return GVal(false);
+	return value;
+}
+
 GValParser::GValParser()
 {
 	parserState = PS_NOT_OPENED;
@@ -94,6 +111,8 @@ GVal GValParser::parse()
 		return token.value;
 	case '{':
 		return parseMap();
+	case '[':
+		return parseList();
 	default:
 		break;
 	}
@@ -129,6 +148,36 @@ void GValParser::parseSlot(const GValParserToken &token, GVal &v)
 	GVal value = parse();
 	expectToken(';');
 	v.set(key, value);
+}
+
+// '[' [expr (, expr)* ']'
+GVal GValParser::parseList()
+{
+	GVal v;
+	v.setMultiArray(0, GVal::GVT_GENERIC);
+	GValParserToken token = lex();
+	if (token.type == ']')
+		return v;
+	if (token.isLiteral())
+		v.pushBack(token.getValue());
+	for (;;)
+	{
+		GValParserToken token = lex();
+		if (token.type == ']')
+			break;
+		if (token.type == ',')
+		{
+			GVal u = parse();
+			v.pushBack(u);
+			continue;
+		}
+		else
+		{
+			error("syntax error");
+			break;
+		}
+	}
+	return v;
 }
 
 GValParserToken GValParser::lex()

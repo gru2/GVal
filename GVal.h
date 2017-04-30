@@ -88,7 +88,7 @@ public:
 
 	GVal keys() const;
 	bool check(const std::string &key) const;
-	bool check(GVal &key) const;
+	bool check(const GVal &key) const;
 
 	void setNull() {
 		reset();

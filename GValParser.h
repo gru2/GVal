@@ -16,6 +16,9 @@ public:
 	enum TokenType { TT_TRUE = 256, TT_FALSE, TT_INT, TT_FLOAT, TT_DOUBLE, TT_STRING };
 	int type;
 	GVal value;
+
+	bool isLiteral();
+	GVal getValue();
 };
 
 class GValParser
@@ -41,6 +44,7 @@ public:
 	GVal parseMap();
 	void expectToken(int expectedTokenType);
 	void parseSlot(const GValParserToken &token, GVal &v);
+	GVal parseList();
 
 	// lexer
 	GValParserToken lex();
