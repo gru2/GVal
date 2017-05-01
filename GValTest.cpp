@@ -81,6 +81,15 @@ SUTF_TEST(testGValParseInt)
 	std::cout << v.asInt() << "\n";
 }
 
+SUTF_TEST(testGValParseNegativeInt)
+{
+	std::string s = "-7";
+	GValParser parser;
+	GVal v = parser.parseString(s);
+	Sutf::test(v.asInt() == -7);
+	std::cout << v.asInt() << "\n";
+}
+
 SUTF_TEST(testGValParseDouble01)
 {
 	std::string s = "2.0";
@@ -104,6 +113,22 @@ SUTF_TEST(testGValParserDouble03)
 	GValParser parser;
 	GVal v = parser.parseString(s);
 	Sutf::test(v.asDouble() == 132.67e-10);
+}
+
+SUTF_TEST(testGValParserNegativeDouble)
+{
+	std::string s = "-0.5e-3";
+	GValParser parser;
+	GVal v = parser.parseString(s);
+	Sutf::test(v.asDouble() == -0.5e-3);
+}
+
+SUTF_TEST(testGValParserNegativeFloat)
+{
+	std::string s = "-2.25e-7f";
+	GValParser parser;
+	GVal v = parser.parseString(s);
+	Sutf::test(v.asFloat() == -2.25e-7f);
 }
 
 SUTF_TEST(testGValParseTrue)
@@ -168,6 +193,7 @@ SUTF_TEST(testGValParseList)
 
 int main(int argc, char *argv[])
 {
+
 	Sutf::runTests(argc, argv);
 	//testGValParser001();
 	//testGValParser02();

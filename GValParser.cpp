@@ -297,19 +297,30 @@ bool GValParser::tryParseString()
 	return false;
 }
 
-//   +-----------------------P1
-//   |        +--------------P2
-//   | P1.5   |       +------P3
-//   v  v     v       v   v--P4
-// N+ [. [N*]] [e[+|-] N+] [f]
+//         +-----------------------P1
+//         |        +--------------P2
+//         | P1.5   |       +------P3
+//         v  v     v       v   v--P4
+// [+|-] N+ [. [N*]] [e[+|-] N+] [f]
 bool GValParser::tryParseNumber()
 {
 	int c = getChar();
 	bool floatingPointDetected = false;
+	int sign = 1;
 	bool isFloat = false;
+	buffer.clear();
+	if (c == '+' || c == '-')
+	{
+		if (c == '-')
+			sign = -1;
+		buffer.push_back(c);
+		c = getChar();
+	}
 	if (c < '0' || c > '9')
 	{
 		returnChar(c);
+		if (!buffer.empty())
+			returnChar(buffer.front());
 		return false;
 	}
 	buffer.clear();
@@ -367,13 +378,13 @@ bool GValParser::tryParseNumber()
 	if (floatingPointDetected)
 	{
 		if (isFloat)
-			lexerValue.setFloat((float)atof(&buffer[0]));
+			lexerValue.setFloat(float(sign) * (float)atof(&buffer[0]));
 		else
-			lexerValue.setDouble(atof(&buffer[0]));
+			lexerValue.setDouble(double(sign) * atof(&buffer[0]));
 	}
 	else
 	{
-		lexerValue.setInt(atoi(&buffer[0]));
+		lexerValue.setInt(sign * atoi(&buffer[0]));
 	}
 	return true;
 }
