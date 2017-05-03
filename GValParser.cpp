@@ -1,5 +1,6 @@
 #include <GValParser.h>
 #include <stdio.h>
+#include <iostream>
 
 GValParserToken::GValParserToken()
 {
@@ -115,6 +116,8 @@ GVal GValParser::parse()
 		return parseMap();
 	case '[':
 		return parseList();
+	case GValParserToken::TT_MAI:
+		return parseMai();
 	default:
 		break;
 	}
@@ -182,6 +185,41 @@ GVal GValParser::parseList()
 	return v;
 }
 
+GVal GValParser::parseMai()
+{
+	std::cout << "parseMai...\n";
+	expectToken('(');
+	expectToken(GValParserToken::TT_INT);
+	GVal v;
+	GValSmallVector<size_t, 4> shape;
+	shape.push_back(lexerValue.asInt());
+	for (;;)
+	{
+		GValParserToken token = lex();
+		if (token.type == ')')
+			break;
+		if (token.type == GValParserToken::TT_INT)
+		{
+			shape.push_back(lexerValue.asInt());
+			expectToken(',');
+		}
+		else
+		{
+			error("syntax error, unexpected token:" + toString(token.type));
+			return GVal();
+		}
+	}
+	std::cout << "MAI(";
+	for (size_t i = 0; i < shape.size(); i++)
+	{
+		std::cout << (unsigned)shape[(unsigned)i] << " ";
+	}
+	std::cout << ")\n";
+	v.setMultiArray(shape, GVal::GVT_INT);
+
+	return v;
+}
+
 GValParserToken GValParser::lex()
 {
 	skipWhiteSpaceAndComments();
@@ -200,6 +238,14 @@ GValParserToken GValParser::lex()
 		return GValParserToken(GValParserToken::TT_TRUE, GVal());
 	if (tryParseKeyword("false"))
 		return GValParserToken(GValParserToken::TT_FALSE, GVal());
+	if (tryParseKeyword("MAI"))
+		return GValParserToken(GValParserToken::TT_MAI, GVal());
+	if (tryParseKeyword("MAF"))
+		return GValParserToken(GValParserToken::TT_MAF, GVal());
+	if (tryParseKeyword("MAD"))
+		return GValParserToken(GValParserToken::TT_MAD, GVal());
+	if (tryParseKeyword("MAG"))
+		return GValParserToken(GValParserToken::TT_MAG, GVal());
 	int c = getChar();
 	return GValParserToken(c, GVal());
 }
