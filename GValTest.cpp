@@ -170,15 +170,16 @@ SUTF_TEST(testGValParseList)
 	Sutf::test(v[2].asInt() == 123);
 }
 
-//SUTF_TEST(testGValParser03)
-//{
-//	std::string s = "MAI(3)[1, 4, 5]";
-//	GValParser parser;
-//	GVal v = parser.parseString(s);
-//	Sutf::test(v[0].asInt() == 1);
-//	Sutf::test(v[1].asInt() == 4);
-//	Sutf::test(v[2].asInt() == 5);
-//}
+SUTF_TEST(testGValParser03)
+{
+	std::string s = "MAI(3)[1, 4, 5]";
+	GValParser parser;
+	GVal v = parser.parseString(s);
+	Sutf::test(v.size() == 3);
+	Sutf::test(v[0].asInt() == 1);
+	Sutf::test(v[1].asInt() == 4);
+	Sutf::test(v[2].asInt() == 5);
+}
 
 //SUTF_TEST(testGValParser04)
 //{

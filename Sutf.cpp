@@ -1,5 +1,7 @@
 #include <Sutf.h>
 #include <iostream>
+#include <vector>
+#include <algorithm>
 
 using namespace Sutf;
 
@@ -41,18 +43,34 @@ void Sutf::test(bool result, const std::string &msg)
 int Sutf::runTests(int argc, char *argv[])
 {
 	Sutf::Initializer *p = Sutf::Initializer::getTests();
+	std::vector<Sutf::Initializer *> tests;
 	for (;;)
 	{
 		if (!p)
 			break;
+		tests.push_back(p);
+		p = p->getNextTest();
+	}
+
+	int n = (int)tests.size();
+	for (int i = 0; i < n; i++)
+	{
+		p = tests[n - i - 1];
 		int oldFailCount = failCount;
 		TestType test = p->getTest();
+		std::cout << "Running test " + p->getTestName() << "...\n";
+		std::cout.flush();
 		test();
 		if (failCount == oldFailCount)
-			std::cout << "TEST PASSED " + p->getTestName() << "\n";
+		{
+			std::cout << "PASSED\n";
+			std::cout.flush();
+		}
 		else
-			std::cout << "TEST FAILED " + p->getTestName() << "\n";
-		p = p->getNextTest();
+		{
+			std::cout << "FAILED\n";
+			std::cout.flush();
+		}
 	}
 
 	std::cout << "Total fail count is " << failCount << ".\n";
