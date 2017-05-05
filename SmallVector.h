@@ -2,16 +2,16 @@
 #define __GVAL_SMALL_VECTOR_H
 
 template<typename T, unsigned N>
-class GValSmallVector
+class SmallVector
 {
 public:
-	GValSmallVector<T, N>()
+	SmallVector<T, N>()
 	{
 		size_ = 0;
 		capacity = N;
 		data = &localStorage[0];
 	}
-	GValSmallVector<T, N>(unsigned n)
+	SmallVector<T, N>(unsigned n)
 	{
 		size_ = 0;
 		capacity = N;
@@ -24,7 +24,7 @@ public:
 		grow(n);
 		size_ = n;
 	}
-	GValSmallVector<T, N>(const GValSmallVector<T, N> &x)
+	SmallVector<T, N>(const SmallVector<T, N> &x)
 	{
 		capacity = N;
 		data = &localStorage[0];
@@ -37,13 +37,13 @@ public:
 		for (unsigned i = 0; i < x.size_; i++)
 			data[i] = x.data[i];
 	}
-	~GValSmallVector<T, N>()
+	~SmallVector<T, N>()
 	{
 		if (capacity > N)
 			delete[] data;
 	}
 
-	const GValSmallVector<T, N> &operator=(const GValSmallVector<T, N> &x)
+	const SmallVector<T, N> &operator=(const SmallVector<T, N> &x)
 	{
 		if (capacity < x.size_)
 			grow(x.size_);
@@ -98,7 +98,7 @@ protected:
 };
 
 template<typename T, unsigned N>
-void GValSmallVector<T, N>::grow(unsigned n)
+void SmallVector<T, N>::grow(unsigned n)
 {
 	if (n <= capacity)
 		return;

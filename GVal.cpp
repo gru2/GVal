@@ -140,7 +140,7 @@ void GVal::set(size_t i0, size_t i1, size_t i2, size_t i3, const GVal &x)
 	static_cast<GValMultiArray *>(genericValue.get())->set(i, 4, x);
 }
 
-GVal GVal::get(const GValSmallVector<size_t, 4> &i) const
+GVal GVal::get(const SmallVector<size_t, 4> &i) const
 {
 	if (type != GVT_MULTI_ARRAY)
 	{
@@ -184,7 +184,7 @@ GVal GVal::get(const GVal &key) const
 	return static_cast<GValMap *>(genericValue.get())->get(key);
 }
 
-void GVal::set(const GValSmallVector<size_t, 4> &i, const GVal &x)
+void GVal::set(const SmallVector<size_t, 4> &i, const GVal &x)
 {
 	if (type != GVT_MULTI_ARRAY)
 	{
@@ -315,7 +315,7 @@ void GVal::resize(size_t i0, size_t i1, size_t i2, size_t i3)
 	resize(i, 4);
 }
 
-void GVal::resize(const GValSmallVector<size_t, 4>& x)
+void GVal::resize(const SmallVector<size_t, 4>& x)
 {
 	size_t s = x.size();
 	size_t *p = x.begin();
@@ -355,7 +355,7 @@ void GVal::reshape(size_t i0, size_t i1, size_t i2, size_t i3)
 	resize(i0, i1, i2, i3);
 }
 
-void GVal::reshape(const GValSmallVector<size_t, 4>& x)
+void GVal::reshape(const SmallVector<size_t, 4>& x)
 {
 	resize(x);
 }
@@ -433,7 +433,7 @@ void GVal::setMultiArray(size_t i0, size_t i1, size_t i2, size_t i3, int entryTy
 	i[3] = i3;
 	setMultiArray(i, 4, entryType);
 }
-void GVal::setMultiArray(const GValSmallVector<size_t, 4> &x, int entryType)
+void GVal::setMultiArray(const SmallVector<size_t, 4> &x, int entryType)
 {
 	size_t s = x.size();
 	size_t *p = x.begin();

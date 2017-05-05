@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <memory>
 #include <map>
-#include <GValSmallVector.h>
+#include <SmallVector.h>
 #include <GValProgressReporter.h>
 #include <toString.h>
 
@@ -51,11 +51,11 @@ public:
 	void set(size_t i0, size_t i1, const GVal &x);
 	void set(size_t i0, size_t i1, size_t i2, const GVal &x);
 	void set(size_t i0, size_t i1, size_t i2, size_t i3, const GVal &x);
-	GVal get(const GValSmallVector<size_t, 4> &i) const;
+	GVal get(const SmallVector<size_t, 4> &i) const;
 	GVal get(size_t *i, int dim) const;
 	GVal get(const std::string &key) const;
 	GVal get(const GVal &key) const;
-	void set(const GValSmallVector<size_t, 4> &i, const GVal &x);
+	void set(const SmallVector<size_t, 4> &i, const GVal &x);
 	void set(size_t *i, int dim, const GVal &x);
 	void set(const std::string &key, const GVal &x);
 	void set(const GVal &key, const GVal &x);
@@ -64,20 +64,20 @@ public:
 	void reset();
 	size_t size() const;
 	size_t size(int dim) const { return shape()[dim]; }
-	const GValSmallVector<size_t, 4> &shape() const;
+	const SmallVector<size_t, 4> &shape() const;
 	size_t numberOfDimensions() const { return shape().size(); }
 	void resize(size_t i0);
 	void resize(size_t i0, size_t i1);
 	void resize(size_t i0, size_t i1, size_t i2);
 	void resize(size_t i0, size_t i1, size_t i2, size_t i3);
-	void resize(const GValSmallVector<size_t, 4> &x);
+	void resize(const SmallVector<size_t, 4> &x);
 	void resize(size_t *i, int dim);
 
 	void reshape(size_t i0);
 	void reshape(size_t i0, size_t i1);
 	void reshape(size_t i0, size_t i1, size_t i2);
 	void reshape(size_t i0, size_t i1, size_t i2, size_t i3);
-	void reshape(const GValSmallVector<size_t, 4> &x);
+	void reshape(const SmallVector<size_t, 4> &x);
 	void reshape(size_t *i, int dim);
 
 	GVal front() const;
@@ -128,7 +128,7 @@ public:
 	void setMultiArray(size_t i0, size_t i1, int entryType);
 	void setMultiArray(size_t i0, size_t i1, size_t i2, int entryType);
 	void setMultiArray(size_t i0, size_t i1, size_t i2, size_t i3, int entryType);
-	void setMultiArray(const GValSmallVector<size_t, 4> &x, int entryType);
+	void setMultiArray(const SmallVector<size_t, 4> &x, int entryType);
 	void setMultiArray(size_t *i, size_t dim, int entryType);
 	void setMap();
 	void setMap(int keyType_, int valueType_);
@@ -209,7 +209,7 @@ public:
 	void resizeAndSetEntryType(size_t *i, int dim, int entryType_);
 protected:
 	int entryType;
-	GValSmallVector<size_t, 4> shape;
+	SmallVector<size_t, 4> shape;
 	size_t capacity;
 	void *data;
 

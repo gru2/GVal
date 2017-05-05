@@ -1,15 +1,17 @@
 #include <GVal.h>
-#include <GValSmallVector.h>
+#include <SmallVector.h>
 #include <GValUtils.h>
 #include <GValParser.h>
+#include <MultiArrayIterator.h>
+#include <Sutf.h>
 #include <iostream>
 #include <assert.h>
-#include <Sutf.h>
 #include <math.h>
+#include <stdlib.h>
 
-SUTF_TEST(testGValSmallVector)
+SUTF_TEST(testSmallVector)
 {
-	GValSmallVector<int, 2> v;
+	SmallVector<int, 2> v;
 	Sutf::test(v.size() == 0);
 	v.push_back(12);
 	Sutf::test(v.size() == 1);
@@ -168,6 +170,38 @@ SUTF_TEST(testGValParseList)
 	Sutf::test(v[0].asDouble() == 1.5);
 	Sutf::test(v[1].asString() == "foo");
 	Sutf::test(v[2].asInt() == 123);
+}
+
+SUTF_TEST(testMultiArrayIterator)
+{
+	MultiArrayIterator it;
+	it.shape.push_back(2);
+	it.shape.push_back(3);
+	it.indices.push_back(0);
+	it.indices.push_back(0);
+	Sutf::test(it.atEnd() == false);
+	Sutf::test(it.indices[0] == 0);
+	Sutf::test(it.indices[1] == 0);
+	it.next();
+	Sutf::test(it.atEnd() == false);
+	Sutf::test(it.indices[0] == 0);
+	Sutf::test(it.indices[1] == 1);
+	it.next();
+	Sutf::test(it.atEnd() == false);
+	Sutf::test(it.indices[0] == 0);
+	Sutf::test(it.indices[1] == 2);
+	it.next();
+	Sutf::test(it.atEnd() == false);
+	Sutf::test(it.indices[0] == 1);
+	Sutf::test(it.indices[1] == 0);
+	it.next();
+	Sutf::test(it.atEnd() == false);
+	Sutf::test(it.indices[0] == 1);
+	Sutf::test(it.indices[1] == 1);
+	it.next();
+	Sutf::test(it.atEnd() == true);
+	Sutf::test(it.indices[0] == 1);
+	Sutf::test(it.indices[1] == 2);
 }
 
 SUTF_TEST(testGValParser03)

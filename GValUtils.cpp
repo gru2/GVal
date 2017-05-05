@@ -1,5 +1,6 @@
 #include <GValUtils.h>
 #include <toString.h>
+#include <MultiArrayIterator.h>
 
 std::string toString(const GVal &x)
 {
@@ -48,4 +49,24 @@ std::string toString(const GVal &x)
 			return "TODO"; // TODO
 		break;
 	}
+}
+
+GVal gvalToMultiArray(const GVal &u, const SmallVector<size_t, 4> &shape, GVal::GValType type)
+{
+	GVal v;
+	v.setMultiArray(shape, type);
+	MultiArrayIterator it(shape);
+	unsigned n = it.shape.size();
+	for (; it.atEnd(); it.next())
+	{
+		GVal t = u;
+		for (unsigned i = 0; i < n; i++)
+		{
+			size_t index = it.indices[i];
+			t = t[index];
+		}
+
+		v.set(it.indices, t);
+	}
+	return GVal();
 }

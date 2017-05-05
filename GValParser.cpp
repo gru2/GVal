@@ -1,6 +1,9 @@
 #include <GValParser.h>
+#include <toString.h>
+#include <GValUtils.h>
 #include <stdio.h>
 #include <iostream>
+#include <stdlib.h>
 
 GValParserToken::GValParserToken()
 {
@@ -190,8 +193,7 @@ GVal GValParser::parseMai()
 	std::cout << "parseMai...\n";
 	expectToken('(');
 	expectToken(GValParserToken::TT_INT);
-	GVal v;
-	GValSmallVector<size_t, 4> shape;
+	SmallVector<size_t, 4> shape;
 	shape.push_back(lexerValue.asInt());
 	for (;;)
 	{
@@ -215,8 +217,10 @@ GVal GValParser::parseMai()
 		std::cout << (unsigned)shape[(unsigned)i] << " ";
 	}
 	std::cout << ")\n";
-	v.setMultiArray(shape, GVal::GVT_INT);
 
+	GVal u = parse();
+	std::cout << "u = " << toString(u) << "\n";
+	GVal v = gvalToMultiArray(u, shape, GVal::GVT_INT);
 	return v;
 }
 
