@@ -172,7 +172,7 @@ SUTF_TEST(testGValParseList)
 	Sutf::test(v[2].asInt() == 123);
 }
 
-SUTF_TEST(testMultiArrayIterator)
+SUTF_TEST(testMultiArrayIterator01)
 {
 	MultiArrayIterator it;
 	it.shape.push_back(2);
@@ -199,9 +199,29 @@ SUTF_TEST(testMultiArrayIterator)
 	Sutf::test(it.indices[0] == 1);
 	Sutf::test(it.indices[1] == 1);
 	it.next();
-	Sutf::test(it.atEnd() == true);
+	Sutf::test(it.atEnd() == false);
 	Sutf::test(it.indices[0] == 1);
 	Sutf::test(it.indices[1] == 2);
+	it.next();
+	Sutf::test(it.atEnd() == true);
+}
+
+SUTF_TEST(testMultiArrayIterator02)
+{
+	SmallVector<size_t, 4> shape;
+	shape.push_back(3);
+	MultiArrayIterator it(shape);
+
+	Sutf::test(it.atEnd() == false);
+	Sutf::test(it.indices[0] == 0);
+	it.next();
+	Sutf::test(it.atEnd() == false);
+	Sutf::test(it.indices[0] == 1);
+	it.next();
+	Sutf::test(it.atEnd() == false);
+	Sutf::test(it.indices[0] == 2);
+	it.next();
+	Sutf::test(it.atEnd() == true);
 }
 
 SUTF_TEST(testGValParser03)
@@ -213,6 +233,22 @@ SUTF_TEST(testGValParser03)
 	Sutf::test(v[0].asInt() == 1);
 	Sutf::test(v[1].asInt() == 4);
 	Sutf::test(v[2].asInt() == 5);
+}
+
+SUTF_TEST(testGValParser031)
+{
+	std::string s = "MAI(2,3)[[1, 4, 5],[14, 48, 51]]";
+	GValParser parser;
+	GVal v = parser.parseString(s);
+	Sutf::test(v.numberOfDimensions() == 2);
+	Sutf::test(v.size(0) == 2);
+	Sutf::test(v.size(1) == 3);
+	Sutf::test(v(0, 0).asInt() == 1);
+	Sutf::test(v(0, 1).asInt() == 4);
+	Sutf::test(v(0, 2).asInt() == 5);
+	Sutf::test(v(1, 0).asInt() == 14);
+	Sutf::test(v(1, 1).asInt() == 48);
+	Sutf::test(v(1, 2).asInt() == 51);
 }
 
 //SUTF_TEST(testGValParser04)
@@ -233,5 +269,6 @@ int main(int argc, char *argv[])
 	//testGValParser001();
 	//testGValParser02();
 	//testGValParser002();
+	//testMultiArrayIterator02();
 	return 0;
 }

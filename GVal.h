@@ -207,6 +207,7 @@ public:
 
 	int getEntryType() const { return entryType; }
 	void resizeAndSetEntryType(size_t *i, int dim, int entryType_);
+	const SmallVector<size_t, 4> &getShape() { return shape; }
 protected:
 	int entryType;
 	SmallVector<size_t, 4> shape;

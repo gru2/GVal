@@ -283,6 +283,18 @@ size_t GVal::size() const
 	}
 }
 
+const SmallVector<size_t, 4> &GVal::shape() const
+{
+	if (type != GVT_MULTI_ARRAY)
+	{
+		error("type does not support shape");
+		//return SmallVector<size_t, 4>; // TODO
+	}
+
+	GValMultiArray *ma = static_cast<GValMultiArray *>(genericValue.get());
+	return ma->getShape();
+}
+
 void GVal::resize(size_t x)
 {
 	resize(&x, 1);

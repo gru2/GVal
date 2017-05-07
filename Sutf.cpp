@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <toString.h>
 
 using namespace Sutf;
 
@@ -26,7 +27,7 @@ void Sutf::test(bool result)
 {
 	if (!result)
 	{
-		std::cout << "FAILED\n";
+		std::cout << "> FAILED: (" + toString(failCount) + ")\n";
 		failCount++;
 	}
 }
@@ -35,7 +36,7 @@ void Sutf::test(bool result, const std::string &msg)
 {
 	if (!result)
 	{
-		std::cout << "FAILED " + msg + "\n";
+		std::cout << "> FAILED: (" + toString(failCount) + ") " + msg + "\n";
 		failCount++;
 	}
 }
