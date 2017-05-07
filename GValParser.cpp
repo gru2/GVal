@@ -181,7 +181,7 @@ GVal GValParser::parseList()
 		}
 		else
 		{
-			error("syntax error");
+			error("syntax error (2), unexpected token:" + toString(token.type));
 			break;
 		}
 	}
@@ -200,10 +200,10 @@ GVal GValParser::parseMai()
 		GValParserToken token = lex();
 		if (token.type == ')')
 			break;
-		if (token.type == GValParserToken::TT_INT)
+		if (token.type == ',')
 		{
+			expectToken(GValParserToken::TT_INT);
 			shape.push_back(lexerValue.asInt());
-			expectToken(',');
 		}
 		else
 		{

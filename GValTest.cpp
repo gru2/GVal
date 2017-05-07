@@ -264,11 +264,11 @@ SUTF_TEST(testGValParser031)
 
 int main(int argc, char *argv[])
 {
-
-	Sutf::runTests(argc, argv);
+	//Sutf::runTests(argc, argv);
 	//testGValParser001();
 	//testGValParser02();
 	//testGValParser002();
 	//testMultiArrayIterator02();
+	testGValParser031();
 	return 0;
 }

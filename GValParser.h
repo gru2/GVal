@@ -14,7 +14,7 @@ public:
 	GValParserToken(int type_, const GVal &value_);
 
 	enum TokenType {
-		TT_NULL = 256, TT_TRUE = 256, TT_FALSE, TT_INT, TT_FLOAT,
+		TT_NULL = 256, TT_TRUE, TT_FALSE, TT_INT, TT_FLOAT,
 		TT_DOUBLE, TT_STRING, TT_MAI, TT_MAF, TT_MAD, TT_MAG
 	};
 	int type;
