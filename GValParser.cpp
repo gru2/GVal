@@ -166,8 +166,9 @@ GVal GValParser::parseList()
 	GValParserToken token = lex();
 	if (token.type == ']')
 		return v;
-	if (token.isLiteral())
-		v.pushBack(token.getValue());
+	returnToken(token);
+	GVal u = parse();
+	v.pushBack(u);
 	for (;;)
 	{
 		GValParserToken token = lex();
@@ -177,7 +178,6 @@ GVal GValParser::parseList()
 		{
 			GVal u = parse();
 			v.pushBack(u);
-			continue;
 		}
 		else
 		{
@@ -225,6 +225,20 @@ GVal GValParser::parseMai()
 }
 
 GValParserToken GValParser::lex()
+{
+	if (returnedTokens.empty())
+		return getNextTokenFromStream();
+	GValParserToken tok = returnedTokens.back();
+	returnedTokens.pop_back();
+	return tok;
+}
+
+void GValParser::returnToken(const GValParserToken &token)
+{
+	returnedTokens.push_back(token);
+}
+
+GValParserToken GValParser::getNextTokenFromStream()
 {
 	skipWhiteSpaceAndComments();
 	if (tryParseString())

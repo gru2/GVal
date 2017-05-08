@@ -52,6 +52,8 @@ public:
 
 	// lexer
 	GValParserToken lex();
+	void returnToken(const GValParserToken &token);
+	GValParserToken getNextTokenFromStream();
 	void skipWhiteSpaceAndComments();
 	bool skipWhiteSpace();
 	bool skipComments();
