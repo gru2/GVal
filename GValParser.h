@@ -46,7 +46,7 @@ public:
 	GVal parse();
 	GVal parseMap();
 	void expectToken(int expectedTokenType);
-	void parseSlot(const GValParserToken &token, GVal &v);
+	void parseSlot(GVal &v);
 	GVal parseList();
 	GVal parseMultiArray(GVal::GValType type);
 

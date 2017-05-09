@@ -143,7 +143,8 @@ GVal GValParser::parseMap()
 		GValParserToken token = lex();
 		if (token.type == '}')
 			return v;
-		parseSlot(token, v);
+		returnToken(token);
+		parseSlot(v);
 	}
 	return v;
 }
@@ -156,7 +157,7 @@ void GValParser::expectToken(int expectedTokenType)
 	error("sintax error: expected token " + toString(expectedTokenType) + ", buf found token " + toString(token.type));
 }
 
-void GValParser::parseSlot(const GValParserToken &token, GVal &v)
+void GValParser::parseSlot(GVal &v)
 {
 	GVal key = parse();
 	expectToken('=');
@@ -292,7 +293,7 @@ bool GValParser::skipWhiteSpace()
 	for (;;)
 	{
 		int c = getChar();
-		if (c == ' ' || c == '\n' || c == '\n' || c == '\r' || c == EOF)
+		if (c == ' ' || c == '\t' || c == '\n' || c == '\n' || c == '\r' || c == EOF)
 		{
 			r = true;
 			continue;
