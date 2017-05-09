@@ -251,24 +251,39 @@ SUTF_TEST(testGValParser031)
 	Sutf::test(v(1, 2).asInt() == 51);
 }
 
-//SUTF_TEST(testGValParser04)
-//{
-//	std::string s = "MAD(2, 2)[[1.0, 2.5], [5.25, -2.125]]";
-//	GValParser parser;
-//	GVal v = parser.parseString(s);
-//	Sutf::test(v(0, 0).asDouble() == 1.0);
-//	Sutf::test(v(0, 1).asDouble() == 2.5);
-//	Sutf::test(v(1, 0).asDouble() == 5.25);
-//	Sutf::test(v(1, 1).asDouble() == -2.125);
-//}
+SUTF_TEST(testGValParser04)
+{
+	std::string s = "MAD(2, 2)[[1.0, 2.5], [5.25, -2.125]]";
+	GValParser parser;
+	GVal v = parser.parseString(s);
+	Sutf::test(v(0, 0).asDouble() == 1.0);
+	Sutf::test(v(0, 1).asDouble() == 2.5);
+	Sutf::test(v(1, 0).asDouble() == 5.25);
+	Sutf::test(v(1, 1).asDouble() == -2.125);
+}
+
+SUTF_TEST(testGValParser05)
+{
+	std::string s = "MAF(2, 1)[[1.0f], [15.5f]]";
+	GValParser parser;
+	GVal v = parser.parseString(s);
+	Sutf::test(v(0, 0).asFloat() == 1.0f);
+	Sutf::test(v(1, 0).asFloat() == 15.5f);
+}
+
+SUTF_TEST(testGValParser06)
+{
+	std::string s = "MAG(3)[1.5f, 2, 'pera']";
+	GValParser parser;
+	GVal v = parser.parseString(s);
+	Sutf::test(v[0].asFloat() == 1.5f);
+	Sutf::test(v[1].asInt() == 2);
+	Sutf::test(v[2].asString() == "pera");
+}
 
 int main(int argc, char *argv[])
 {
 	Sutf::runTests(argc, argv);
-	//testGValParser001();
-	//testGValParser02();
-	//testGValParser002();
-	//testMultiArrayIterator02();
 	//testGValParser031();
 	return 0;
 }

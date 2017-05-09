@@ -50,6 +50,7 @@ public:
 		size_ = x.size_;
 		for (unsigned i = 0; i < x.size_; i++)
 			data[i] = x.data[i];
+		return *this;
 	}
 
 	unsigned size() const { return size_; }

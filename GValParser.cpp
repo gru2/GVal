@@ -120,8 +120,15 @@ GVal GValParser::parse()
 	case '[':
 		return parseList();
 	case GValParserToken::TT_MAI:
-		return parseMai();
+		return parseMultiArray(GVal::GVT_INT);
+	case GValParserToken::TT_MAF:
+		return parseMultiArray(GVal::GVT_FLOAT);
+	case GValParserToken::TT_MAD:
+		return parseMultiArray(GVal::GVT_DOUBLE);
+	case GValParserToken::TT_MAG:
+		return parseMultiArray(GVal::GVT_GENERIC);
 	default:
+		error("sintax error: unexpected token" + toString(token.type));
 		break;
 	}
 	return GVal();
@@ -188,9 +195,9 @@ GVal GValParser::parseList()
 	return v;
 }
 
-GVal GValParser::parseMai()
+GVal GValParser::parseMultiArray(GVal::GValType type)
 {
-	std::cout << "parseMai...\n";
+	std::cout << "parseMultiArray...\n";
 	expectToken('(');
 	expectToken(GValParserToken::TT_INT);
 	SmallVector<size_t, 4> shape;
@@ -211,7 +218,7 @@ GVal GValParser::parseMai()
 			return GVal();
 		}
 	}
-	std::cout << "MAI(";
+	std::cout << "MA<" + toString(type) + ">(";
 	for (size_t i = 0; i < shape.size(); i++)
 	{
 		std::cout << (unsigned)shape[(unsigned)i] << " ";
@@ -220,7 +227,7 @@ GVal GValParser::parseMai()
 
 	GVal u = parse();
 	std::cout << "u = " << toString(u) << "\n";
-	GVal v = gvalToMultiArray(u, shape, GVal::GVT_INT);
+	GVal v = gvalToMultiArray(u, shape, type);
 	return v;
 }
 
