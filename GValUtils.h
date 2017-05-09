@@ -7,4 +7,8 @@
 std::string toString(const GVal &x);
 GVal gvalToMultiArray(const GVal &u, const SmallVector<size_t, 4> &shape, GVal::GValType type);
 
+class GValToStringFormater
+{
+};
+
 #endif
