@@ -508,6 +508,7 @@ GValMultiArray::GValMultiArray()
 	entryType = GVal::GVT_GENERIC;
 	data = 0;
 	capacity = 0;
+	isOwner = false;
 }
 
 GValMultiArray::~GValMultiArray()

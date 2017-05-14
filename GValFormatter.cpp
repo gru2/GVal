@@ -1,6 +1,7 @@
 #include <GValFormatter.h>
 #include <toString.h>
 #include <GVal.h>
+#include <MultiArraySlice.h>
 
 std::string GValFromatter::toStringSimple(const GVal &x)
 {
@@ -57,5 +58,32 @@ std::string GValFromatter::toStringSimpleMultiArray(const GVal &x)
 		return "not multi array";
 	GValMultiArray *ma = static_cast<GValMultiArray *>(genericValue.get());
 	const SmallVector<size_t, 4> &shape = ma->getShape();
+	MultiArraySlice slice;
+	slice.setWholeArray(shape);
+	std::string r = toStringSimpleMultiArrayRecursive(x, slice);
+}
 
+std::string GValFromatter::toStringSimpleMultiArrayRecursive(const GVal &x, const MultiArraySlice &slice)
+{
+	std::string r = "[";
+	size_t m = slice.shape[0];
+	int n = slice.shape.size();
+	for (size_t i = 0; i < m; i++)
+	{
+		if (n <= 1)
+		{
+			size_t offset = slice.calculateOffset(i);
+			GVal v = x[offset];
+			std::string s = toStringSimple(v);
+			r += s;
+		}
+		else
+		{
+			MultiArraySlice newSlice = slice.slice(0, i);
+			std::string s = toStringSimpleMultiArrayRecursive(x, newSlice);
+		}
+		if (i != m - 1)
+			r += ", ";
+	}
+	return r;
 }
