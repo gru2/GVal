@@ -3,6 +3,7 @@
 #include <GValUtils.h>
 #include <GValParser.h>
 #include <MultiArrayIterator.h>
+#include <MultiArraySlice.h>
 #include <Sutf.h>
 #include <iostream>
 #include <assert.h>
@@ -279,6 +280,61 @@ SUTF_TEST(testGValParser06)
 	Sutf::test(v[0].asFloat() == 1.5f);
 	Sutf::test(v[1].asInt() == 2);
 	Sutf::test(v[2].asString() == "pera");
+}
+
+SUTF_TEST(testMultiArraySlice01)
+{
+	int data[2 * 2 * 3] = {
+	1, 2, 9,
+	3, 4, 5,
+
+	2, 7, 6,
+	0, 8, 3 };
+
+	MultiArraySlice mas;
+	SmallVector<size_t, 4> shape;
+	shape.push_back(2);
+	shape.push_back(2);
+	shape.push_back(3);
+
+	mas.setWholeArray(shape);
+
+	SmallVector<size_t, 4> indices;
+	indices.resize(2);
+
+	MultiArraySlice slice = mas.slice(0, 0);
+
+	indices[0] = 0;
+	indices[1] = 0;
+	Sutf::test(slice.calculateOffset(indices) == 0);
+	indices[1] = 1;
+	Sutf::test(slice.calculateOffset(indices) == 1);
+	indices[1] = 2;
+	Sutf::test(slice.calculateOffset(indices) == 2);
+	indices[0] = 1;
+	indices[1] = 0;
+	Sutf::test(slice.calculateOffset(indices) == 3);
+	indices[1] = 1;
+	Sutf::test(slice.calculateOffset(indices) == 4);
+	indices[1] = 2;
+	Sutf::test(slice.calculateOffset(indices) == 5);
+
+	slice = mas.slice(0, 1);
+
+	indices[0] = 0;
+	indices[1] = 0;
+	Sutf::test(slice.calculateOffset(indices) == 6);
+	indices[1] = 1;
+	Sutf::test(slice.calculateOffset(indices) == 7);
+	indices[1] = 2;
+	Sutf::test(slice.calculateOffset(indices) == 8);
+	indices[0] = 1;
+	indices[1] = 0;
+	Sutf::test(slice.calculateOffset(indices) == 9);
+	indices[1] = 1;
+	Sutf::test(slice.calculateOffset(indices) == 10);
+	indices[1] = 2;
+	Sutf::test(slice.calculateOffset(indices) == 11);
 }
 
 int main(int argc, char *argv[])
