@@ -335,6 +335,79 @@ SUTF_TEST(testMultiArraySlice01)
 	Sutf::test(slice.calculateOffset(indices) == 10);
 	indices[1] = 2;
 	Sutf::test(slice.calculateOffset(indices) == 11);
+
+	slice = mas.slice(1, 0);
+
+	indices[0] = 0;
+	indices[1] = 0;
+	Sutf::test(slice.calculateOffset(indices) == 0);
+	indices[1] = 1;
+	Sutf::test(slice.calculateOffset(indices) == 1);
+	indices[1] = 2;
+	Sutf::test(slice.calculateOffset(indices) == 2);
+	indices[0] = 1;
+	indices[1] = 0;
+	Sutf::test(slice.calculateOffset(indices) == 6);
+	indices[1] = 1;
+	Sutf::test(slice.calculateOffset(indices) == 7);
+	indices[1] = 2;
+	Sutf::test(slice.calculateOffset(indices) == 8);
+
+	slice = mas.slice(1, 1);
+
+	indices[0] = 0;
+	indices[1] = 0;
+	Sutf::test(slice.calculateOffset(indices) == 3);
+	indices[1] = 1;
+	Sutf::test(slice.calculateOffset(indices) == 4);
+	indices[1] = 2;
+	Sutf::test(slice.calculateOffset(indices) == 5);
+	indices[0] = 1;
+	indices[1] = 0;
+	Sutf::test(slice.calculateOffset(indices) == 9);
+	indices[1] = 1;
+	Sutf::test(slice.calculateOffset(indices) == 10);
+	indices[1] = 2;
+	Sutf::test(slice.calculateOffset(indices) == 11);
+
+	slice = mas.slice(2, 0);
+
+	indices[0] = 0;
+	indices[1] = 0;
+	Sutf::test(slice.calculateOffset(indices) == 0);
+	indices[1] = 1;
+	Sutf::test(slice.calculateOffset(indices) == 3);
+	indices[0] = 1;
+	indices[1] = 0;
+	Sutf::test(slice.calculateOffset(indices) == 6);
+	indices[1] = 1;
+	Sutf::test(slice.calculateOffset(indices) == 9);
+
+	slice = mas.slice(2, 1);
+
+	indices[0] = 0;
+	indices[1] = 0;
+	Sutf::test(slice.calculateOffset(indices) == 1);
+	indices[1] = 1;
+	Sutf::test(slice.calculateOffset(indices) == 4);
+	indices[0] = 1;
+	indices[1] = 0;
+	Sutf::test(slice.calculateOffset(indices) == 7);
+	indices[1] = 1;
+	Sutf::test(slice.calculateOffset(indices) == 10);
+
+	slice = mas.slice(2, 2);
+
+	indices[0] = 0;
+	indices[1] = 0;
+	Sutf::test(slice.calculateOffset(indices) == 2);
+	indices[1] = 1;
+	Sutf::test(slice.calculateOffset(indices) == 5);
+	indices[0] = 1;
+	indices[1] = 0;
+	Sutf::test(slice.calculateOffset(indices) == 8);
+	indices[1] = 1;
+	Sutf::test(slice.calculateOffset(indices) == 11);
 }
 
 int main(int argc, char *argv[])

@@ -2,6 +2,7 @@
 #define __MULTI_ARRAY_SLICE_H
 
 #include <SmallVector.h>
+#include <cstddef>
 
 class MultiArraySlice
 {
