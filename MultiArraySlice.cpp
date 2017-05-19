@@ -28,18 +28,19 @@ MultiArraySlice MultiArraySlice::slice(unsigned dim, size_t index)
 			newSlice.stride.push_back(stride[i]);
 		}
 	}
-	offset = stride[dim] * index;
+	newSlice.offset = offset + stride[dim] * index;
+	return newSlice;
 }
 
 void MultiArraySlice::setWholeArray(const SmallVector<size_t, 4> &shape_)
 {
 	shape = shape_;
 	int n = (int)shape.size();
-	shape.resize(n);
+	stride.resize(n);
 	size_t m = 1;
 	for (int i = n - 1; i >= 0; i--)
 	{
-		shape[i] = m;
+		stride[i] = m;
 		m *= shape[i];
 	}
 }
