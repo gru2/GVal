@@ -43,4 +43,5 @@ void MultiArraySlice::setWholeArray(const SmallVector<size_t, 4> &shape_)
 		stride[i] = m;
 		m *= shape[i];
 	}
+	offset = 0;
 }
