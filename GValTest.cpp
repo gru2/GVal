@@ -411,7 +411,7 @@ SUTF_TEST(testMultiArraySlice01)
 	Sutf::test(slice.calculateOffset(indices) == 11);
 }
 
-SUTF_TEST(testGValFormatter)
+SUTF_TEST(testGValFormatter01)
 {
 	GValFormatter gvf;
 	Sutf::test(gvf.toStringSimple(GVal()) == "null");
@@ -426,6 +426,22 @@ SUTF_TEST(testGValFormatter)
 	ma.set(1, 1, GVal(9));
 	//std::cout << gvf.toStringSimple(ma) << "\n";
 	std::string ref = "MAI(2, 2)[[4, 7], [2, 9]]";
+	Sutf::test(gvf.toStringSimple(ma) == ref);
+}
+
+SUTF_TEST(testGValFormatter02)
+{
+	GValFormatter gvf;
+	Sutf::test(gvf.toStringSimple(GVal()) == "null");
+	//std::cout << gvf.toStringSimple(GVal()) << "\n";
+	Sutf::test(gvf.toStringSimple(GVal("pera")) == "'pera'");
+	//std::cout << gvf.toStringSimple(GVal("pera")) << "\n";
+	GVal ma;
+	ma.setMultiArray(2, GVal::GVT_GENERIC);
+	ma.set(0, 0, GVal(4));
+	ma.set(0, 1, GVal("mika"));
+	std::cout << gvf.toStringSimple(ma) << "\n";
+	std::string ref = "[4, 'mika']";
 	Sutf::test(gvf.toStringSimple(ma) == ref);
 }
 

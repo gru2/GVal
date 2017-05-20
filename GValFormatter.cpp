@@ -61,7 +61,10 @@ std::string GValFormatter::toStringSimpleMultiArray(const GVal &x)
 	const SmallVector<size_t, 4> &shape = ma->getShape();
 	MultiArraySlice slice;
 	slice.setWholeArray(shape);
-	std::string r = generateMultiArrayHeader(shape, ma->getEntryType());
+	std::string r;
+	int entryType = ma->getEntryType();
+	if (entryType != GVal::GVT_GENERIC || shape.size() != 1)
+		r = generateMultiArrayHeader(shape, entryType);
 	r += toStringSimpleMultiArrayRecursive(x, slice);
 	return r;
 }
@@ -71,7 +74,8 @@ std::string GValFormatter::toStringSimpleMap(const GVal &x)
 	return std::string();
 }
 
-std::string GValFormatter::toStringSimpleMultiArrayRecursive(const GVal &x, const MultiArraySlice &slice)
+std::string GValFormatter::toStringSimpleMultiArrayRecursive(const GVal &x,
+const MultiArraySlice &slice)
 {
 	std::string r = "[";
 	size_t m = slice.shape[0];
@@ -100,7 +104,8 @@ std::string GValFormatter::toStringSimpleMultiArrayRecursive(const GVal &x, cons
 	return r;
 }
 
-std::string GValFormatter::generateMultiArrayHeader(const SmallVector<size_t, 4> &shape, int entryType)
+std::string GValFormatter::generateMultiArrayHeader(
+const SmallVector<size_t, 4> &shape, int entryType)
 {
 	std::string r;
 	switch (entryType)
