@@ -432,10 +432,6 @@ SUTF_TEST(testGValFormatter01)
 SUTF_TEST(testGValFormatter02)
 {
 	GValFormatter gvf;
-	Sutf::test(gvf.toStringSimple(GVal()) == "null");
-	//std::cout << gvf.toStringSimple(GVal()) << "\n";
-	Sutf::test(gvf.toStringSimple(GVal("pera")) == "'pera'");
-	//std::cout << gvf.toStringSimple(GVal("pera")) << "\n";
 	GVal ma;
 	ma.setMultiArray(2, GVal::GVT_GENERIC);
 	ma.set(0, 0, GVal(4));
@@ -443,6 +439,18 @@ SUTF_TEST(testGValFormatter02)
 	std::cout << gvf.toStringSimple(ma) << "\n";
 	std::string ref = "[4, 'mika']";
 	Sutf::test(gvf.toStringSimple(ma) == ref);
+}
+
+SUTF_TEST(testGValFormatter03)
+{
+	GValFormatter gvf;
+	GVal m;
+	m.setMap();
+	m.set(GVal("pera"), 34);
+	m.set(GVal(4), 0.5);
+	std::cout << gvf.toStringSimple(m) << "\n";
+	std::string ref = "{4 = 0.5; 'pera' = 34;}";
+	Sutf::test(gvf.toStringSimple(m) == ref);
 }
 
 int main(int argc, char *argv[])

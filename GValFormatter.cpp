@@ -71,7 +71,25 @@ std::string GValFormatter::toStringSimpleMultiArray(const GVal &x)
 
 std::string GValFormatter::toStringSimpleMap(const GVal &x)
 {
-	return std::string();
+	if (x.getType() != GVal::GVT_MAP)
+		return "not map";
+	const std::shared_ptr<void> genericValue = x.getGenericValue();
+	GValMap *map = static_cast<GValMap *>(genericValue.get());
+	std::string r = "{";
+	size_t n = map->size();
+	GVal keys = map->keys();
+	for (size_t i = 0; i < n; i++)
+	{
+		GVal key = keys[i];
+		GVal value = x.get(key);
+		std::string keyStr = toStringSimple(key);
+		std::string valueStr = toStringSimple(value);
+		r += keyStr + " = " + valueStr + ";";
+		if (i < n - 1)
+			r += " ";
+	}
+	r += "}";
+	return r;
 }
 
 std::string GValFormatter::toStringSimpleMultiArrayRecursive(const GVal &x,

@@ -174,6 +174,8 @@ public:
 
 	std::shared_ptr<void> &getGenericValue() { return genericValue; }
 	const std::shared_ptr<void> &getGenericValue() const { return genericValue; }
+
+	GVal keys();
 protected:
 	int type;
 	union
@@ -228,8 +230,9 @@ class GValMap
 public:
 	size_t size() { return data.size(); }
 
-	GVal get(const GVal &key);
+	GVal get(const GVal &key) const;
 	void set(const GVal &key, const GVal &value);
+	GVal keys() const;
 protected:
 	int keyType;
 	int valueType;

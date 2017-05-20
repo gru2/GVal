@@ -503,6 +503,13 @@ std::string GVal::typeToString(int type_)
 	}
 }
 
+GVal GVal::keys()
+{
+	if (type != GVT_MAP)
+		error("Map type expected.");
+	return static_cast<GValMap *>(genericValue.get())->keys();
+}
+
 GValMultiArray::GValMultiArray()
 {
 	entryType = GVal::GVT_GENERIC;
@@ -756,10 +763,10 @@ void GValMultiArray::copyObjects(GVal *dst, GVal *src, size_t count)
 	}
 }
 
-GVal GValMap::get(const GVal &key)
+GVal GValMap::get(const GVal &key) const
 {
 	//std::cout << "GValMap::get(type=" << key.getType() << ")... \n";
-	std::map<GVal, GVal>::iterator it = data.find(key);
+	std::map<GVal, GVal>::const_iterator it = data.find(key);
 	if (it == data.end())
 		key.error("unable to find key.");
 	return it->second;
@@ -768,4 +775,17 @@ GVal GValMap::get(const GVal &key)
 void GValMap::set(const GVal &key, const GVal &value)
 {
 	data[key] = value;
+}
+
+GVal GValMap::keys() const
+{
+	GVal r;
+	r.setMultiArray(0, GVal::GVT_GENERIC);
+	std::map<GVal, GVal>::const_iterator it = data.begin();
+	for (; it != data.end(); it++)
+	{
+		GVal key = it->first;
+		r.pushBack(key);
+	}
+	return r;
 }
