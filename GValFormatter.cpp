@@ -3,7 +3,7 @@
 #include <GVal.h>
 #include <MultiArraySlice.h>
 
-std::string GValFromatter::toStringSimple(const GVal &x)
+std::string GValFormatter::toStringSimple(const GVal &x)
 {
 	int type = x.getType();
 	switch (type)
@@ -39,7 +39,7 @@ std::string GValFromatter::toStringSimple(const GVal &x)
 		return toString(v);
 	}
 	case GVal::GVT_STRING:
-		return x.asString();
+		return "'" + x.asString() + "'";
 	case GVal::GVT_MULTI_ARRAY:
 		return toStringSimpleMultiArray(x);
 	case GVal::GVT_MAP:
@@ -52,18 +52,26 @@ std::string GValFromatter::toStringSimple(const GVal &x)
 	}
 }
 
-std::string GValFromatter::toStringSimpleMultiArray(const GVal &x)
+std::string GValFormatter::toStringSimpleMultiArray(const GVal &x)
 {
 	if (x.getType() != GVal::GVT_MULTI_ARRAY)
 		return "not multi array";
+	const std::shared_ptr<void> genericValue = x.getGenericValue();
 	GValMultiArray *ma = static_cast<GValMultiArray *>(genericValue.get());
 	const SmallVector<size_t, 4> &shape = ma->getShape();
 	MultiArraySlice slice;
 	slice.setWholeArray(shape);
-	std::string r = toStringSimpleMultiArrayRecursive(x, slice);
+	std::string r = generateMultiArrayHeader(shape, ma->getEntryType());
+	r += toStringSimpleMultiArrayRecursive(x, slice);
+	return r;
 }
 
-std::string GValFromatter::toStringSimpleMultiArrayRecursive(const GVal &x, const MultiArraySlice &slice)
+std::string GValFormatter::toStringSimpleMap(const GVal &x)
+{
+	return std::string();
+}
+
+std::string GValFormatter::toStringSimpleMultiArrayRecursive(const GVal &x, const MultiArraySlice &slice)
 {
 	std::string r = "[";
 	size_t m = slice.shape[0];
@@ -72,7 +80,9 @@ std::string GValFromatter::toStringSimpleMultiArrayRecursive(const GVal &x, cons
 	{
 		if (n <= 1)
 		{
-			size_t offset = slice.calculateOffset(i);
+			SmallVector<size_t, 4> indices;
+			indices.push_back(i);
+			size_t offset = slice.calculateOffset(indices);
 			GVal v = x[offset];
 			std::string s = toStringSimple(v);
 			r += s;
@@ -81,9 +91,43 @@ std::string GValFromatter::toStringSimpleMultiArrayRecursive(const GVal &x, cons
 		{
 			MultiArraySlice newSlice = slice.slice(0, i);
 			std::string s = toStringSimpleMultiArrayRecursive(x, newSlice);
+			r += s;
 		}
-		if (i != m - 1)
+		if (i < m - 1)
 			r += ", ";
 	}
+	r += "]";
+	return r;
+}
+
+std::string GValFormatter::generateMultiArrayHeader(const SmallVector<size_t, 4> &shape, int entryType)
+{
+	std::string r;
+	switch (entryType)
+	{
+	case GVal::GVT_INT:
+		r = "MAI";
+		break;
+	case GVal::GVT_FLOAT:
+		r = "MAF";
+		break;
+	case GVal::GVT_DOUBLE:
+		r = "MAD";
+		break;
+	case GVal::GVT_GENERIC:
+		r = "MAG";
+		break;
+	default:
+		r = "unknown multi array type";
+	}
+	r += "(";
+	int n = (int)shape.size();
+	for (int i = 0; i < n; i++)
+	{
+		r += toString((long long)shape[i]);
+		if (i < n - 1)
+			r += ", ";
+	}
+	r += ")";
 	return r;
 }

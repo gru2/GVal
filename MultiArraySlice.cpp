@@ -7,7 +7,7 @@ MultiArraySlice::MultiArraySlice()
 
 MultiArraySlice::~MultiArraySlice() { }
 
-size_t MultiArraySlice::calculateOffset(const SmallVector<size_t, 4> &indices)
+size_t MultiArraySlice::calculateOffset(const SmallVector<size_t, 4> &indices) const
 {
 	size_t o = offset;
 	int n = (int)shape.size();
@@ -16,7 +16,7 @@ size_t MultiArraySlice::calculateOffset(const SmallVector<size_t, 4> &indices)
 	return o;
 }
 
-MultiArraySlice MultiArraySlice::slice(unsigned dim, size_t index)
+MultiArraySlice MultiArraySlice::slice(unsigned dim, size_t index) const
 {
 	MultiArraySlice newSlice;
 	int n = (int)shape.size();

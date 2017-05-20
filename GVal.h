@@ -52,11 +52,11 @@ public:
 	void set(size_t i0, size_t i1, size_t i2, const GVal &x);
 	void set(size_t i0, size_t i1, size_t i2, size_t i3, const GVal &x);
 	GVal get(const SmallVector<size_t, 4> &i) const;
-	GVal get(size_t *i, int dim) const;
+	//GVal get(size_t *i, int dim) const;
 	GVal get(const std::string &key) const;
 	GVal get(const GVal &key) const;
 	void set(const SmallVector<size_t, 4> &i, const GVal &x);
-	void set(size_t *i, int dim, const GVal &x);
+	//void set(size_t *i, int dim, const GVal &x);
 	void set(const std::string &key, const GVal &x);
 	void set(const GVal &key, const GVal &x);
 
@@ -172,6 +172,8 @@ public:
 	void error(const std::string &msg) const;
 	static std::string typeToString(int type_);
 
+	std::shared_ptr<void> &getGenericValue() { return genericValue; }
+	const std::shared_ptr<void> &getGenericValue() const { return genericValue; }
 protected:
 	int type;
 	union

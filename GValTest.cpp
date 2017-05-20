@@ -5,6 +5,7 @@
 #include <MultiArrayIterator.h>
 #include <MultiArraySlice.h>
 #include <Sutf.h>
+#include <GValFormatter.h>
 #include <iostream>
 #include <assert.h>
 #include <math.h>
@@ -408,6 +409,24 @@ SUTF_TEST(testMultiArraySlice01)
 	Sutf::test(slice.calculateOffset(indices) == 8);
 	indices[1] = 1;
 	Sutf::test(slice.calculateOffset(indices) == 11);
+}
+
+SUTF_TEST(testGValFormatter)
+{
+	GValFormatter gvf;
+	Sutf::test(gvf.toStringSimple(GVal()) == "null");
+	//std::cout << gvf.toStringSimple(GVal()) << "\n";
+	Sutf::test(gvf.toStringSimple(GVal("pera")) == "'pera'");
+	//std::cout << gvf.toStringSimple(GVal("pera")) << "\n";
+	GVal ma;
+	ma.setMultiArray(2, 2, GVal::GVT_INT);
+	ma.set(0, 0, GVal(4));
+	ma.set(0, 1, GVal(7));
+	ma.set(1, 0, GVal(2));
+	ma.set(1, 1, GVal(9));
+	//std::cout << gvf.toStringSimple(ma) << "\n";
+	std::string ref = "MAI(2, 2)[[4, 7], [2, 9]]";
+	Sutf::test(gvf.toStringSimple(ma) == ref);
 }
 
 int main(int argc, char *argv[])

@@ -14,8 +14,8 @@ public:
 	MultiArraySlice();
 	~MultiArraySlice();
 
-	size_t calculateOffset(const SmallVector<size_t, 4> &inices);
-	MultiArraySlice slice(unsigned dim, size_t index);
+	size_t calculateOffset(const SmallVector<size_t, 4> &inices) const;
+	MultiArraySlice slice(unsigned dim, size_t index) const;
 	void setWholeArray(const SmallVector<size_t, 4> &shape_);
 };
 
