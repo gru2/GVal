@@ -453,6 +453,17 @@ SUTF_TEST(testGValFormatter03)
 	Sutf::test(gvf.toStringSimple(m) == ref);
 }
 
+SUTF_TEST(testIntegrationOfGValFormatterAndGValParser)
+{
+	GValParser gvp;
+	std::string ref = "{1 = 3; 'aca' = 123; 'laza' = [1, 3, 'open', 3.0f, 45.0];}";
+	GVal v = gvp.parseString(ref);
+	GValFormatter gvf;
+	std::string test = gvf.toStringSimple(v);
+	std::cout << test << "\n";
+	Sutf::test(test == ref);
+}
+
 int main(int argc, char *argv[])
 {
 	Sutf::runTests(argc, argv);

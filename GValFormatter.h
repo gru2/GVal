@@ -15,6 +15,7 @@ public:
 	std::string toStringSimpleMap(const GVal &x);
 	std::string toStringSimpleMultiArrayRecursive(const GVal &x, const MultiArraySlice &slice);
 	std::string generateMultiArrayHeader(const SmallVector<size_t, 4> &shape, int entryType);
+	std::string addDotZero(const std::string &x);
 };
 
 #endif

@@ -31,12 +31,16 @@ std::string GValFormatter::toStringSimple(const GVal &x)
 	case GVal::GVT_FLOAT:
 	{
 		float v = x.asFloat();
-		return toString(v);
+		std::string r = toString(v);
+		r = addDotZero(r);
+		return r + "f";
 	}
 	case GVal::GVT_DOUBLE:
 	{
 		double v = x.asDouble();
-		return toString(v);
+		std::string r = toString(v);
+		r = addDotZero(r);
+		return r;
 	}
 	case GVal::GVT_STRING:
 		return "'" + x.asString() + "'";
@@ -153,4 +157,12 @@ const SmallVector<size_t, 4> &shape, int entryType)
 	}
 	r += ")";
 	return r;
+}
+
+std::string GValFormatter::addDotZero(const std::string &x)
+{
+	size_t pos = x.find('.');
+	if (pos >= x.size())
+		return x + ".0";
+	return x;
 }
