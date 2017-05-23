@@ -5,7 +5,7 @@
 #include <memory>
 #include <map>
 #include <SmallVector.h>
-#include <GValProgressReporter.h>
+#include <ProgressReporter.h>
 #include <toString.h>
 
 class GVal
@@ -188,7 +188,7 @@ protected:
 	};
 	std::shared_ptr<void> genericValue;
 	std::string stringValue;
-	GValProgressReporter progressReporter;
+	ProgressReporter progressReporter;
 };
 
 class GValMultiArray

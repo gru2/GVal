@@ -1,7 +1,7 @@
 #ifndef __GVAL_PARSER_H
 #define __GVAL_PARSER_H
 
-#include <GValProgressReporter.h>
+#include <ProgressReporter.h>
 #include <GVal.h>
 #include <string>
 #include <vector>
@@ -68,7 +68,7 @@ public:
 	std::vector<char> buffer;
 	GVal lexerValue;
 	ParserState parserState;
-	GValProgressReporter progressReporter;
+	ProgressReporter progressReporter;
 	std::string inputString;
 	int inputStringPosition;
 	std::vector<int> returnedChars;

@@ -1,9 +1,9 @@
-#ifndef __GVAL_PROGRESS_REPORTER_H
-#define __GVAL_PROGRESS_REPORTER_H
+#ifndef __PROGRESS_REPORTER_H
+#define __PROGRESS_REPORTER_H
 
 #include <string>
 
-class GValProgressReporter
+class ProgressReporter
 {
 public:
 	void error(const std::string &msg) const;
