@@ -20,6 +20,8 @@ public:
 	virtual bool atEnd();
 
 	FILE *file;
+	size_t fileSize;
+	size_t position;
 };
 
 #endif

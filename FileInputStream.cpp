@@ -17,16 +17,20 @@ void FileInputStream::open(const std::string &fileName)
 {
 }
 
-void FileInputStream::readBytes(size_t size, char * buffer)
+void FileInputStream::readBytes(size_t size, char *buffer)
 {
+	position += size;
+	fread(buffer, 1, size, file);
 }
 
 bool FileInputStream::check()
 {
-	return false;
+	return true;
 }
 
 bool FileInputStream::atEnd()
 {
-	return false;
+	if (position < fileSize)
+		return false;
+	return true;
 }
