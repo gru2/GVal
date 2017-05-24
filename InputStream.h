@@ -1,6 +1,8 @@
 #ifndef __INPUT_STREAM_H
 #define __INPUT_STREAM_H
 
+#include <cstddef>
+
 class InputStream
 {
 public:

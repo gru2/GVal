@@ -14,6 +14,8 @@ public:
 	~FileInputStream();
 
 	void open(const std::string &fileName);
+	void close();
+	size_t getFileSize();
 
 	virtual void readBytes(size_t size, char *buffer);
 	virtual bool check();
