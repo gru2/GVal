@@ -15,6 +15,7 @@ FileInputStream::~FileInputStream()
 
 void FileInputStream::open(const std::string &fileName)
 {
+	file = fopen(fileName.c_str(), "rb");
 }
 
 void FileInputStream::readBytes(size_t size, char *buffer)
@@ -25,6 +26,10 @@ void FileInputStream::readBytes(size_t size, char *buffer)
 
 bool FileInputStream::check()
 {
+	if (file == 0)
+		return false;
+	if (position > fileSize)
+		return false;
 	return true;
 }
 
