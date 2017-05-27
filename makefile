@@ -4,9 +4,9 @@ CPPFLAGS = $(OPT_FLAGS) -I. -std=c++11
 
 TARGETS = GValTest 
 
-GVAL_TEST_OBJS=GValTest.o GVal.o GValProgressReporter.o GValUtils.o Sutf.o \
+GVAL_TEST_OBJS=GValTest.o GVal.o ProgressReporter.o GValUtils.o Sutf.o \
 GValParser.o toString.o MultiArrayIterator.o MultiArraySlice.o \
-GValFormatter.o FileInputStream.o
+GValFormatter.o FileStream.o BinaryStream.o
 
 all: $(TARGETS)
 
