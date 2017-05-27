@@ -10,6 +10,10 @@ FileStream::FileStream()
 
 FileStream::FileStream(const std::string &fileName, FileStream::ModeType mode_)
 {
+	mode = READ_MODE;
+	file = 0;
+	position = 0;
+	fileSize = 0;
 	open(fileName, mode_);
 }
 

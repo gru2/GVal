@@ -6,10 +6,12 @@
 #include <MultiArraySlice.h>
 #include <Sutf.h>
 #include <GValFormatter.h>
+#include <FileStream.h>
 #include <iostream>
 #include <assert.h>
 #include <math.h>
 #include <stdlib.h>
+#include <cstdio>
 
 SUTF_TEST(testSmallVector)
 {
@@ -464,9 +466,27 @@ SUTF_TEST(testIntegrationOfGValFormatterAndGValParser)
 	Sutf::test(test == ref);
 }
 
+SUTF_TEST(testFileStream)
+{
+	std::string fileName = "xyz235355az";
+	const int fileSize = 5;
+	FileStream fs(fileName, FileStream::WRITE_MODE);
+	char buffer1[fileSize] = { 45, 127, -128, 0, -1 };
+	char buffer2[fileSize] = { 0, 0, 0, 0, 0 };
+	fs.writeBytes(fileSize, buffer1);
+	fs.close();
+	fs.open(fileName, FileStream::READ_MODE);
+	Sutf::test(fs.atEnd() == false);
+	fs.readBytes(fileSize, buffer2);
+	Sutf::test(fs.atEnd() == true);
+	Sutf::test(fs.check() == true);
+	fs.close();
+	// remove file fileName
+}
+
 int main(int argc, char *argv[])
 {
 	Sutf::runTests(argc, argv);
-	//testGValParser031();
+	//testFileStream();
 	return 0;
 }
