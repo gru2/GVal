@@ -8,6 +8,7 @@
 #include <GValFormatter.h>
 #include <FileStream.h>
 #include <BinaryStream.h>
+#include <MemoryStream.h>
 #include <iostream>
 #include <assert.h>
 #include <math.h>
@@ -515,6 +516,30 @@ SUTF_TEST(testBinaryStream)
 	Sutf::test(ct == cr);
 	Sutf::test(it == ir);
 	Sutf::test(ft == fr);
+	Sutf::test(dt == dr);
+}
+
+SUTF_TEST(testMemoryStream)
+{
+	std::string fileName = "test_brfjrtyrt53546gfg";
+	MemoryStream ms;
+	BinaryStream bs(&ms);
+
+	char cr = -1;
+	int ir = 123456;
+	double dr = -44.75;
+	bs.writeByte(cr);
+	bs.writeInt(ir);
+	bs.writeDouble(dr);
+
+	Sutf::test(ms.atEnd() == false);
+	char ct = bs.readByte();
+	int it = bs.readInt();
+	double dt = bs.readDouble();
+	Sutf::test(ms.atEnd() == true);
+	Sutf::test(ms.check() == true);
+	Sutf::test(ct == cr);
+	Sutf::test(it == ir);
 	Sutf::test(dt == dr);
 }
 
