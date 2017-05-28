@@ -13,6 +13,9 @@ public:
 	void write(const GVal &x);
 	GVal read();
 
+
+	writeMultiArray(GValMultiArray *x);
+	writeMap(GValMap *x);
 	BinaryStream *binaryStream;
 };
 

@@ -30,8 +30,13 @@ void GValSerialzier::write(const GVal &x)
 		bs.writeDouble(x.asDouble());
 		break;
 	case GVal::GVT_STRING:
-
+		bs.writeString(x.asString());
 		break;
+	case GVal::GVT_MULTI_ARRAY:
+		writeMultiArray(x);
+		break;
+	case GVal::GVT_MAP:
+		writeMap(x);
 	default:
 		progressReporter.error("GValSerialzier::write bad GVal type "
 		+ toString(type));
@@ -39,6 +44,21 @@ void GValSerialzier::write(const GVal &x)
 }
 
 GVal GValSerialzier::read()
+{
+
+}
+
+GValSerialzier::writeMultiArray(GValMultiArray *x)
+{
+	BinaryStream &bs = *binaryStream;
+	SmallVector<size_t, 4> &shape = x->getShape();
+	int nDims = (int)shape.size();
+	bs.writeInt((int)nDims);
+	for (int i = 0; i < nDims; i++)
+		bs.writeLong((long long)shape[i]);
+}
+
+GValSerialzier::writeMap(GValMap *x)
 {
 
 }
