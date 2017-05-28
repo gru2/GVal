@@ -6,6 +6,8 @@ class Stream;
 class BinaryStream
 {
 public:
+	BinaryStream(Stream *s);
+
 	unsigned char readByte();
 	int readInt();
 	float readFloat();

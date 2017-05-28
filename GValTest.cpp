@@ -7,6 +7,7 @@
 #include <Sutf.h>
 #include <GValFormatter.h>
 #include <FileStream.h>
+#include <BinaryStream.h>
 #include <iostream>
 #include <assert.h>
 #include <math.h>
@@ -468,7 +469,7 @@ SUTF_TEST(testIntegrationOfGValFormatterAndGValParser)
 
 SUTF_TEST(testFileStream)
 {
-	std::string fileName = "xyz235355az";
+	std::string fileName = "test_xyz235355az";
 	const int fileSize = 5;
 	FileStream fs(fileName, FileStream::WRITE_MODE);
 	char buffer1[fileSize] = { 45, 127, -128, 0, -1 };
@@ -481,12 +482,45 @@ SUTF_TEST(testFileStream)
 	Sutf::test(fs.atEnd() == true);
 	Sutf::test(fs.check() == true);
 	fs.close();
-	// remove file fileName
+	remove(fileName.c_str());
+	for (int i = 0; i < fileSize; i++)
+		Sutf::test(buffer1[i] == buffer2[i]);
+}
+
+SUTF_TEST(testBinaryStream)
+{
+	std::string fileName = "test_brfjrtyrt53546gfg";
+	FileStream fs(fileName, FileStream::WRITE_MODE);
+	BinaryStream bs(&fs);
+	
+	char cr = 17;
+	int ir = 123456;
+	float fr = 4.5f;
+	double dr = 17.25;
+	bs.writeByte(cr);
+	bs.writeInt(ir);
+	bs.writeFloat(fr);
+	bs.writeDouble(dr);
+	fs.close();
+	fs.open(fileName, FileStream::READ_MODE);
+	Sutf::test(fs.atEnd() == false);
+	char ct = bs.readByte();
+	int it = bs.readInt();
+	float ft = bs.readFloat();
+	double dt = bs.readDouble();
+	Sutf::test(fs.atEnd() == true);
+	Sutf::test(fs.check() == true);
+	fs.close();
+	remove(fileName.c_str());
+	Sutf::test(ct == cr);
+	Sutf::test(it == ir);
+	Sutf::test(ft == fr);
+	Sutf::test(dt == dr);
 }
 
 int main(int argc, char *argv[])
 {
 	Sutf::runTests(argc, argv);
-	//testFileStream();
+	//testBinaryStream();
 	return 0;
 }

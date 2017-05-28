@@ -1,6 +1,8 @@
 #include <BinaryStream.h>
 #include <Stream.h>
 
+BinaryStream::BinaryStream(Stream *s) : stream(s) { }
+
 unsigned char BinaryStream::readByte()
 {
 	char x;
