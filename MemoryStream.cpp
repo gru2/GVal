@@ -11,7 +11,7 @@ void MemoryStream::reset()
 	buffer.clear();
 }
 
-void MemoryStream::writeBytes(size_t size, char *data)
+void MemoryStream::writeBytes(size_t size, const char *data)
 {
 	size_t n = buffer.size();
 	buffer.resize(n + size);

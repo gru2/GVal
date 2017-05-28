@@ -38,6 +38,14 @@ double BinaryStream::readDouble()
 	return x;
 }
 
+std::string BinaryStream::readString()
+{
+	long long len = readLong();
+	std::string x((size_t)len, ' ');
+	stream->readBytes((size_t)len, &x[0]);
+	return x;
+}
+
 void BinaryStream::writeByte(unsigned char x)
 {
 	stream->writeBytes(1, reinterpret_cast<char *>(&x));
@@ -61,4 +69,11 @@ void BinaryStream::writeFloat(float x)
 void BinaryStream::writeDouble(double x)
 {
 	stream->writeBytes(8, reinterpret_cast<char *>(&x));
+}
+
+void BinaryStream::writeString(const std::string &x)
+{
+	long long n = (long long)x.size();
+	writeLong(n);
+	stream->writeBytes((size_t)n, &x[0]);
 }

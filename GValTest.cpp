@@ -499,11 +499,13 @@ SUTF_TEST(testBinaryStream)
 	long long lr = 1234567890LL;
 	float fr = 4.5f;
 	double dr = 17.25;
+	std::string sr = "bar";
 	bs.writeByte(cr);
 	bs.writeInt(ir);
 	bs.writeLong(lr);
 	bs.writeFloat(fr);
 	bs.writeDouble(dr);
+	bs.writeString(sr);
 	fs.close();
 	fs.open(fileName, FileStream::READ_MODE);
 	Sutf::test(fs.atEnd() == false);
@@ -512,6 +514,7 @@ SUTF_TEST(testBinaryStream)
 	int lt = bs.readLong();
 	float ft = bs.readFloat();
 	double dt = bs.readDouble();
+	std::string st = bs.readString();
 	Sutf::test(fs.atEnd() == true);
 	Sutf::test(fs.check() == true);
 	fs.close();
@@ -521,6 +524,7 @@ SUTF_TEST(testBinaryStream)
 	Sutf::test(lt == lr);
 	Sutf::test(ft == fr);
 	Sutf::test(dt == dr);
+	Sutf::test(st == sr);
 }
 
 SUTF_TEST(testMemoryStream)

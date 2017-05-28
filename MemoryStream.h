@@ -11,7 +11,7 @@ public:
 
 	void reset();
 
-	virtual void writeBytes(size_t size, char *buffer);
+	virtual void writeBytes(size_t size, const char *buffer);
 	virtual void readBytes(size_t size, char *buffer);
 	virtual bool check();
 	virtual bool atEnd();

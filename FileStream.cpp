@@ -64,7 +64,7 @@ size_t FileStream::getFileSize()
 	return fs;
 }
 
-void FileStream::writeBytes(size_t size, char *buffer)
+void FileStream::writeBytes(size_t size, const char *buffer)
 {
 	position += size;
 	fwrite(buffer, 1, size, file);
