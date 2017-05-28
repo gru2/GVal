@@ -17,6 +17,13 @@ int BinaryStream::readInt()
 	return x;
 }
 
+long long BinaryStream::readLong()
+{
+	long long x;
+	stream->readBytes(8, (char *)&x);
+	return x;
+}
+
 float BinaryStream::readFloat()
 {
 	float x;
@@ -39,6 +46,11 @@ void BinaryStream::writeByte(unsigned char x)
 void BinaryStream::writeInt(int x)
 {
 	stream->writeBytes(4, reinterpret_cast<char *>(&x));
+}
+
+void BinaryStream::writeLong(long long x)
+{
+	stream->writeBytes(8, reinterpret_cast<char *>(&x));
 }
 
 void BinaryStream::writeFloat(float x)

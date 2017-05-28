@@ -10,11 +10,13 @@ public:
 
 	unsigned char readByte();
 	int readInt();
+	long long readLong();
 	float readFloat();
 	double readDouble();
 
 	void writeByte(unsigned char x);
 	void writeInt(int x);
+	void writeLong(long long x);
 	void writeFloat(float x);
 	void writeDouble(double x);
 

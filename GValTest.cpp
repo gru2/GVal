@@ -496,10 +496,12 @@ SUTF_TEST(testBinaryStream)
 	
 	char cr = 17;
 	int ir = 123456;
+	long long lr = 1234567890LL;
 	float fr = 4.5f;
 	double dr = 17.25;
 	bs.writeByte(cr);
 	bs.writeInt(ir);
+	bs.writeLong(lr);
 	bs.writeFloat(fr);
 	bs.writeDouble(dr);
 	fs.close();
@@ -507,6 +509,7 @@ SUTF_TEST(testBinaryStream)
 	Sutf::test(fs.atEnd() == false);
 	char ct = bs.readByte();
 	int it = bs.readInt();
+	int lt = bs.readLong();
 	float ft = bs.readFloat();
 	double dt = bs.readDouble();
 	Sutf::test(fs.atEnd() == true);
@@ -515,6 +518,7 @@ SUTF_TEST(testBinaryStream)
 	remove(fileName.c_str());
 	Sutf::test(ct == cr);
 	Sutf::test(it == ir);
+	Sutf::test(lt == lr);
 	Sutf::test(ft == fr);
 	Sutf::test(dt == dr);
 }
