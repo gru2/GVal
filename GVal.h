@@ -212,13 +212,14 @@ public:
 	int getEntryType() const { return entryType; }
 	void resizeAndSetEntryType(size_t *i, int dim, int entryType_);
 	const SmallVector<size_t, 4> &getShape() { return shape; }
+	void *getData() const { return data; }
+	size_t getEntrySize(int type) const;
 protected:
 	int entryType;
 	SmallVector<size_t, 4> shape;
 	size_t capacity;
 	void *data;
 
-	size_t getEntrySize(int type) const;
 	size_t calculateOffset(size_t *i, int dim) const;
 	void createObjects(GVal *objs, size_t count);
 	void destroyObjects(GVal *objs, size_t count);

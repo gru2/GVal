@@ -2,6 +2,7 @@
 #define __GVAL_SERIALIZER_H
 
 #include <GVal.h>
+#include <ProgressReporter.h>
 
 class BinaryStream;
 
@@ -12,11 +13,13 @@ public:
 
 	void write(const GVal &x);
 	GVal read();
+	GVal readMultiArray();
+	GVal readMap();
 
-
-	writeMultiArray(GValMultiArray *x);
-	writeMap(GValMap *x);
+	writeMultiArray(const GVal &x);
+	writeMap(const GVal &x);
 	BinaryStream *binaryStream;
+	ProgressReporter progressReporter;
 };
 
 #endif
