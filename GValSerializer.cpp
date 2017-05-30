@@ -1,12 +1,12 @@
 #include <GValSerializer.h>
 #include <BinaryStream.h>
 
-GValSerialzier::GValSerialzier()
+GValSerializer::GValSerializer()
 {
 	binaryStream = 0;
 }
 
-void GValSerialzier::write(const GVal &x)
+void GValSerializer::write(const GVal &x)
 {
 	BinaryStream &bs = *binaryStream;
 	int type = x.getType();
@@ -43,7 +43,7 @@ void GValSerialzier::write(const GVal &x)
 	}
 }
 
-GVal GValSerialzier::read()
+GVal GValSerializer::read()
 {
 	BinaryStream &bs = *binaryStream;
 	int type = bs.readInt();
@@ -91,7 +91,7 @@ GVal GValSerialzier::read()
 	return GVal();
 }
 
-GVal GValSerialzier::readMultiArray()
+GVal GValSerializer::readMultiArray()
 {
 	BinaryStream &bs = *binaryStream;
 	int entryType = bs.readInt();
@@ -160,7 +160,7 @@ GVal GValSerialzier::readMultiArray()
 	return r;
 }
 
-GVal GValSerialzier::readMap()
+GVal GValSerializer::readMap()
 {
 	GVal r;
 	r.setMap();
@@ -169,12 +169,12 @@ GVal GValSerialzier::readMap()
 	{
 		GVal key = read();
 		GVal value = read();
-		r[key] = value;
+		r.set(key, value);
 	}
 	return r;
 }
 
-void GValSerialzier::writeMultiArray(const GVal &x)
+void GValSerializer::writeMultiArray(const GVal &x)
 {
 	ProgressReporter &pr = progressReporter;
 	if (x.getType() != GVal::GVT_MULTI_ARRAY)
@@ -241,7 +241,7 @@ void GValSerialzier::writeMultiArray(const GVal &x)
 	}
 }
 
-void GValSerialzier::writeMap(const GVal &x)
+void GValSerializer::writeMap(const GVal &x)
 {
 	ProgressReporter &pr = progressReporter;
 	if (x.getType() != GVal::GVT_MAP)

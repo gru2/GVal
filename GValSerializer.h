@@ -6,10 +6,10 @@
 
 class BinaryStream;
 
-class GValSerialzier
+class GValSerializer
 {
 public:
-	GValSerialzier();
+	GValSerializer();
 
 	void write(const GVal &x);
 	GVal read();

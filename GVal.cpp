@@ -35,6 +35,34 @@ bool GVal::operator < (const GVal &x) const
 	}
 	return false;
 }
+bool GVal::operator == (const GVal &x) const
+{
+	if (type != x.type)
+		return false;
+	switch (type)
+	{
+	case GVT_NULL:
+		return true;
+	case GVT_BOOL:
+		return boolValue == x.boolValue;
+	case GVT_INT:
+		return intValue == x.intValue;
+	case GVT_LONG:
+		return longValue == x.longValue;
+	case GVT_FLOAT:
+		return floatValue == x.floatValue;
+	case GVT_DOUBLE:
+		return doubleValue == x.doubleValue;
+	case GVT_STRING:
+		return stringValue == x.stringValue;
+	case GVT_MULTI_ARRAY:
+	case GVT_MAP:
+		return genericValue == x.genericValue; // TODO
+		break;
+	}
+	return false;
+}
+
 
 GVal GVal::get(size_t i0) const
 {

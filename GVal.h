@@ -33,6 +33,7 @@ public:
 
 	GVal &operator = (const GVal &x);
 	bool operator < (const GVal &x) const;
+	bool operator == (const GVal &x) const;
 
 	int getType() const { return type; }
 	void setType(int x) { type = x; }

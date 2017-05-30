@@ -9,6 +9,7 @@
 #include <FileStream.h>
 #include <BinaryStream.h>
 #include <MemoryStream.h>
+#include <GValSerializer.h>
 #include <iostream>
 #include <assert.h>
 #include <math.h>
@@ -529,7 +530,6 @@ SUTF_TEST(testBinaryStream)
 
 SUTF_TEST(testMemoryStream)
 {
-	std::string fileName = "test_brfjrtyrt53546gfg";
 	MemoryStream ms;
 	BinaryStream bs(&ms);
 
@@ -549,6 +549,18 @@ SUTF_TEST(testMemoryStream)
 	Sutf::test(ct == cr);
 	Sutf::test(it == ir);
 	Sutf::test(dt == dr);
+}
+
+SUTF_TEST(testGValSerializer)
+{
+	GValSerializer gvs;
+	MemoryStream ms;
+	BinaryStream bs(&ms);
+	gvs.binaryStream = &bs;
+	GVal r = GVal(4);
+	gvs.write(r);
+	GVal t = gvs.read();
+	Sutf::test(r == t);
 }
 
 int main(int argc, char *argv[])
