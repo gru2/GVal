@@ -16,8 +16,8 @@ public:
 	GVal readMultiArray();
 	GVal readMap();
 
-	writeMultiArray(const GVal &x);
-	writeMap(const GVal &x);
+	void writeMultiArray(const GVal &x);
+	void writeMap(const GVal &x);
 	BinaryStream *binaryStream;
 	ProgressReporter progressReporter;
 };

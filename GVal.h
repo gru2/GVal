@@ -19,6 +19,7 @@ public:
 	GVal() : type(GVT_NULL) { }
 	GVal(bool x) : type(GVT_BOOL) { boolValue = x; }
 	GVal(int x) : type(GVT_INT) { intValue = x; }
+	GVal(long long x) : type(GVT_LONG) { longValue = x; }
 	GVal(float x) : type(GVT_FLOAT) { floatValue = x; }
 	GVal(double x) : type(GVT_DOUBLE) { doubleValue = x; }
 	GVal(const std::string &x) : type(GVT_STRING) { stringValue = x; }

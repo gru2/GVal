@@ -100,7 +100,7 @@ GVal GValSerialzier::readMap()
 	return GVal();
 }
 
-GValSerialzier::writeMultiArray(const GVal &x)
+void GValSerialzier::writeMultiArray(const GVal &x)
 {
 	ProgressReporter &pr = progressReporter;
 	if (x.getType() != GVal::GVT_MULTI_ARRAY)
@@ -108,7 +108,7 @@ GValSerialzier::writeMultiArray(const GVal &x)
 	const std::shared_ptr<void> genericValue = x.getGenericValue();
 	GValMultiArray *ma = static_cast<GValMultiArray *>(genericValue.get());
 	BinaryStream &bs = *binaryStream;
-	SmallVector<size_t, 4> &shape = ma->getShape();
+	const SmallVector<size_t, 4> &shape = ma->getShape();
 	int nDims = (int)shape.size();
 	bs.writeInt((int)nDims);
 	for (int i = 0; i < nDims; i++)
@@ -127,28 +127,28 @@ GValSerialzier::writeMultiArray(const GVal &x)
 	}
 	case GVal::GVT_INT:
 	{
-		bool *p = static_cast<int *>(data);
+		int *p = static_cast<int *>(data);
 		for (size_t i = 0; i < n; i++)
 			bs.writeInt(*p++);
 		break;
 	}
 	case GVal::GVT_LONG:
 	{
-		bool *p = static_cast<long long *>(data);
+		long long *p = static_cast<long long *>(data);
 		for (size_t i = 0; i < n; i++)
 			bs.writeLong(*p++);
 		break;
 	}
 	case GVal::GVT_FLOAT:
 	{
-		bool *p = static_cast<float *>(data);
+		float *p = static_cast<float *>(data);
 		for (size_t i = 0; i < n; i++)
 			bs.writeFloat(*p++);
 		break;
 	}
 	case GVal::GVT_DOUBLE:
 	{
-		bool *p = static_cast<double *>(data);
+		double *p = static_cast<double *>(data);
 		for (size_t i = 0; i < n; i++)
 			bs.writeDouble(*p++);
 		break;
@@ -157,7 +157,7 @@ GValSerialzier::writeMultiArray(const GVal &x)
 	{
 		GVal *p = static_cast<GVal *>(data);
 		for (size_t i = 0; i < n; i++)
-			bs.write(*p++);
+			write(*p++);
 		break;
 	}
 	default:
@@ -166,7 +166,7 @@ GValSerialzier::writeMultiArray(const GVal &x)
 	}
 }
 
-GValSerialzier::writeMap(const GVal &x)
+void GValSerialzier::writeMap(const GVal &x)
 {
 	ProgressReporter &pr = progressReporter;
 	if (x.getType() != GVal::GVT_MAP)

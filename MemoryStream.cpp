@@ -1,4 +1,5 @@
 #include <MemoryStream.h>
+#include <algorithm>
 
 MemoryStream::MemoryStream()
 {
@@ -26,7 +27,7 @@ void MemoryStream::readBytes(size_t size, char *data)
 		position += size;
 		return;
 	}
-	size_t n = std::min(size, buffer.size() - position);
+	size_t n = std::min<size_t>(size, buffer.size() - position);
 	for (int i = 0; i < n; i++)
 		data[i] = buffer[position + i];
 	position += size;
