@@ -510,6 +510,15 @@ GVal GVal::keys()
 	return static_cast<GValMap *>(genericValue.get())->keys();
 }
 
+void * GVal::getData()
+{
+	if (type != GVT_MULTI_ARRAY)
+	{
+		error("type does not support shape");
+	}
+	return static_cast<GValMultiArray *>(genericValue.get())->getData();
+}
+
 GValMultiArray::GValMultiArray()
 {
 	entryType = GVal::GVT_GENERIC;
