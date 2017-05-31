@@ -590,6 +590,32 @@ SUTF_TEST(testGValSerializer03)
 	Sutf::test(r(1, 1) != GVal(74));
 }
 
+SUTF_TEST(testGValCompareMultiArray)
+{
+	GVal a = gvParseString("MAI(2, 3)[[1, 4, 5], [5, 75, 9]]");
+	GVal b = gvParseString("MAI(2, 3)[[1, 4, 5], [5, 75, 9]]");
+	GVal c = gvParseString("MAI(2, 3)[[1, 4, 5], [5, 76, 9]]");
+	Sutf::test(a == b);
+	Sutf::test(!(a == c));
+	Sutf::test(a != c);
+	Sutf::test(a < c);
+	Sutf::test(c > a);
+	Sutf::test(!(b > a));
+}
+
+SUTF_TEST(testGValCompareMap)
+{
+	GVal a = gvParseString("{ 1 = 4; 'a' = 'pera'; 'c' = 45.0; }");
+	GVal b = gvParseString("{ 1 = 4; 'a' = 'pera'; 'c' = 45.0; }");
+	GVal c = gvParseString("{ 1 = 4; 'a' = 'pera'; 'c' = 45.5; }");
+	Sutf::test(!(a == c));
+	Sutf::test(a == b);
+	Sutf::test(a != c);
+	Sutf::test(a < c);
+	Sutf::test(c > a);
+	Sutf::test(!(b > a));
+}
+
 int main(int argc, char *argv[])
 {
 	Sutf::runTests(argc, argv);

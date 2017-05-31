@@ -156,7 +156,7 @@ int GVal::compareMap(const GVal &x) const
 		GVal lhsKey = keys_[i];
 		GVal rhsKey = xkeys[i];
 		GVal lhsValue = get(lhsKey);
-		GVal rhsValue = get(rhsKey);
+		GVal rhsValue = x.get(rhsKey);
 		if (lhsValue < rhsValue)
 			return -1;
 		if (lhsValue > rhsValue)
@@ -555,8 +555,11 @@ GVal GVal::popBack()
 
 GVal GVal::keys() const
 {
-	return GVal(); // TODO
+	if (type != GVT_MAP)
+		error("Map type expected.");
+	return static_cast<GValMap *>(genericValue.get())->keys();
 }
+
 
 bool GVal::check(const std::string &key) const
 {
@@ -652,13 +655,6 @@ std::string GVal::typeToString(int type_)
 			//return "Unknown(" + std::to_string("
 			return "Unknown()";
 	}
-}
-
-GVal GVal::keys()
-{
-	if (type != GVT_MAP)
-		error("Map type expected.");
-	return static_cast<GValMap *>(genericValue.get())->keys();
 }
 
 void * GVal::getData()
