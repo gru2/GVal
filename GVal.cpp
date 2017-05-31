@@ -29,12 +29,19 @@ bool GVal::operator < (const GVal &x) const
 		case GVT_STRING:
 			return stringValue < x.stringValue;
 		case GVT_MULTI_ARRAY:
+			return compareMultiArray(x) < 0;
 		case GVT_MAP:
-			return genericValue < x.genericValue; // TODO
+			return compareMap(x) < 0;
 			break;
 	}
 	return false;
 }
+
+bool GVal::operator > (const GVal &x) const
+{
+	return x < *this;
+}
+
 bool GVal::operator == (const GVal &x) const
 {
 	if (type != x.type)
@@ -56,11 +63,107 @@ bool GVal::operator == (const GVal &x) const
 	case GVT_STRING:
 		return stringValue == x.stringValue;
 	case GVT_MULTI_ARRAY:
+		return compareMultiArray(x) == 0;
 	case GVT_MAP:
-		return genericValue == x.genericValue; // TODO
-		break;
+		return compareMap(x) == 0;
 	}
 	return false;
+}
+
+bool GVal::operator != (const GVal &x) const
+{
+	return !(*this == x);
+}
+
+int GVal::compareMultiArray(const GVal &x) const
+{
+	if (x.type != GVT_MULTI_ARRAY || type != GVT_MULTI_ARRAY)
+		return 1;
+
+	GValMultiArray *ma = static_cast<GValMultiArray *>(genericValue.get());
+	GValMultiArray *xma = static_cast<GValMultiArray *>(x.genericValue.get());
+
+	// Compare entry types.
+	if (ma->getEntryType() < xma->getEntryType())
+		return -1;
+	if (ma->getEntryType() > xma->getEntryType())
+		return 1;
+
+	const SmallVector<size_t, 4> &shape = ma->getShape();
+	const SmallVector<size_t, 4> &xshape = xma->getShape();
+
+	// Compare shape sizes.
+	int nDims = (int)shape.size();
+	if (nDims < (int)xshape.size())
+		return -1;
+	if (nDims > (int)xshape.size())
+		return 1;
+
+	// Compare shapes.
+	for (int i = 0; i < nDims; i++)
+	{
+		if (shape[i] < xshape[i])
+			return -1;
+		if (shape[i] > xshape[i])
+			return 1;
+	}
+
+	// Compare elements.
+	size_t n = ma->size();
+	for (size_t i = 0; i < n; i++)
+	{
+		GVal lhs = ma->getLinear(i);
+		GVal rhs = xma->getLinear(i);
+		if (lhs < rhs)
+			return -1;
+		if (rhs < lhs)
+			return 1;
+	}
+
+	return 0;
+}
+
+int GVal::compareMap(const GVal &x) const
+{
+	if (x.getType() != GVT_MAP || type != GVT_MAP)
+		return 1;
+
+	GVal keys_ = keys();
+	GVal xkeys = x.keys();
+
+	size_t nKeys = keys_.size();
+
+	// Compare number of slots.
+	if (nKeys < xkeys.size())
+		return -1;
+	if (nKeys > xkeys.size())
+		return 1;
+
+	// Compare keys.
+	for (size_t i = 0; i < nKeys; i++)
+	{
+		GVal lhsKey = keys_[i];
+		GVal rhsKey = xkeys[i];
+		if (lhsKey < rhsKey)
+			return -1;
+		if (lhsKey > rhsKey)
+			return 1;
+	}
+
+	// Compare values.
+	for (size_t i = 0; i < nKeys; i++)
+	{
+		GVal lhsKey = keys_[i];
+		GVal rhsKey = xkeys[i];
+		GVal lhsValue = get(lhsKey);
+		GVal rhsValue = get(rhsKey);
+		if (lhsValue < rhsValue)
+			return -1;
+		if (lhsValue > rhsValue)
+			return 1;
+	}
+
+	return 0;
 }
 
 
@@ -238,7 +341,7 @@ void GVal::set(const std::string &key, const GVal &x)
 {
 	if (type != GVT_MAP)
 	{
-		error("multi array type expected.");
+		error("map type expected.");
 		return;
 	}
 	GVal key_;
@@ -250,10 +353,30 @@ void GVal::set(const GVal &key, const GVal &x)
 {
 	if (type != GVT_MAP)
 	{
-		error("multi array type expected.");
+		error("map type expected.");
 		return;
 	}
 	static_cast<GValMap *>(genericValue.get())->set(key, x);
+}
+
+GVal GVal::getLinear(size_t i) const
+{
+	if (type != GVT_MULTI_ARRAY)
+	{
+		error("multi array type expected.");
+		return GVal();
+	}
+	return static_cast<GValMultiArray *>(genericValue.get())->getLinear(i);
+}
+
+void GVal::setLinear(size_t i, const GVal &x)
+{
+	if (type != GVT_MULTI_ARRAY)
+	{
+		error("multi array type expected.");
+		return;
+	}
+	return static_cast<GValMultiArray *>(genericValue.get())->setLinear(i, x);
 }
 
 void GVal::copyContentFrom(const GVal &x)
@@ -617,6 +740,66 @@ void GValMultiArray::set(size_t *i, int dim, const GVal &x)
 {
 	//std::cout << "GValMultiArray::set(*i = " << *i << ", dim = " << dim << ",..)\n";
 	size_t offset = calculateOffset(i, dim);
+	char *p1 = (char *)data + offset;
+	void *p = static_cast<void *>(p1);
+	//std::cout << "entryType = " << entryType << "\n";
+	switch (entryType)
+	{
+	case GVal::GVT_BOOL:
+		*static_cast<bool *>(p) = x.asBool();
+		break;
+	case GVal::GVT_INT:
+		*static_cast<int *>(p) = x.asInt();
+		break;
+	case GVal::GVT_LONG:
+		*static_cast<long long *>(p) = x.asLong();
+		break;
+	case GVal::GVT_FLOAT:
+		*static_cast<float *>(p) = x.asFloat();
+		break;
+	case GVal::GVT_DOUBLE:
+		*static_cast<double *>(p) = x.asDouble();
+		break;
+	default:
+		*static_cast<GVal *>(p) = x;
+		break;
+	}
+}
+
+GVal GValMultiArray::getLinear(size_t i) const
+{
+	size_t entrySize = getEntrySize(entryType);
+	size_t offset = entrySize * i;
+	char *p1 = (char *)data + offset;
+	void *p = static_cast<void *>(p1);
+	GVal r;
+	switch (entryType)
+	{
+	case GVal::GVT_BOOL:
+		r.setBool(*static_cast<bool *>(p));
+		break;
+	case GVal::GVT_INT:
+		r.setInt(*static_cast<int *>(p));
+		break;
+	case GVal::GVT_LONG:
+		r.setLong(*static_cast<long long *>(p));
+		break;
+	case GVal::GVT_FLOAT:
+		r.setFloat(*static_cast<float *>(p));
+		break;
+	case GVal::GVT_DOUBLE:
+		r.setDouble(*static_cast<double *>(p));
+		break;
+	default:
+		return *static_cast<GVal *>(p);
+	}
+	return r;
+}
+
+void GValMultiArray::setLinear(size_t i, const GVal &x)
+{
+	size_t entrySize = getEntrySize(entryType);
+	size_t offset = entrySize * i;
 	char *p1 = (char *)data + offset;
 	void *p = static_cast<void *>(p1);
 	//std::cout << "entryType = " << entryType << "\n";

@@ -500,3 +500,8 @@ void GValParser::error(const std::string &msg)
 	progressReporter.error(msg);
 }
 
+GVal gvParseString(const std::string &x)
+{
+	GValParser parser;
+	return parser.parseString(x);
+}

@@ -512,7 +512,7 @@ SUTF_TEST(testBinaryStream)
 	Sutf::test(fs.atEnd() == false);
 	char ct = bs.readByte();
 	int it = bs.readInt();
-	int lt = bs.readLong();
+	long long lt = bs.readLong();
 	float ft = bs.readFloat();
 	double dt = bs.readDouble();
 	std::string st = bs.readString();
@@ -551,7 +551,7 @@ SUTF_TEST(testMemoryStream)
 	Sutf::test(dt == dr);
 }
 
-SUTF_TEST(testGValSerializer)
+SUTF_TEST(testGValSerializer01)
 {
 	GValSerializer gvs;
 	MemoryStream ms;
@@ -561,6 +561,33 @@ SUTF_TEST(testGValSerializer)
 	gvs.write(r);
 	GVal t = gvs.read();
 	Sutf::test(r == t);
+}
+
+SUTF_TEST(testGValSerializer02)
+{
+	GValSerializer gvs;
+	MemoryStream ms;
+	BinaryStream bs(&ms);
+	gvs.binaryStream = &bs;
+	GVal r = GVal("Pera");
+	gvs.write(r);
+	GVal t = gvs.read();
+	Sutf::test(r == t);
+}
+
+SUTF_TEST(testGValSerializer03)
+{
+	GValSerializer gvs;
+	MemoryStream ms;
+	BinaryStream bs(&ms);
+	gvs.binaryStream = &bs;
+	GVal r = gvParseString("MAI(2, 2)[[1, 4], [5, 75]]");
+	gvs.write(r);
+	GVal t = gvs.read();
+	Sutf::test(r == t);
+	Sutf::test(r(1, 1) == t(1, 1));
+	Sutf::test(r(1, 1) == GVal(75));
+	Sutf::test(r(1, 1) != GVal(74));
 }
 
 int main(int argc, char *argv[])

@@ -76,4 +76,6 @@ public:
 	FILE *inputStream;
 };
 
+GVal gvParseString(const std::string &x);
+
 #endif

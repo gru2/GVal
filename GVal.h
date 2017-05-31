@@ -33,7 +33,12 @@ public:
 
 	GVal &operator = (const GVal &x);
 	bool operator < (const GVal &x) const;
+	bool operator > (const GVal &x) const;
 	bool operator == (const GVal &x) const;
+	bool operator != (const GVal &x) const;
+
+	int compareMultiArray(const GVal &x) const;
+	int compareMap(const GVal &x) const;
 
 	int getType() const { return type; }
 	void setType(int x) { type = x; }
@@ -61,6 +66,8 @@ public:
 	//void set(size_t *i, int dim, const GVal &x);
 	void set(const std::string &key, const GVal &x);
 	void set(const GVal &key, const GVal &x);
+	GVal getLinear(size_t i) const;
+	void setLinear(size_t i, const GVal &x);
 
 	void copyContentFrom(const GVal &x);
 	void reset();
@@ -205,6 +212,8 @@ public:
 	size_t size() const;
 	GVal get(size_t *i, int dim) const;
 	void set(size_t *i, int dim, const GVal &x);
+	GVal getLinear(size_t i) const;
+	void setLinear(size_t i, const GVal &x);
 
 	GVal front() const;
 	GVal back() const;
