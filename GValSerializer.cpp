@@ -37,9 +37,11 @@ void GValSerializer::write(const GVal &x)
 		break;
 	case GVal::GVT_MAP:
 		writeMap(x);
+		break;
 	default:
 		progressReporter.error("GValSerialzier::write:bad GVal type "
 		+ toString(type));
+		break;
 	}
 }
 

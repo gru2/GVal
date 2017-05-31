@@ -590,6 +590,30 @@ SUTF_TEST(testGValSerializer03)
 	Sutf::test(r(1, 1) != GVal(74));
 }
 
+SUTF_TEST(testGValSerializer04)
+{
+	GValSerializer gvs;
+	MemoryStream ms;
+	BinaryStream bs(&ms);
+	gvs.binaryStream = &bs;
+	GVal r = gvParseString("{ 1 = 4; 'a' = 'pera'; 'c' = 45.0; }");
+	gvs.write(r);
+	GVal t = gvs.read();
+	Sutf::test(r == t);
+}
+
+SUTF_TEST(testGValSerializer05)
+{
+	GValSerializer gvs;
+	MemoryStream ms;
+	BinaryStream bs(&ms);
+	gvs.binaryStream = &bs;
+	GVal r = gvParseString("{ 1 = 4; 'a' = 'pera'; 'c' = []; }");
+	gvs.write(r);
+	GVal t = gvs.read();
+	Sutf::test(r == t);
+}
+
 SUTF_TEST(testGValCompareMultiArray)
 {
 	GVal a = gvParseString("MAI(2, 3)[[1, 4, 5], [5, 75, 9]]");
@@ -603,11 +627,24 @@ SUTF_TEST(testGValCompareMultiArray)
 	Sutf::test(!(b > a));
 }
 
-SUTF_TEST(testGValCompareMap)
+SUTF_TEST(testGValCompareMap01)
 {
 	GVal a = gvParseString("{ 1 = 4; 'a' = 'pera'; 'c' = 45.0; }");
 	GVal b = gvParseString("{ 1 = 4; 'a' = 'pera'; 'c' = 45.0; }");
 	GVal c = gvParseString("{ 1 = 4; 'a' = 'pera'; 'c' = 45.5; }");
+	Sutf::test(!(a == c));
+	Sutf::test(a == b);
+	Sutf::test(a != c);
+	Sutf::test(a < c);
+	Sutf::test(c > a);
+	Sutf::test(!(b > a));
+}
+
+SUTF_TEST(testGValCompareMap02)
+{
+	GVal a = gvParseString("{ [1, 4] = 4; 'a' = 'pera'; 'c' = 45.0; }");
+	GVal b = gvParseString("{ [1, 4] = 4; 'a' = 'pera'; 'c' = 45.0; }");
+	GVal c = gvParseString("{ [1, 5] = 4; 'a' = 'pera'; 'c' = 45.0; }");
 	Sutf::test(!(a == c));
 	Sutf::test(a == b);
 	Sutf::test(a != c);
