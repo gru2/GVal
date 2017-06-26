@@ -2,6 +2,7 @@
 #include <string.h>
 #include <iostream>
 #include <toString.h>
+#include <GValUtils.h>
 
 GVal &GVal::operator = (const GVal &x)
 {
@@ -14,25 +15,25 @@ bool GVal::operator < (const GVal &x) const
 		return type < x.type;
 	switch (type)
 	{
-		case GVT_NULL:
-			return false;
-		case GVT_BOOL:
-			return boolValue < x.boolValue;
-		case GVT_INT:
-			return intValue < x.intValue;
-		case GVT_LONG:
-			return longValue < x.longValue;
-		case GVT_FLOAT:
-			return floatValue < x.floatValue;
-		case GVT_DOUBLE:
-			return doubleValue < x.doubleValue;
-		case GVT_STRING:
-			return stringValue < x.stringValue;
-		case GVT_MULTI_ARRAY:
-			return compareMultiArray(x) < 0;
-		case GVT_MAP:
-			return compareMap(x) < 0;
-			break;
+	case GVT_NULL:
+		return false;
+	case GVT_BOOL:
+		return boolValue < x.boolValue;
+	case GVT_INT:
+		return intValue < x.intValue;
+	case GVT_LONG:
+		return longValue < x.longValue;
+	case GVT_FLOAT:
+		return floatValue < x.floatValue;
+	case GVT_DOUBLE:
+		return doubleValue < x.doubleValue;
+	case GVT_STRING:
+		return stringValue < x.stringValue;
+	case GVT_MULTI_ARRAY:
+		return compareMultiArray(x) < 0;
+	case GVT_MAP:
+		return compareMap(x) < 0;
+		break;
 	}
 	return false;
 }
@@ -305,6 +306,11 @@ GVal GVal::get(const std::string &key) const
 	return static_cast<GValMap *>(genericValue.get())->get(key_);
 }
 
+GVal GVal::get(const char *key) const
+{
+	return get(std::string(key));
+}
+
 GVal GVal::get(const GVal &key) const
 {
 	if (type != GVT_MAP)
@@ -385,30 +391,30 @@ void GVal::copyContentFrom(const GVal &x)
 	type = x.type;
 	switch(type)
 	{
-		case GVT_NULL:
-			break;
-		case GVT_BOOL:
-			boolValue = x.boolValue;
-			break;
-		case GVT_INT:
-			intValue = x.intValue;
-			break;
-		case GVT_LONG:
-			longValue = x.longValue;
-			break;
-		case GVT_FLOAT:
-			floatValue = x.floatValue;
-			break;
-		case GVT_DOUBLE:
-			doubleValue = x.doubleValue;
-			break;
-		case GVT_STRING:
-			stringValue = x.stringValue;
-			break;
-		case GVT_MULTI_ARRAY:
-		case GVT_MAP:
-			genericValue = x.genericValue;
-			break;
+	case GVT_NULL:
+		break;
+	case GVT_BOOL:
+		boolValue = x.boolValue;
+		break;
+	case GVT_INT:
+		intValue = x.intValue;
+		break;
+	case GVT_LONG:
+		longValue = x.longValue;
+		break;
+	case GVT_FLOAT:
+		floatValue = x.floatValue;
+		break;
+	case GVT_DOUBLE:
+		doubleValue = x.doubleValue;
+		break;
+	case GVT_STRING:
+		stringValue = x.stringValue;
+		break;
+	case GVT_MULTI_ARRAY:
+	case GVT_MAP:
+		genericValue = x.genericValue;
+		break;
 	}
 }
 
@@ -423,14 +429,14 @@ size_t GVal::size() const
 {
 	switch(type)
 	{
-		case GVT_MULTI_ARRAY:
-			return static_cast<GValMultiArray *>(genericValue.get())->size();
-		case GVT_MAP:
-			return static_cast<GValMap *>(genericValue.get())->size();
-			break;
-		default:
-			error("type does not support size");
-			return 0;
+	case GVT_MULTI_ARRAY:
+		return static_cast<GValMultiArray *>(genericValue.get())->size();
+	case GVT_MAP:
+		return static_cast<GValMap *>(genericValue.get())->size();
+		break;
+	default:
+		error("type does not support size");
+		return 0;
 	}
 }
 
@@ -560,7 +566,6 @@ GVal GVal::keys() const
 	return static_cast<GValMap *>(genericValue.get())->keys();
 }
 
-
 bool GVal::check(const std::string &key) const
 {
 	return check(GVal(key));
@@ -569,6 +574,11 @@ bool GVal::check(const std::string &key) const
 bool GVal::check(const GVal &key) const
 {
 	return false; // TODO
+}
+
+void GVal::setMultiArray()
+{
+	setMultiArray(0, GVal::GVT_GENERIC);
 }
 
 void GVal::setMultiArray(size_t i, int entryType)
@@ -631,30 +641,37 @@ std::string GVal::typeToString(int type_)
 {
 	switch(type_)
 	{
-		case GVT_NULL:
-			return "Null";
-		case GVT_BOOL:
-			return "Bool";
-		case GVT_INT:
-			return "Int";
-		case GVT_LONG:
-			return "Long";
-		case GVT_FLOAT:
-			return "Float";
-		case GVT_DOUBLE:
-			return "Double";
-		case GVT_STRING:
-			return "String";
-		case GVT_MULTI_ARRAY:
-			return "MultiArray";
-		case GVT_MAP:
-			return "Map";
-		case GVT_GENERIC:
-			return "Generic";
-		default:
-			//return "Unknown(" + std::to_string("
-			return "Unknown()";
+	case GVT_NULL:
+		return "Null";
+	case GVT_BOOL:
+		return "Bool";
+	case GVT_INT:
+		return "Int";
+	case GVT_LONG:
+		return "Long";
+	case GVT_FLOAT:
+		return "Float";
+	case GVT_DOUBLE:
+		return "Double";
+	case GVT_STRING:
+		return "String";
+	case GVT_MULTI_ARRAY:
+		return "MultiArray";
+	case GVT_MAP:
+		return "Map";
+	case GVT_GENERIC:
+		return "Generic";
+	default:
+		//return "Unknown(" + std::to_string("
+		return "Unknown()";
 	}
+}
+
+GVal GVal::keys()
+{
+	if (type != GVT_MAP)
+		error("Map type expected.");
+	return static_cast<GValMap *>(genericValue.get())->keys();
 }
 
 void * GVal::getData()
@@ -915,7 +932,8 @@ void GValMultiArray::resizeAndSetEntryType(size_t *i, int dim, int newEntryType)
 
 size_t GValMultiArray::getEntrySize(int type) const
 {
-	switch (type) {
+	switch (type)
+	{
 	case GVal::GVT_BOOL:
 		return sizeof(bool);
 	case GVal::GVT_INT:
@@ -984,7 +1002,7 @@ GVal GValMap::get(const GVal &key) const
 	//std::cout << "GValMap::get(type=" << key.getType() << ")... \n";
 	std::map<GVal, GVal>::const_iterator it = data.find(key);
 	if (it == data.end())
-		key.error("unable to find key.");
+		key.error("unable to find key '" + toString(key) + "'.");
 	return it->second;
 }
 

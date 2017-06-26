@@ -17,13 +17,13 @@ public:
 	};
 
 	GVal() : type(GVT_NULL) { }
-	GVal(bool x) : type(GVT_BOOL) { boolValue = x; }
-	GVal(int x) : type(GVT_INT) { intValue = x; }
-	GVal(long long x) : type(GVT_LONG) { longValue = x; }
-	GVal(float x) : type(GVT_FLOAT) { floatValue = x; }
-	GVal(double x) : type(GVT_DOUBLE) { doubleValue = x; }
-	GVal(const std::string &x) : type(GVT_STRING) { stringValue = x; }
-	GVal(const char *x) : type(GVT_STRING) { stringValue = std::string(x); }
+	explicit GVal(bool x) : type(GVT_BOOL) { boolValue = x; }
+	explicit GVal(int x) : type(GVT_INT) { intValue = x; }
+	explicit GVal(long long x) : type(GVT_LONG) { longValue = x; }
+	explicit GVal(float x) : type(GVT_FLOAT) { floatValue = x; }
+	explicit GVal(double x) : type(GVT_DOUBLE) { doubleValue = x; }
+	explicit GVal(const std::string &x) : type(GVT_STRING) { stringValue = x; }
+	explicit GVal(const char *x) : type(GVT_STRING) { stringValue = std::string(x); }
 	GVal(const GVal &x) {
 		copyContentFrom(x);
 	}
@@ -46,6 +46,7 @@ public:
 	GVal operator[] (size_t i) const { return get(i); }
 	//GVal operator[] (const std::string &key) const { return get(key); }
 	GVal operator[] (const GVal &key) const { return get(key); }
+	GVal operator[] (const std::string &key) const { return get(GVal(key)); }
 	GVal operator() (size_t i0, size_t i1) const { return get(i0, i1); }
 	GVal operator() (size_t i0, size_t i1, size_t i2) const { return get(i0, i1, i2); }
 	GVal operator() (size_t i0, size_t i1, size_t i2, size_t i3) const { return get(i0, i1, i2, i3); }
@@ -61,6 +62,7 @@ public:
 	GVal get(const SmallVector<size_t, 4> &i) const;
 	//GVal get(size_t *i, int dim) const;
 	GVal get(const std::string &key) const;
+	GVal get(const char *key) const;
 	GVal get(const GVal &key) const;
 	void set(const SmallVector<size_t, 4> &i, const GVal &x);
 	//void set(size_t *i, int dim, const GVal &x);
@@ -133,6 +135,7 @@ public:
 		type = GVT_STRING;
 		stringValue = x;
 	}
+	void setMultiArray();
 	void setMultiArray(size_t i, int entryType);
 	void setMultiArray(size_t i0, size_t i1, int entryType);
 	void setMultiArray(size_t i0, size_t i1, size_t i2, int entryType);
@@ -184,6 +187,7 @@ public:
 	std::shared_ptr<void> &getGenericValue() { return genericValue; }
 	const std::shared_ptr<void> &getGenericValue() const { return genericValue; }
 
+	GVal keys();
 	void *getData();
 protected:
 	int type;

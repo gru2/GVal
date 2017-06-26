@@ -451,8 +451,8 @@ SUTF_TEST(testGValFormatter03)
 	GValFormatter gvf;
 	GVal m;
 	m.setMap();
-	m.set(GVal("pera"), 34);
-	m.set(GVal(4), 0.5);
+	m.set(GVal("pera"), GVal(34));
+	m.set(GVal(4), GVal(0.5));
 	std::cout << gvf.toStringSimple(m) << "\n";
 	std::string ref = "{4 = 0.5; 'pera' = 34;}";
 	Sutf::test(gvf.toStringSimple(m) == ref);
