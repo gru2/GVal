@@ -6,5 +6,7 @@
 
 std::string toString(const GVal &x);
 GVal gvalToMultiArray(const GVal &u, const SmallVector<size_t, 4> &shape, GVal::GValType type);
+GVal gvParseFile(const std::string &fileName);
+void gvWriteTextFile(const GVal &x, const std::string &fileName);
 
 #endif

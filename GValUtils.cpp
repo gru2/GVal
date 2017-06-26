@@ -1,6 +1,9 @@
 #include <GValUtils.h>
 #include <toString.h>
 #include <MultiArrayIterator.h>
+#include <FileStream.h>
+#include <GValParser.h>
+#include <GValFormatter.h>
 #include <iostream>
 
 std::string toString(const GVal &x)
@@ -41,9 +44,11 @@ std::string toString(const GVal &x)
 		case GVal::GVT_STRING:
 			return x.asString();
 		case GVal::GVT_MULTI_ARRAY:
-			return "TODO"; // TODO
 		case GVal::GVT_MAP:
-			return "TODO"; // TODO
+		{
+			GValFormatter formater;
+			return formater.toStringSimple(x);
+		}
 		case GVal::GVT_GENERIC:
 			return "GENERIC";
 		default:
@@ -77,4 +82,33 @@ GVal gvalToMultiArray(const GVal &u, const SmallVector<size_t, 4> &shape, GVal::
 		std::cout << toString(t) << "\n";
 	}
 	return v;
+}
+
+static std::string __loadFile(const std::string &fileName)
+{
+	FileStream fs;
+	fs.open(fileName, FileStream::READ_MODE);
+	size_t n = fs.getFileSize();
+	char *buffer = new char[n];
+	fs.readBytes(n, buffer);
+
+	std::string s(n, ' ');
+	for (size_t i = 0; i < n; i++)
+		s[i] = buffer[i];
+	delete[] buffer;
+	return s;
+}
+
+GVal gvParseFile(const std::string &fileName)
+{
+	std::string s = __loadFile(fileName);
+	return gvParseString(s);
+}
+
+void gvWriteTextFile(const GVal &x, const std::string & fileName)
+{
+	FileStream fs;
+	fs.open(fileName, FileStream::WRITE_MODE);
+	std::string s = toString(x);
+	fs.writeBytes(s.size(), &s[0]);
 }
