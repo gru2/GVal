@@ -653,6 +653,18 @@ SUTF_TEST(testGValCompareMap02)
 	Sutf::test(!(b > a));
 }
 
+SUTF_TEST(testGvArray)
+{
+	GVal x0(2);
+	GVal x1("pera");
+
+	GVal a = gvArray(x0, x1);
+
+	Sutf::test(a.size() == 2);
+	Sutf::test(a[0] == x0);
+	Sutf::test(a[1] == x1);
+}
+
 int main(int argc, char *argv[])
 {
 	Sutf::runTests(argc, argv);

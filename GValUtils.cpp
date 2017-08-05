@@ -112,3 +112,31 @@ void gvWriteTextFile(const GVal &x, const std::string & fileName)
 	std::string s = toString(x);
 	fs.writeBytes(s.size(), &s[0]);
 }
+
+GVal gvArray()
+{
+	GVal a;
+	a.setMultiArray();
+	return a;
+}
+
+GVal gvArray(const GVal &x0)
+{
+	GVal a = gvArray();
+	a.pushBack(x0);
+	return a;
+}
+
+GVal gvArray(const GVal &x0, const GVal &x1)
+{
+	GVal a = gvArray(x0);
+	a.pushBack(x1);
+	return a;
+}
+
+GVal gvArray(const GVal &x0, const GVal &x1, const GVal &x2)
+{
+	GVal a = gvArray(x0, x1);
+	a.pushBack(x2);
+	return a;
+}
