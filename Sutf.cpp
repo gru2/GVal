@@ -7,6 +7,8 @@
 using namespace Sutf;
 
 int failCount = 0;
+int passCount = 0;
+int internalTestCount = 0;
 
 Initializer *Initializer::tests = 0;
 
@@ -25,20 +27,21 @@ Initializer *Initializer::getTests()
 
 void Sutf::test(bool result)
 {
-	if (!result)
-	{
-		std::cout << "> FAILED: (" + toString(failCount) + ")\n";
-		failCount++;
-	}
+	test(result, "");
 }
 
 void Sutf::test(bool result, const std::string &msg)
 {
-	if (!result)
+	if (result)
 	{
-		std::cout << "> FAILED: (" + toString(failCount) + ") " + msg + "\n";
+		passCount++;
+	}
+	else
+	{
+		std::cout << "> FAILED: (" + toString(internalTestCount) + ") " + msg + "\n";
 		failCount++;
 	}
+	internalTestCount++;
 }
 
 int Sutf::runTests(int argc, char *argv[])
@@ -61,6 +64,7 @@ int Sutf::runTests(int argc, char *argv[])
 		TestType test = p->getTest();
 		std::cout << "Running test " + p->getTestName() << "...\n";
 		std::cout.flush();
+		internalTestCount = 0;
 		test();
 		if (failCount == oldFailCount)
 		{
