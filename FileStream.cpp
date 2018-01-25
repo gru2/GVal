@@ -57,9 +57,9 @@ void FileStream::close()
 
 size_t FileStream::getFileSize()
 {
-	size_t oldPosition = ftell(file);
+	size_t oldPosition = (size_t)ftell(file);
 	fseek(file, 0L, SEEK_END);
-	size_t fs = ftell(file);
+	size_t fs = (size_t)ftell(file);
 	fseek(file, (long)oldPosition, SEEK_SET);
 	return fs;
 }

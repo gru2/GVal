@@ -665,6 +665,16 @@ SUTF_TEST(testGvArray)
 	Sutf::test(a[1] == x1);
 }
 
+SUTF_TEST(testGvReadFromBinaryFile)
+{
+	std::string fileName = "test.gval";
+	GVal x("pera");
+	gvWriteToBinaryFile(x, fileName);
+	GVal t = gvReadFromBinaryFile(fileName);
+	Sutf::test(t.getType() == GVal::GVT_STRING);
+	Sutf::test(t.asString() == "pera");
+}
+
 int main(int argc, char *argv[])
 {
 	Sutf::runTests(argc, argv);

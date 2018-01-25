@@ -5,6 +5,8 @@
 #include <GValParser.h>
 #include <GValFormatter.h>
 #include <iostream>
+#include <BinaryStream.h>
+#include <GValSerializer.h>
 
 std::string toString(const GVal &x)
 {
@@ -111,6 +113,27 @@ void gvWriteTextFile(const GVal &x, const std::string & fileName)
 	fs.open(fileName, FileStream::WRITE_MODE);
 	std::string s = toString(x);
 	fs.writeBytes(s.size(), &s[0]);
+}
+
+GVal gvReadFromBinaryFile(const std::string &fileName)
+{
+	FileStream fs;
+	fs.open(fileName, FileStream::READ_MODE);
+	BinaryStream bs(&fs);
+	GValSerializer s;
+	s.binaryStream = &bs;
+	GVal r = s.read();
+	return r;
+}
+
+void gvWriteToBinaryFile(const GVal &x, const std::string &fileName)
+{
+	FileStream fs;
+	fs.open(fileName, FileStream::WRITE_MODE);
+	BinaryStream bs(&fs);
+	GValSerializer s;
+	s.binaryStream = &bs;
+	s.write(x);
 }
 
 GVal gvArray()
