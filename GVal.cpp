@@ -19,6 +19,8 @@ bool GVal::operator < (const GVal &x) const
 		return false;
 	case GVT_BOOL:
 		return boolValue < x.boolValue;
+	case GVT_UCHAR:
+		return ucharValue < x.ucharValue;
 	case GVT_INT:
 		return intValue < x.intValue;
 	case GVT_LONG:
@@ -53,6 +55,8 @@ bool GVal::operator == (const GVal &x) const
 		return true;
 	case GVT_BOOL:
 		return boolValue == x.boolValue;
+	case GVT_UCHAR:
+		return ucharValue == x.ucharValue;
 	case GVT_INT:
 		return intValue == x.intValue;
 	case GVT_LONG:
@@ -396,6 +400,9 @@ void GVal::copyContentFrom(const GVal &x)
 	case GVT_BOOL:
 		boolValue = x.boolValue;
 		break;
+	case GVT_UCHAR:
+		ucharValue = x.ucharValue;
+		break;
 	case GVT_INT:
 		intValue = x.intValue;
 		break;
@@ -645,6 +652,8 @@ std::string GVal::typeToString(int type_)
 		return "Null";
 	case GVT_BOOL:
 		return "Bool";
+	case GVT_UCHAR:
+		return "UChar";
 	case GVT_INT:
 		return "Int";
 	case GVT_LONG:
@@ -731,6 +740,9 @@ GVal GValMultiArray::get(size_t *i, int dim) const
 	case GVal::GVT_BOOL:
 		r.setBool(*static_cast<bool *>(p));
 		break;
+	case GVal::GVT_UCHAR:
+		r.setInt(*static_cast<unsigned char *>(p));
+		break;
 	case GVal::GVT_INT:
 		r.setInt(*static_cast<int *>(p));
 		break;
@@ -761,6 +773,9 @@ void GValMultiArray::set(size_t *i, int dim, const GVal &x)
 	case GVal::GVT_BOOL:
 		*static_cast<bool *>(p) = x.asBool();
 		break;
+	case GVal::GVT_UCHAR:
+		*static_cast<unsigned char *>(p) = x.asUChar();
+		break;
 	case GVal::GVT_INT:
 		*static_cast<int *>(p) = x.asInt();
 		break;
@@ -790,6 +805,9 @@ GVal GValMultiArray::getLinear(size_t i) const
 	{
 	case GVal::GVT_BOOL:
 		r.setBool(*static_cast<bool *>(p));
+		break;
+	case GVal::GVT_UCHAR:
+		r.setUChar(*static_cast<unsigned char *>(p));
 		break;
 	case GVal::GVT_INT:
 		r.setInt(*static_cast<int *>(p));
@@ -823,6 +841,9 @@ void GValMultiArray::setLinear(size_t i, const GVal &x)
 		break;
 	case GVal::GVT_INT:
 		*static_cast<int *>(p) = x.asInt();
+		break;
+	case GVal::GVT_UCHAR:
+		*static_cast<unsigned char *>(p) = x.asUChar();
 		break;
 	case GVal::GVT_LONG:
 		*static_cast<long long *>(p) = x.asLong();
@@ -936,6 +957,8 @@ size_t GValMultiArray::getEntrySize(int type) const
 	{
 	case GVal::GVT_BOOL:
 		return sizeof(bool);
+	case GVal::GVT_UCHAR:
+		return sizeof(unsigned char);
 	case GVal::GVT_INT:
 		return sizeof(int);
 	case GVal::GVT_LONG:

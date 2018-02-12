@@ -12,12 +12,13 @@ class GVal
 {
 public:
 	enum GValType {
-		GVT_NULL, GVT_BOOL, GVT_INT, GVT_LONG, GVT_FLOAT, GVT_DOUBLE,
+		GVT_NULL, GVT_BOOL, GVT_UCHAR, GVT_INT, GVT_LONG, GVT_FLOAT, GVT_DOUBLE,
 		GVT_STRING, GVT_MULTI_ARRAY, GVT_MAP, GVT_GENERIC
 	};
 
 	GVal() : type(GVT_NULL) { }
 	explicit GVal(bool x) : type(GVT_BOOL) { boolValue = x; }
+	explicit GVal(unsigned char x) : type(GVT_UCHAR) { ucharValue = x; }
 	explicit GVal(int x) : type(GVT_INT) { intValue = x; }
 	explicit GVal(long long x) : type(GVT_LONG) { longValue = x; }
 	explicit GVal(float x) : type(GVT_FLOAT) { floatValue = x; }
@@ -110,6 +111,11 @@ public:
 		type = GVT_BOOL;
 		boolValue = x;
 	}
+	void setUChar(unsigned char x) {
+		reset();
+		type = GVT_UCHAR;
+		ucharValue = x;
+	}
 	void setInt(int x) {
 		reset();
 		type = GVT_INT;
@@ -153,11 +159,14 @@ public:
 			error("Bool type expected.");
 		return boolValue;
 	}
+	unsigned char asUChar() const {
+		if (type != GVT_UCHAR)
+			error("UChar type expected but found type " + typeToString(type) + ".");
+		return intValue;
+	}
 	int asInt() const {
 		if (type != GVT_INT)
-		{
 			error("Int type expected but found type " + typeToString(type) + ".");
-		}
 		return intValue;
 	}
 	long long asLong() const {
@@ -194,6 +203,7 @@ protected:
 	union
 	{
 		bool boolValue;
+		unsigned char ucharValue;
 		int intValue;
 		long long longValue;
 		float floatValue;

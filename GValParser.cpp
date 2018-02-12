@@ -119,6 +119,8 @@ GVal GValParser::parse()
 		return parseMap();
 	case '[':
 		return parseList();
+	case GValParserToken::TT_MAUC:
+		return parseMultiArray(GVal::GVT_UCHAR);
 	case GValParserToken::TT_MAI:
 		return parseMultiArray(GVal::GVT_INT);
 	case GValParserToken::TT_MAF:
@@ -264,6 +266,8 @@ GValParserToken GValParser::getNextTokenFromStream()
 		return GValParserToken(GValParserToken::TT_TRUE, GVal());
 	if (tryParseKeyword("false"))
 		return GValParserToken(GValParserToken::TT_FALSE, GVal());
+	if (tryParseKeyword("MAUC"))
+		return GValParserToken(GValParserToken::TT_MAUC, GVal());
 	if (tryParseKeyword("MAI"))
 		return GValParserToken(GValParserToken::TT_MAI, GVal());
 	if (tryParseKeyword("MAF"))

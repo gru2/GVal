@@ -17,6 +17,9 @@ void GValSerializer::write(const GVal &x)
 	case GVal::GVT_BOOL:
 		bs.writeByte(x.asBool());
 		break;
+	case GVal::GVT_UCHAR:
+		bs.writeByte(x.asUChar());
+		break;
 	case GVal::GVT_INT:
 		bs.writeInt(x.asInt());
 		break;
@@ -55,6 +58,11 @@ GVal GValSerializer::read()
 	{
 		char c = bs.readByte();
 		bool x = c ? true : false;
+		return GVal(x);
+	}
+	case GVal::GVT_UCHAR:
+	{
+		unsigned char x = bs.readByte();
 		return GVal(x);
 	}
 	case GVal::GVT_INT:
@@ -117,6 +125,13 @@ GVal GValSerializer::readMultiArray()
 			bool x = c ? true : false;
 			*p++ = x;
 		}	
+		break;
+	}
+	case GVal::GVT_UCHAR:
+	{
+		unsigned char *p = static_cast<unsigned char *>(data);
+		for (size_t i = 0; i < n; i++)
+			*p++ = bs.readByte();
 		break;
 	}
 	case GVal::GVT_INT:
@@ -198,6 +213,13 @@ void GValSerializer::writeMultiArray(const GVal &x)
 	case GVal::GVT_BOOL:
 	{
 		bool *p = static_cast<bool *>(data);
+		for (size_t i = 0; i < n; i++)
+			bs.writeByte(*p++);
+		break;
+	}
+	case GVal::GVT_UCHAR:
+	{
+		unsigned char *p = static_cast<unsigned char *>(data);
 		for (size_t i = 0; i < n; i++)
 			bs.writeByte(*p++);
 		break;

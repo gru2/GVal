@@ -18,6 +18,11 @@ std::string GValFormatter::toStringSimple(const GVal &x)
 		else
 			return "false";
 	}
+	case GVal::GVT_UCHAR:
+	{
+		unsigned char v = x.asUChar();
+		return toString((int)v) + "UC";
+	}
 	case GVal::GVT_INT:
 	{
 		int v = x.asInt();
@@ -26,7 +31,7 @@ std::string GValFormatter::toStringSimple(const GVal &x)
 	case GVal::GVT_LONG:
 	{
 		long long v = x.asLong();
-		return toString(v);
+		return toString(v) + "L";
 	}
 	case GVal::GVT_FLOAT:
 	{
@@ -134,6 +139,9 @@ const SmallVector<size_t, 4> &shape, int entryType)
 	{
 	case GVal::GVT_INT:
 		r = "MAI";
+		break;
+	case GVal::GVT_UCHAR:
+		r = "MAUC";
 		break;
 	case GVal::GVT_FLOAT:
 		r = "MAF";
