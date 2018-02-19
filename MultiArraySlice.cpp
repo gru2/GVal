@@ -22,7 +22,7 @@ MultiArraySlice MultiArraySlice::slice(unsigned dim, size_t index) const
 	int n = (int)shape.size();
 	for (int i = 0; i < n; i++)
 	{
-		if (i != dim)
+		if (i != (int)dim)
 		{
 			newSlice.shape.push_back(shape[i]);
 			newSlice.stride.push_back(stride[i]);

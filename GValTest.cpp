@@ -4,7 +4,7 @@
 #include <GValParser.h>
 #include <MultiArrayIterator.h>
 #include <MultiArraySlice.h>
-#include <Sutf.h>
+#include <Usutf.h>
 #include <GValFormatter.h>
 #include <FileStream.h>
 #include <BinaryStream.h>
@@ -16,147 +16,147 @@
 #include <stdlib.h>
 #include <cstdio>
 
-SUTF_TEST(testSmallVector)
+USUTF_TEST(testSmallVector)
 {
 	SmallVector<int, 2> v;
-	Sutf::test(v.size() == 0);
+	Usutf::test(v.size() == 0);
 	v.push_back(12);
-	Sutf::test(v.size() == 1);
-	Sutf::test(v[0] == 12);
+	Usutf::test(v.size() == 1);
+	Usutf::test(v[0] == 12);
 	v.push_back(25);
-	Sutf::test(v.size() == 2);
-	Sutf::test(v[0] == 12);
-	Sutf::test(v[1] == 25);
+	Usutf::test(v.size() == 2);
+	Usutf::test(v[0] == 12);
+	Usutf::test(v[1] == 25);
 	v.push_back(77);
-	Sutf::test(v.size() == 3);
-	Sutf::test(v[0] == 12);
-	Sutf::test(v[1] == 25);
-	Sutf::test(v[2] == 77);
+	Usutf::test(v.size() == 3);
+	Usutf::test(v[0] == 12);
+	Usutf::test(v[1] == 25);
+	Usutf::test(v[2] == 77);
 	v.push_back(373);
-	Sutf::test(v.size() == 4);
-	Sutf::test(v[0] == 12);
-	Sutf::test(v[1] == 25);
-	Sutf::test(v[2] == 77);
-	Sutf::test(v[3] == 373);
+	Usutf::test(v.size() == 4);
+	Usutf::test(v[0] == 12);
+	Usutf::test(v[1] == 25);
+	Usutf::test(v[2] == 77);
+	Usutf::test(v[3] == 373);
 }
 
-SUTF_TEST(testGValUtils)
+USUTF_TEST(testGValUtils)
 {
-	Sutf::test(toString(GVal("abc")) == "abc");
-	Sutf::test(toString(GVal(10)) == "10");
-	Sutf::test(toString(GVal(2.5)) == "2.5");
+	Usutf::test(toString(GVal("abc")) == "abc");
+	Usutf::test(toString(GVal(10)) == "10");
+	Usutf::test(toString(GVal(2.5)) == "2.5");
 	double ref = 1.234567890123456789;
 	std::string s = toString(GVal(ref));
 	double test = atof(s.c_str());
 	double tol = 1.0e-14;
-	Sutf::test(fabs(ref - test) < tol);
+	Usutf::test(fabs(ref - test) < tol);
 }
 
-SUTF_TEST(testGVal)
+USUTF_TEST(testGVal)
 {
 	GVal v;
 	v.setBool(true);
-	Sutf::test(v.asBool(), "Test set/get true.");
+	Usutf::test(v.asBool(), "Test set/get true.");
 	v.setBool(false);
-	Sutf::test(!v.asBool(), "Test set/get false.");
+	Usutf::test(!v.asBool(), "Test set/get false.");
 	v.setInt(10);
-	Sutf::test(v.asInt() == 10, "Test set/get int.");
+	Usutf::test(v.asInt() == 10, "Test set/get int.");
 	v.setMultiArray(3, GVal::GVT_INT);
 	v.set(0, GVal(10));
 	v.set(1, GVal(20));
 	v.set(2, GVal(30));
-	Sutf::test(v[0].asInt() == 10);
-	Sutf::test(v[1].asInt() == 20);
-	Sutf::test(v[2].asInt() == 30);
+	Usutf::test(v[0].asInt() == 10);
+	Usutf::test(v[1].asInt() == 20);
+	Usutf::test(v[2].asInt() == 30);
 	v.setMap();
 	v.set(std::string("pera"), GVal(23));
-	Sutf::test(v[GVal("pera")].asInt() == 23);
+	Usutf::test(v[GVal("pera")].asInt() == 23);
 }
 
-SUTF_TEST(testGValParseString)
+USUTF_TEST(testGValParseString)
 {
 	std::string s = "'foo'";
 	GValParser parser;
 	GVal v = parser.parseString(s);
-	Sutf::test(v.asString() == "foo");
+	Usutf::test(v.asString() == "foo");
 }
 
-SUTF_TEST(testGValParseInt)
+USUTF_TEST(testGValParseInt)
 {
 	std::string s = "1";
 	GValParser parser;
 	GVal v = parser.parseString(s);
-	Sutf::test(v.asInt() == 1);
+	Usutf::test(v.asInt() == 1);
 	std::cout << v.asInt() << "\n";
 }
 
-SUTF_TEST(testGValParseNegativeInt)
+USUTF_TEST(testGValParseNegativeInt)
 {
 	std::string s = "-7";
 	GValParser parser;
 	GVal v = parser.parseString(s);
-	Sutf::test(v.asInt() == -7);
+	Usutf::test(v.asInt() == -7);
 	std::cout << v.asInt() << "\n";
 }
 
-SUTF_TEST(testGValParseDouble01)
+USUTF_TEST(testGValParseDouble01)
 {
 	std::string s = "2.0";
 	GValParser parser;
 	GVal v = parser.parseString(s);
-	Sutf::test(v.asDouble() == 2.0);
+	Usutf::test(v.asDouble() == 2.0);
 	std::cout << v.asDouble() << "\n";
 }
 
-SUTF_TEST(testGValParseDouble02)
+USUTF_TEST(testGValParseDouble02)
 {
 	std::string s = "2.0e10";
 	GValParser parser;
 	GVal v = parser.parseString(s);
-	Sutf::test(v.asDouble() == 2.0e10);
+	Usutf::test(v.asDouble() == 2.0e10);
 }
 
-SUTF_TEST(testGValParserDouble03)
+USUTF_TEST(testGValParserDouble03)
 {
 	std::string s = "132.67e-10";
 	GValParser parser;
 	GVal v = parser.parseString(s);
-	Sutf::test(v.asDouble() == 132.67e-10);
+	Usutf::test(v.asDouble() == 132.67e-10);
 }
 
-SUTF_TEST(testGValParserNegativeDouble)
+USUTF_TEST(testGValParserNegativeDouble)
 {
 	std::string s = "-0.5e-3";
 	GValParser parser;
 	GVal v = parser.parseString(s);
-	Sutf::test(v.asDouble() == -0.5e-3);
+	Usutf::test(v.asDouble() == -0.5e-3);
 }
 
-SUTF_TEST(testGValParserNegativeFloat)
+USUTF_TEST(testGValParserNegativeFloat)
 {
 	std::string s = "-2.25e-7f";
 	GValParser parser;
 	GVal v = parser.parseString(s);
-	Sutf::test(v.asFloat() == -2.25e-7f);
+	Usutf::test(v.asFloat() == -2.25e-7f);
 }
 
-SUTF_TEST(testGValParseTrue)
+USUTF_TEST(testGValParseTrue)
 {
 	std::string s = "true";
 	GValParser parser;
 	GVal v = parser.parseString(s);
-	Sutf::test(v.asBool() == true);
+	Usutf::test(v.asBool() == true);
 }
 
-SUTF_TEST(testGValParseFalse)
+USUTF_TEST(testGValParseFalse)
 {
 	std::string s = "false";
 	GValParser parser;
 	GVal v = parser.parseString(s);
-	Sutf::test(v.asBool() == false);
+	Usutf::test(v.asBool() == false);
 }
 
-SUTF_TEST(testGValParseMap)
+USUTF_TEST(testGValParseMap)
 {
 	std::string s =
 		"{"
@@ -165,137 +165,137 @@ SUTF_TEST(testGValParseMap)
 		"}";
 	GValParser parser;
 	GVal v = parser.parseString(s);
-	Sutf::test(v["a"].asString() == "foo");
-	Sutf::test(v["b"].asInt() == 123);
+	Usutf::test(v["a"].asString() == "foo");
+	Usutf::test(v["b"].asInt() == 123);
 }
 
-SUTF_TEST(testGValParseList)
+USUTF_TEST(testGValParseList)
 {
 	std::string s = "[1.5, 'foo', 123]";
 	GValParser parser;
 	GVal v = parser.parseString(s);
-	Sutf::test(v[0].asDouble() == 1.5);
-	Sutf::test(v[1].asString() == "foo");
-	Sutf::test(v[2].asInt() == 123);
+	Usutf::test(v[0].asDouble() == 1.5);
+	Usutf::test(v[1].asString() == "foo");
+	Usutf::test(v[2].asInt() == 123);
 }
 
-SUTF_TEST(testMultiArrayIterator01)
+USUTF_TEST(testMultiArrayIterator01)
 {
 	MultiArrayIterator it;
 	it.shape.push_back(2);
 	it.shape.push_back(3);
 	it.indices.push_back(0);
 	it.indices.push_back(0);
-	Sutf::test(it.atEnd() == false);
-	Sutf::test(it.indices[0] == 0);
-	Sutf::test(it.indices[1] == 0);
+	Usutf::test(it.atEnd() == false);
+	Usutf::test(it.indices[0] == 0);
+	Usutf::test(it.indices[1] == 0);
 	it.next();
-	Sutf::test(it.atEnd() == false);
-	Sutf::test(it.indices[0] == 0);
-	Sutf::test(it.indices[1] == 1);
+	Usutf::test(it.atEnd() == false);
+	Usutf::test(it.indices[0] == 0);
+	Usutf::test(it.indices[1] == 1);
 	it.next();
-	Sutf::test(it.atEnd() == false);
-	Sutf::test(it.indices[0] == 0);
-	Sutf::test(it.indices[1] == 2);
+	Usutf::test(it.atEnd() == false);
+	Usutf::test(it.indices[0] == 0);
+	Usutf::test(it.indices[1] == 2);
 	it.next();
-	Sutf::test(it.atEnd() == false);
-	Sutf::test(it.indices[0] == 1);
-	Sutf::test(it.indices[1] == 0);
+	Usutf::test(it.atEnd() == false);
+	Usutf::test(it.indices[0] == 1);
+	Usutf::test(it.indices[1] == 0);
 	it.next();
-	Sutf::test(it.atEnd() == false);
-	Sutf::test(it.indices[0] == 1);
-	Sutf::test(it.indices[1] == 1);
+	Usutf::test(it.atEnd() == false);
+	Usutf::test(it.indices[0] == 1);
+	Usutf::test(it.indices[1] == 1);
 	it.next();
-	Sutf::test(it.atEnd() == false);
-	Sutf::test(it.indices[0] == 1);
-	Sutf::test(it.indices[1] == 2);
+	Usutf::test(it.atEnd() == false);
+	Usutf::test(it.indices[0] == 1);
+	Usutf::test(it.indices[1] == 2);
 	it.next();
-	Sutf::test(it.atEnd() == true);
+	Usutf::test(it.atEnd() == true);
 }
 
-SUTF_TEST(testMultiArrayIterator02)
+USUTF_TEST(testMultiArrayIterator02)
 {
 	SmallVector<size_t, 4> shape;
 	shape.push_back(3);
 	MultiArrayIterator it(shape);
 
-	Sutf::test(it.atEnd() == false);
-	Sutf::test(it.indices[0] == 0);
+	Usutf::test(it.atEnd() == false);
+	Usutf::test(it.indices[0] == 0);
 	it.next();
-	Sutf::test(it.atEnd() == false);
-	Sutf::test(it.indices[0] == 1);
+	Usutf::test(it.atEnd() == false);
+	Usutf::test(it.indices[0] == 1);
 	it.next();
-	Sutf::test(it.atEnd() == false);
-	Sutf::test(it.indices[0] == 2);
+	Usutf::test(it.atEnd() == false);
+	Usutf::test(it.indices[0] == 2);
 	it.next();
-	Sutf::test(it.atEnd() == true);
+	Usutf::test(it.atEnd() == true);
 }
 
-SUTF_TEST(testGValParser03)
+USUTF_TEST(testGValParser03)
 {
 	std::string s = "MAI(3)[1, 4, 5]";
 	GValParser parser;
 	GVal v = parser.parseString(s);
-	Sutf::test(v.size() == 3);
-	Sutf::test(v[0].asInt() == 1);
-	Sutf::test(v[1].asInt() == 4);
-	Sutf::test(v[2].asInt() == 5);
+	Usutf::test(v.size() == 3);
+	Usutf::test(v[0].asInt() == 1);
+	Usutf::test(v[1].asInt() == 4);
+	Usutf::test(v[2].asInt() == 5);
 }
 
-SUTF_TEST(testGValParser031)
+USUTF_TEST(testGValParser031)
 {
 	std::string s = "MAI(2,3)[[1, 4, 5],[14, 48, 51]]";
 	GValParser parser;
 	GVal v = parser.parseString(s);
-	Sutf::test(v.numberOfDimensions() == 2);
-	Sutf::test(v.size(0) == 2);
-	Sutf::test(v.size(1) == 3);
-	Sutf::test(v(0, 0).asInt() == 1);
-	Sutf::test(v(0, 1).asInt() == 4);
-	Sutf::test(v(0, 2).asInt() == 5);
-	Sutf::test(v(1, 0).asInt() == 14);
-	Sutf::test(v(1, 1).asInt() == 48);
-	Sutf::test(v(1, 2).asInt() == 51);
+	Usutf::test(v.numberOfDimensions() == 2);
+	Usutf::test(v.size(0) == 2);
+	Usutf::test(v.size(1) == 3);
+	Usutf::test(v(0, 0).asInt() == 1);
+	Usutf::test(v(0, 1).asInt() == 4);
+	Usutf::test(v(0, 2).asInt() == 5);
+	Usutf::test(v(1, 0).asInt() == 14);
+	Usutf::test(v(1, 1).asInt() == 48);
+	Usutf::test(v(1, 2).asInt() == 51);
 }
 
-SUTF_TEST(testGValParser04)
+USUTF_TEST(testGValParser04)
 {
 	std::string s = "MAD(2, 2)[[1.0, 2.5], [5.25, -2.125]]";
 	GValParser parser;
 	GVal v = parser.parseString(s);
-	Sutf::test(v(0, 0).asDouble() == 1.0);
-	Sutf::test(v(0, 1).asDouble() == 2.5);
-	Sutf::test(v(1, 0).asDouble() == 5.25);
-	Sutf::test(v(1, 1).asDouble() == -2.125);
+	Usutf::test(v(0, 0).asDouble() == 1.0);
+	Usutf::test(v(0, 1).asDouble() == 2.5);
+	Usutf::test(v(1, 0).asDouble() == 5.25);
+	Usutf::test(v(1, 1).asDouble() == -2.125);
 }
 
-SUTF_TEST(testGValParser05)
+USUTF_TEST(testGValParser05)
 {
 	std::string s = "MAF(2, 1)[[1.0f], [15.5f]]";
 	GValParser parser;
 	GVal v = parser.parseString(s);
-	Sutf::test(v(0, 0).asFloat() == 1.0f);
-	Sutf::test(v(1, 0).asFloat() == 15.5f);
+	Usutf::test(v(0, 0).asFloat() == 1.0f);
+	Usutf::test(v(1, 0).asFloat() == 15.5f);
 }
 
-SUTF_TEST(testGValParser06)
+USUTF_TEST(testGValParser06)
 {
 	std::string s = "MAG(3)[1.5f, 2, 'pera']";
 	GValParser parser;
 	GVal v = parser.parseString(s);
-	Sutf::test(v[0].asFloat() == 1.5f);
-	Sutf::test(v[1].asInt() == 2);
-	Sutf::test(v[2].asString() == "pera");
+	Usutf::test(v[0].asFloat() == 1.5f);
+	Usutf::test(v[1].asInt() == 2);
+	Usutf::test(v[2].asString() == "pera");
 }
 
-SUTF_TEST(testMultiArraySlice01)
+USUTF_TEST(testMultiArraySlice01)
 {
-	int data[2 * 2 * 3] = {
-	1, 2, 9,
-	3, 4, 5,
+	//int data[2 * 2 * 3] = {
+	//1, 2, 9,
+	//3, 4, 5,
 
-	2, 7, 6,
-	0, 8, 3 };
+	//2, 7, 6,
+	//0, 8, 3 };
 
 	MultiArraySlice mas;
 	SmallVector<size_t, 4> shape;
@@ -312,116 +312,116 @@ SUTF_TEST(testMultiArraySlice01)
 
 	indices[0] = 0;
 	indices[1] = 0;
-	Sutf::test(slice.calculateOffset(indices) == 0);
+	Usutf::test(slice.calculateOffset(indices) == 0);
 	indices[1] = 1;
-	Sutf::test(slice.calculateOffset(indices) == 1);
+	Usutf::test(slice.calculateOffset(indices) == 1);
 	indices[1] = 2;
-	Sutf::test(slice.calculateOffset(indices) == 2);
+	Usutf::test(slice.calculateOffset(indices) == 2);
 	indices[0] = 1;
 	indices[1] = 0;
-	Sutf::test(slice.calculateOffset(indices) == 3);
+	Usutf::test(slice.calculateOffset(indices) == 3);
 	indices[1] = 1;
-	Sutf::test(slice.calculateOffset(indices) == 4);
+	Usutf::test(slice.calculateOffset(indices) == 4);
 	indices[1] = 2;
-	Sutf::test(slice.calculateOffset(indices) == 5);
+	Usutf::test(slice.calculateOffset(indices) == 5);
 
 	slice = mas.slice(0, 1);
 
 	indices[0] = 0;
 	indices[1] = 0;
-	Sutf::test(slice.calculateOffset(indices) == 6);
+	Usutf::test(slice.calculateOffset(indices) == 6);
 	indices[1] = 1;
-	Sutf::test(slice.calculateOffset(indices) == 7);
+	Usutf::test(slice.calculateOffset(indices) == 7);
 	indices[1] = 2;
-	Sutf::test(slice.calculateOffset(indices) == 8);
+	Usutf::test(slice.calculateOffset(indices) == 8);
 	indices[0] = 1;
 	indices[1] = 0;
-	Sutf::test(slice.calculateOffset(indices) == 9);
+	Usutf::test(slice.calculateOffset(indices) == 9);
 	indices[1] = 1;
-	Sutf::test(slice.calculateOffset(indices) == 10);
+	Usutf::test(slice.calculateOffset(indices) == 10);
 	indices[1] = 2;
-	Sutf::test(slice.calculateOffset(indices) == 11);
+	Usutf::test(slice.calculateOffset(indices) == 11);
 
 	slice = mas.slice(1, 0);
 
 	indices[0] = 0;
 	indices[1] = 0;
-	Sutf::test(slice.calculateOffset(indices) == 0);
+	Usutf::test(slice.calculateOffset(indices) == 0);
 	indices[1] = 1;
-	Sutf::test(slice.calculateOffset(indices) == 1);
+	Usutf::test(slice.calculateOffset(indices) == 1);
 	indices[1] = 2;
-	Sutf::test(slice.calculateOffset(indices) == 2);
+	Usutf::test(slice.calculateOffset(indices) == 2);
 	indices[0] = 1;
 	indices[1] = 0;
-	Sutf::test(slice.calculateOffset(indices) == 6);
+	Usutf::test(slice.calculateOffset(indices) == 6);
 	indices[1] = 1;
-	Sutf::test(slice.calculateOffset(indices) == 7);
+	Usutf::test(slice.calculateOffset(indices) == 7);
 	indices[1] = 2;
-	Sutf::test(slice.calculateOffset(indices) == 8);
+	Usutf::test(slice.calculateOffset(indices) == 8);
 
 	slice = mas.slice(1, 1);
 
 	indices[0] = 0;
 	indices[1] = 0;
-	Sutf::test(slice.calculateOffset(indices) == 3);
+	Usutf::test(slice.calculateOffset(indices) == 3);
 	indices[1] = 1;
-	Sutf::test(slice.calculateOffset(indices) == 4);
+	Usutf::test(slice.calculateOffset(indices) == 4);
 	indices[1] = 2;
-	Sutf::test(slice.calculateOffset(indices) == 5);
+	Usutf::test(slice.calculateOffset(indices) == 5);
 	indices[0] = 1;
 	indices[1] = 0;
-	Sutf::test(slice.calculateOffset(indices) == 9);
+	Usutf::test(slice.calculateOffset(indices) == 9);
 	indices[1] = 1;
-	Sutf::test(slice.calculateOffset(indices) == 10);
+	Usutf::test(slice.calculateOffset(indices) == 10);
 	indices[1] = 2;
-	Sutf::test(slice.calculateOffset(indices) == 11);
+	Usutf::test(slice.calculateOffset(indices) == 11);
 
 	slice = mas.slice(2, 0);
 
 	indices[0] = 0;
 	indices[1] = 0;
-	Sutf::test(slice.calculateOffset(indices) == 0);
+	Usutf::test(slice.calculateOffset(indices) == 0);
 	indices[1] = 1;
-	Sutf::test(slice.calculateOffset(indices) == 3);
+	Usutf::test(slice.calculateOffset(indices) == 3);
 	indices[0] = 1;
 	indices[1] = 0;
-	Sutf::test(slice.calculateOffset(indices) == 6);
+	Usutf::test(slice.calculateOffset(indices) == 6);
 	indices[1] = 1;
-	Sutf::test(slice.calculateOffset(indices) == 9);
+	Usutf::test(slice.calculateOffset(indices) == 9);
 
 	slice = mas.slice(2, 1);
 
 	indices[0] = 0;
 	indices[1] = 0;
-	Sutf::test(slice.calculateOffset(indices) == 1);
+	Usutf::test(slice.calculateOffset(indices) == 1);
 	indices[1] = 1;
-	Sutf::test(slice.calculateOffset(indices) == 4);
+	Usutf::test(slice.calculateOffset(indices) == 4);
 	indices[0] = 1;
 	indices[1] = 0;
-	Sutf::test(slice.calculateOffset(indices) == 7);
+	Usutf::test(slice.calculateOffset(indices) == 7);
 	indices[1] = 1;
-	Sutf::test(slice.calculateOffset(indices) == 10);
+	Usutf::test(slice.calculateOffset(indices) == 10);
 
 	slice = mas.slice(2, 2);
 
 	indices[0] = 0;
 	indices[1] = 0;
-	Sutf::test(slice.calculateOffset(indices) == 2);
+	Usutf::test(slice.calculateOffset(indices) == 2);
 	indices[1] = 1;
-	Sutf::test(slice.calculateOffset(indices) == 5);
+	Usutf::test(slice.calculateOffset(indices) == 5);
 	indices[0] = 1;
 	indices[1] = 0;
-	Sutf::test(slice.calculateOffset(indices) == 8);
+	Usutf::test(slice.calculateOffset(indices) == 8);
 	indices[1] = 1;
-	Sutf::test(slice.calculateOffset(indices) == 11);
+	Usutf::test(slice.calculateOffset(indices) == 11);
 }
 
-SUTF_TEST(testGValFormatter01)
+USUTF_TEST(testGValFormatter01)
 {
 	GValFormatter gvf;
-	Sutf::test(gvf.toStringSimple(GVal()) == "null");
+	Usutf::test(gvf.toStringSimple(GVal()) == "null");
 	//std::cout << gvf.toStringSimple(GVal()) << "\n";
-	Sutf::test(gvf.toStringSimple(GVal("pera")) == "'pera'");
+	Usutf::test(gvf.toStringSimple(GVal("pera")) == "'pera'");
 	//std::cout << gvf.toStringSimple(GVal("pera")) << "\n";
 	GVal ma;
 	ma.setMultiArray(2, 2, GVal::GVT_INT);
@@ -431,10 +431,10 @@ SUTF_TEST(testGValFormatter01)
 	ma.set(1, 1, GVal(9));
 	//std::cout << gvf.toStringSimple(ma) << "\n";
 	std::string ref = "MAI(2, 2)[[4, 7], [2, 9]]";
-	Sutf::test(gvf.toStringSimple(ma) == ref);
+	Usutf::test(gvf.toStringSimple(ma) == ref);
 }
 
-SUTF_TEST(testGValFormatter02)
+USUTF_TEST(testGValFormatter02)
 {
 	GValFormatter gvf;
 	GVal ma;
@@ -443,10 +443,10 @@ SUTF_TEST(testGValFormatter02)
 	ma.set(0, 1, GVal("mika"));
 	std::cout << gvf.toStringSimple(ma) << "\n";
 	std::string ref = "[4, 'mika']";
-	Sutf::test(gvf.toStringSimple(ma) == ref);
+	Usutf::test(gvf.toStringSimple(ma) == ref);
 }
 
-SUTF_TEST(testGValFormatter03)
+USUTF_TEST(testGValFormatter03)
 {
 	GValFormatter gvf;
 	GVal m;
@@ -455,10 +455,10 @@ SUTF_TEST(testGValFormatter03)
 	m.set(GVal(4), GVal(0.5));
 	std::cout << gvf.toStringSimple(m) << "\n";
 	std::string ref = "{4 = 0.5; 'pera' = 34;}";
-	Sutf::test(gvf.toStringSimple(m) == ref);
+	Usutf::test(gvf.toStringSimple(m) == ref);
 }
 
-SUTF_TEST(testIntegrationOfGValFormatterAndGValParser)
+USUTF_TEST(testIntegrationOfGValFormatterAndGValParser)
 {
 	GValParser gvp;
 	std::string ref = "{1 = 3; 'aca' = 123; 'laza' = [1, 3, 'open', 3.0f, 45.0];}";
@@ -466,10 +466,10 @@ SUTF_TEST(testIntegrationOfGValFormatterAndGValParser)
 	GValFormatter gvf;
 	std::string test = gvf.toStringSimple(v);
 	std::cout << test << "\n";
-	Sutf::test(test == ref);
+	Usutf::test(test == ref);
 }
 
-SUTF_TEST(testFileStream)
+USUTF_TEST(testFileStream)
 {
 	std::string fileName = "test_xyz235355az";
 	const int fileSize = 5;
@@ -479,17 +479,17 @@ SUTF_TEST(testFileStream)
 	fs.writeBytes(fileSize, buffer1);
 	fs.close();
 	fs.open(fileName, FileStream::READ_MODE);
-	Sutf::test(fs.atEnd() == false);
+	Usutf::test(fs.atEnd() == false);
 	fs.readBytes(fileSize, buffer2);
-	Sutf::test(fs.atEnd() == true);
-	Sutf::test(fs.check() == true);
+	Usutf::test(fs.atEnd() == true);
+	Usutf::test(fs.check() == true);
 	fs.close();
 	remove(fileName.c_str());
 	for (int i = 0; i < fileSize; i++)
-		Sutf::test(buffer1[i] == buffer2[i]);
+		Usutf::test(buffer1[i] == buffer2[i]);
 }
 
-SUTF_TEST(testBinaryStream)
+USUTF_TEST(testBinaryStream)
 {
 	std::string fileName = "test_brfjrtyrt53546gfg";
 	FileStream fs(fileName, FileStream::WRITE_MODE);
@@ -509,26 +509,26 @@ SUTF_TEST(testBinaryStream)
 	bs.writeString(sr);
 	fs.close();
 	fs.open(fileName, FileStream::READ_MODE);
-	Sutf::test(fs.atEnd() == false);
+	Usutf::test(fs.atEnd() == false);
 	char ct = bs.readByte();
 	int it = bs.readInt();
 	long long lt = bs.readLong();
 	float ft = bs.readFloat();
 	double dt = bs.readDouble();
 	std::string st = bs.readString();
-	Sutf::test(fs.atEnd() == true);
-	Sutf::test(fs.check() == true);
+	Usutf::test(fs.atEnd() == true);
+	Usutf::test(fs.check() == true);
 	fs.close();
 	remove(fileName.c_str());
-	Sutf::test(ct == cr);
-	Sutf::test(it == ir);
-	Sutf::test(lt == lr);
-	Sutf::test(ft == fr);
-	Sutf::test(dt == dr);
-	Sutf::test(st == sr);
+	Usutf::test(ct == cr);
+	Usutf::test(it == ir);
+	Usutf::test(lt == lr);
+	Usutf::test(ft == fr);
+	Usutf::test(dt == dr);
+	Usutf::test(st == sr);
 }
 
-SUTF_TEST(testMemoryStream)
+USUTF_TEST(testMemoryStream)
 {
 	MemoryStream ms;
 	BinaryStream bs(&ms);
@@ -540,18 +540,18 @@ SUTF_TEST(testMemoryStream)
 	bs.writeInt(ir);
 	bs.writeDouble(dr);
 
-	Sutf::test(ms.atEnd() == false);
+	Usutf::test(ms.atEnd() == false);
 	char ct = bs.readByte();
 	int it = bs.readInt();
 	double dt = bs.readDouble();
-	Sutf::test(ms.atEnd() == true);
-	Sutf::test(ms.check() == true);
-	Sutf::test(ct == cr);
-	Sutf::test(it == ir);
-	Sutf::test(dt == dr);
+	Usutf::test(ms.atEnd() == true);
+	Usutf::test(ms.check() == true);
+	Usutf::test(ct == cr);
+	Usutf::test(it == ir);
+	Usutf::test(dt == dr);
 }
 
-SUTF_TEST(testGValSerializer01)
+USUTF_TEST(testGValSerializer01)
 {
 	GValSerializer gvs;
 	MemoryStream ms;
@@ -560,10 +560,10 @@ SUTF_TEST(testGValSerializer01)
 	GVal r = GVal(4);
 	gvs.write(r);
 	GVal t = gvs.read();
-	Sutf::test(r == t);
+	Usutf::test(r == t);
 }
 
-SUTF_TEST(testGValSerializer02)
+USUTF_TEST(testGValSerializer02)
 {
 	GValSerializer gvs;
 	MemoryStream ms;
@@ -572,10 +572,10 @@ SUTF_TEST(testGValSerializer02)
 	GVal r = GVal("Pera");
 	gvs.write(r);
 	GVal t = gvs.read();
-	Sutf::test(r == t);
+	Usutf::test(r == t);
 }
 
-SUTF_TEST(testGValSerializer03)
+USUTF_TEST(testGValSerializer03)
 {
 	GValSerializer gvs;
 	MemoryStream ms;
@@ -584,13 +584,13 @@ SUTF_TEST(testGValSerializer03)
 	GVal r = gvParseString("MAI(2, 2)[[1, 4], [5, 75]]");
 	gvs.write(r);
 	GVal t = gvs.read();
-	Sutf::test(r == t);
-	Sutf::test(r(1, 1) == t(1, 1));
-	Sutf::test(r(1, 1) == GVal(75));
-	Sutf::test(r(1, 1) != GVal(74));
+	Usutf::test(r == t);
+	Usutf::test(r(1, 1) == t(1, 1));
+	Usutf::test(r(1, 1) == GVal(75));
+	Usutf::test(r(1, 1) != GVal(74));
 }
 
-SUTF_TEST(testGValSerializer04)
+USUTF_TEST(testGValSerializer04)
 {
 	GValSerializer gvs;
 	MemoryStream ms;
@@ -599,10 +599,10 @@ SUTF_TEST(testGValSerializer04)
 	GVal r = gvParseString("{ 1 = 4; 'a' = 'pera'; 'c' = 45.0; }");
 	gvs.write(r);
 	GVal t = gvs.read();
-	Sutf::test(r == t);
+	Usutf::test(r == t);
 }
 
-SUTF_TEST(testGValSerializer05)
+USUTF_TEST(testGValSerializer05)
 {
 	GValSerializer gvs;
 	MemoryStream ms;
@@ -611,73 +611,73 @@ SUTF_TEST(testGValSerializer05)
 	GVal r = gvParseString("{ 1 = 4; 'a' = 'pera'; 'c' = []; }");
 	gvs.write(r);
 	GVal t = gvs.read();
-	Sutf::test(r == t);
+	Usutf::test(r == t);
 }
 
-SUTF_TEST(testGValCompareMultiArray)
+USUTF_TEST(testGValCompareMultiArray)
 {
 	GVal a = gvParseString("MAI(2, 3)[[1, 4, 5], [5, 75, 9]]");
 	GVal b = gvParseString("MAI(2, 3)[[1, 4, 5], [5, 75, 9]]");
 	GVal c = gvParseString("MAI(2, 3)[[1, 4, 5], [5, 76, 9]]");
-	Sutf::test(a == b);
-	Sutf::test(!(a == c));
-	Sutf::test(a != c);
-	Sutf::test(a < c);
-	Sutf::test(c > a);
-	Sutf::test(!(b > a));
+	Usutf::test(a == b);
+	Usutf::test(!(a == c));
+	Usutf::test(a != c);
+	Usutf::test(a < c);
+	Usutf::test(c > a);
+	Usutf::test(!(b > a));
 }
 
-SUTF_TEST(testGValCompareMap01)
+USUTF_TEST(testGValCompareMap01)
 {
 	GVal a = gvParseString("{ 1 = 4; 'a' = 'pera'; 'c' = 45.0; }");
 	GVal b = gvParseString("{ 1 = 4; 'a' = 'pera'; 'c' = 45.0; }");
 	GVal c = gvParseString("{ 1 = 4; 'a' = 'pera'; 'c' = 45.5; }");
-	Sutf::test(!(a == c));
-	Sutf::test(a == b);
-	Sutf::test(a != c);
-	Sutf::test(a < c);
-	Sutf::test(c > a);
-	Sutf::test(!(b > a));
+	Usutf::test(!(a == c));
+	Usutf::test(a == b);
+	Usutf::test(a != c);
+	Usutf::test(a < c);
+	Usutf::test(c > a);
+	Usutf::test(!(b > a));
 }
 
-SUTF_TEST(testGValCompareMap02)
+USUTF_TEST(testGValCompareMap02)
 {
 	GVal a = gvParseString("{ [1, 4] = 4; 'a' = 'pera'; 'c' = 45.0; }");
 	GVal b = gvParseString("{ [1, 4] = 4; 'a' = 'pera'; 'c' = 45.0; }");
 	GVal c = gvParseString("{ [1, 5] = 4; 'a' = 'pera'; 'c' = 45.0; }");
-	Sutf::test(!(a == c));
-	Sutf::test(a == b);
-	Sutf::test(a != c);
-	Sutf::test(a < c);
-	Sutf::test(c > a);
-	Sutf::test(!(b > a));
+	Usutf::test(!(a == c));
+	Usutf::test(a == b);
+	Usutf::test(a != c);
+	Usutf::test(a < c);
+	Usutf::test(c > a);
+	Usutf::test(!(b > a));
 }
 
-SUTF_TEST(testGvArray)
+USUTF_TEST(testGvArray)
 {
 	GVal x0(2);
 	GVal x1("pera");
 
 	GVal a = gvArray(x0, x1);
 
-	Sutf::test(a.size() == 2);
-	Sutf::test(a[0] == x0);
-	Sutf::test(a[1] == x1);
+	Usutf::test(a.size() == 2);
+	Usutf::test(a[0] == x0);
+	Usutf::test(a[1] == x1);
 }
 
-SUTF_TEST(testGvReadFromBinaryFile)
+USUTF_TEST(testGvReadFromBinaryFile)
 {
 	std::string fileName = "test.gval";
 	GVal x("pera");
 	gvWriteToBinaryFile(x, fileName);
 	GVal t = gvReadFromBinaryFile(fileName);
-	Sutf::test(t.getType() == GVal::GVT_STRING);
-	Sutf::test(t.asString() == "pera");
+	Usutf::test(t.getType() == GVal::GVT_STRING);
+	Usutf::test(t.asString() == "pera");
 }
 
 int main(int argc, char *argv[])
 {
-	Sutf::runTests(argc, argv);
+	Usutf::runTests(argc, argv);
 	//testBinaryStream();
 	return 0;
 }

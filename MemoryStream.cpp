@@ -28,7 +28,7 @@ void MemoryStream::readBytes(size_t size, char *data)
 		return;
 	}
 	size_t n = std::min<size_t>(size, buffer.size() - position);
-	for (int i = 0; i < n; i++)
+	for (size_t i = 0; i < n; i++)
 		data[i] = buffer[position + i];
 	position += size;
 }

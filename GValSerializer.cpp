@@ -182,7 +182,7 @@ GVal GValSerializer::readMap()
 	GVal r;
 	r.setMap();
 	size_t n = binaryStream->readLong();
-	for (int i = 0; i < n; i++)
+	for (size_t i = 0; i < n; i++)
 	{
 		GVal key = read();
 		GVal value = read();
