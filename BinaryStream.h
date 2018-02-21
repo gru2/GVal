@@ -11,6 +11,8 @@ public:
 	BinaryStream(Stream *s);
 
 	unsigned char readByte();
+	char readChar();
+	short readShort();
 	int readInt();
 	long long readLong();
 	float readFloat();
@@ -18,6 +20,8 @@ public:
 	std::string readString();
 
 	void writeByte(unsigned char x);
+	void writeChar(char x);
+	void writeShort(short x);
 	void writeInt(int x);
 	void writeLong(long long x);
 	void writeFloat(float x);

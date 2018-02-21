@@ -7,6 +7,20 @@ unsigned char BinaryStream::readByte()
 {
 	char x;
 	stream->readBytes(1, &x);
+	return (unsigned char)x;
+}
+
+char BinaryStream::readChar()
+{
+	char x;
+	stream->readBytes(1, &x);
+	return x;
+}
+
+short BinaryStream::readShort()
+{
+	short x;
+	stream->readBytes(2, (char *)&x);
 	return x;
 }
 
@@ -49,6 +63,16 @@ std::string BinaryStream::readString()
 void BinaryStream::writeByte(unsigned char x)
 {
 	stream->writeBytes(1, reinterpret_cast<char *>(&x));
+}
+
+void BinaryStream::writeChar(char x)
+{
+	stream->writeBytes(1, reinterpret_cast<char *>(&x));
+}
+
+void BinaryStream::writeShort(short x)
+{
+	stream->writeBytes(2, reinterpret_cast<char *>(&x));
 }
 
 void BinaryStream::writeInt(int x)
