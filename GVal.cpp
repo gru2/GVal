@@ -35,7 +35,6 @@ bool GVal::operator < (const GVal &x) const
 		return compareMultiArray(x) < 0;
 	case GVT_MAP:
 		return compareMap(x) < 0;
-		break;
 	}
 	return false;
 }
@@ -440,7 +439,6 @@ size_t GVal::size() const
 		return static_cast<GValMultiArray *>(genericValue.get())->size();
 	case GVT_MAP:
 		return static_cast<GValMap *>(genericValue.get())->size();
-		break;
 	default:
 		error("type does not support size");
 		return 0;
@@ -580,7 +578,9 @@ bool GVal::check(const std::string &key) const
 
 bool GVal::check(const GVal &key) const
 {
-	return false; // TODO
+	if (type != GVT_MAP)
+		error("Map type expected.");
+	return static_cast<GValMap *>(genericValue.get())->check(key);
 }
 
 void GVal::setMultiArray()
@@ -1045,4 +1045,12 @@ GVal GValMap::keys() const
 		r.pushBack(key);
 	}
 	return r;
+}
+
+bool GValMap::check(const GVal &key)
+{
+	std::map<GVal, GVal>::const_iterator it = data.find(key);
+	if (it != data.end())
+		return true;
+	return false;
 }

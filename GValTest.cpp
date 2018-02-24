@@ -73,6 +73,16 @@ USUTF_TEST(testGVal)
 	Usutf::test(v[GVal("pera")].asInt() == 23);
 }
 
+USUTF_TEST(testGValCheck)
+{
+	GVal v;
+	v.setMap();
+	v.set("Pera", GVal(10));
+	Usutf::test(v.check("Pera"));
+	Usutf::test(!v.check("Mika"));
+	Usutf::test(!v.check(GVal(4)));
+}
+
 USUTF_TEST(testGValParseString)
 {
 	std::string s = "'foo'";

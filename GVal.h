@@ -75,7 +75,7 @@ public:
 	void copyContentFrom(const GVal &x);
 	void reset();
 	size_t size() const;
-	size_t size(int dim) const { return shape()[dim]; }
+	size_t size(unsigned dim) const { return shape()[dim]; }
 	const SmallVector<size_t, 4> &shape() const;
 	size_t numberOfDimensions() const { return shape().size(); }
 	void resize(size_t i0);
@@ -162,7 +162,7 @@ public:
 	unsigned char asUChar() const {
 		if (type != GVT_UCHAR)
 			error("UChar type expected but found type " + typeToString(type) + ".");
-		return intValue;
+		return static_cast<unsigned char>(intValue);
 	}
 	int asInt() const {
 		if (type != GVT_INT)
@@ -259,6 +259,7 @@ public:
 	GVal get(const GVal &key) const;
 	void set(const GVal &key, const GVal &value);
 	GVal keys() const;
+	bool check(const GVal &key);
 protected:
 	int keyType;
 	int valueType;
