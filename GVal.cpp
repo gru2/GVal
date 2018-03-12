@@ -741,7 +741,7 @@ GVal GValMultiArray::get(size_t *i, int dim) const
 		r.setBool(*static_cast<bool *>(p));
 		break;
 	case GVal::GVT_UCHAR:
-		r.setInt(*static_cast<unsigned char *>(p));
+		r.setUChar(*static_cast<unsigned char *>(p));
 		break;
 	case GVal::GVT_INT:
 		r.setInt(*static_cast<int *>(p));
