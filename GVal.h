@@ -1,5 +1,5 @@
-#ifndef __GVAL_H
-#define __GVAL_H
+#ifndef GVAL_H
+#define GVAL_H
 
 #include <cstdint>
 #include <memory>
@@ -148,6 +148,8 @@ public:
 	void setMultiArray(size_t i0, size_t i1, size_t i2, size_t i3, int entryType);
 	void setMultiArray(const SmallVector<size_t, 4> &x, int entryType);
 	void setMultiArray(size_t *i, size_t dim, int entryType);
+	void setMultiArrayFromData(const SmallVector<size_t, 4> &shape, int entryType,
+		void *data, bool borrowData = false);
 	void setMap();
 	void setMap(int keyType_, int valueType_);
 
@@ -235,7 +237,8 @@ public:
 	GVal popBack();
 
 	int getEntryType() const { return entryType; }
-	void resizeAndSetEntryType(size_t *i, int dim, int entryType_);
+	void resizeAndSetEntryType(size_t *i, size_t dim, int entryType_);
+	void fromBorrowedData(const SmallVector<size_t, 4> &shape_, int entryType_, void *data_);
 	const SmallVector<size_t, 4> &getShape() { return shape; }
 	void *getData() const { return data; }
 	size_t getEntrySize(int type) const;
@@ -244,6 +247,7 @@ protected:
 	SmallVector<size_t, 4> shape;
 	size_t capacity;
 	void *data;
+	bool borrowedData;
 
 	size_t calculateOffset(size_t *i, int dim) const;
 	void createObjects(GVal *objs, size_t count);

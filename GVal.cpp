@@ -631,6 +631,25 @@ void GVal::setMultiArray(size_t *i, size_t dim, int entryType)
 	array->resizeAndSetEntryType(i, (int)dim, entryType);
 }
 
+void GVal::setMultiArrayFromData(const SmallVector<size_t, 4> &shape, int entryType, void *data, bool borrowData)
+{
+	if (!borrowData)
+	{
+		setMultiArray(shape, entryType);
+		GValMultiArray *array = static_cast<GValMultiArray *>(genericValue.get());
+		void *newData = array->getData();
+		size_t entrySize = array->getEntrySize(array->getEntryType());
+		size_t dataSize = entrySize * array->size();
+		memcpy(newData, data, dataSize);
+		return;
+	}
+	reset();
+	type = GVT_MULTI_ARRAY;
+	GValMultiArray *array = new GValMultiArray;
+	genericValue = std::shared_ptr<GValMultiArray>(array);
+	array->fromBorrowedData(shape, entryType, data);
+}
+
 void GVal::setMap()
 {
 	reset();
@@ -697,6 +716,7 @@ GValMultiArray::GValMultiArray()
 	entryType = GVal::GVT_GENERIC;
 	data = 0;
 	capacity = 0;
+	borrowedData = false;
 }
 
 GValMultiArray::~GValMultiArray()
@@ -706,10 +726,13 @@ GValMultiArray::~GValMultiArray()
 
 void GValMultiArray::reset()
 {
+	if (!data)
+		return;
 	if (entryType == GVal::GVT_GENERIC)
 	{
 		size_t n = size();
 		destroyObjects(static_cast<GVal *>(data), n);
+		data = nullptr;
 	}
 	if (data)
 	{
@@ -720,19 +743,19 @@ void GValMultiArray::reset()
 
 size_t GValMultiArray::size() const
 {
-	int nDims = shape.size();
+	size_t nDims = shape.size();
 	if (nDims == 0)
 		return 0;
 	size_t s = 1;
-	for (int i = 0; i < nDims; i++)
-		s *= shape[i];
+	for (size_t i = 0; i < nDims; i++)
+		s *= shape[static_cast<unsigned int>(i)];
 	return s;
 }
 
 GVal GValMultiArray::get(size_t *i, int dim) const
 {
 	size_t offset = calculateOffset(i, dim);
-	char *p1 = (char *)data + offset;
+	char *p1 = static_cast<char *>(data) + offset;
 	void *p = static_cast<void *>(p1);
 	GVal r;
 	switch (entryType)
@@ -890,11 +913,11 @@ GVal GValMultiArray::popBack()
 	return r;
 }
 
-void GValMultiArray::resizeAndSetEntryType(size_t *i, int dim, int newEntryType)
+void GValMultiArray::resizeAndSetEntryType(size_t *i, size_t dim, int newEntryType)
 {
 	// Calculate requred storage size for the new array.
 	size_t newEntrysCount = 1;
-	for(int j = 0; j < dim; j++)
+	for(size_t j = 0; j < dim; j++)
 		newEntrysCount *= i[j];
 	size_t newEntrySize = getEntrySize(newEntryType);
 	size_t requiredCapacity = newEntrysCount * newEntrySize;
@@ -944,11 +967,21 @@ void GValMultiArray::resizeAndSetEntryType(size_t *i, int dim, int newEntryType)
 
 	// Set shape.
 	shape.resize(dim);
-	for(int j = 0; j < dim; j++)
+	for(size_t j = 0; j < dim; j++)
 		shape[j] = i[j];
 
 	// Set the new entry type.
 	entryType = newEntryType;
+}
+
+void GValMultiArray::fromBorrowedData(const SmallVector<size_t, 4> &shape_, int entryType_, void *data_)
+{
+	if (data)
+		reset();
+	shape = shape_;
+	entryType = entryType_;
+	data = data_;
+	borrowedData = true;
 }
 
 size_t GValMultiArray::getEntrySize(int type) const

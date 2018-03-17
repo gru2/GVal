@@ -1,5 +1,5 @@
-#ifndef __GVAL_SMALL_VECTOR_H
-#define __GVAL_SMALL_VECTOR_H
+#ifndef GVAL_SMALL_VECTOR_H
+#define GVAL_SMALL_VECTOR_H
 
 template<typename T, unsigned N>
 class SmallVector
