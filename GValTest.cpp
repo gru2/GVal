@@ -83,6 +83,21 @@ USUTF_TEST(testGValCheck)
 	Usutf::test(!v.check(GVal(4)));
 }
 
+USUTF_TEST(testGValSetMultiArrayFromData)
+{
+	int data[2] = { 1, 5 };
+	GVal v;
+	SmallVector<size_t, 4> shape;
+	shape.push_back(2);
+	v.setMultiArrayFromData(shape, GVal::GVT_INT, data, false);
+	data[0] = 7;
+	Usutf::test(v[0].asInt() == 1);
+	data[0] = 1;
+	v.setMultiArrayFromData(shape, GVal::GVT_INT, data, true);
+	data[0] = 9;
+	Usutf::test(v[0].asInt() == 9);
+}
+
 USUTF_TEST(testGValParseString)
 {
 	std::string s = "'foo'";

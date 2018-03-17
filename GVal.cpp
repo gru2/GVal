@@ -728,6 +728,11 @@ void GValMultiArray::reset()
 {
 	if (!data)
 		return;
+	if (borrowedData)
+	{
+		data = nullptr;
+		borrowedData = false;
+	}
 	if (entryType == GVal::GVT_GENERIC)
 	{
 		size_t n = size();
