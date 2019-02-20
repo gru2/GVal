@@ -19,6 +19,8 @@ MultiArrayIterator.h ProgressReporter.h Stream.h toString.h FileStream.h
 GVal.h GValSerializer.h MemoryStream.h MultiArraySlice.h SmallVector.h)
 
 add_library(GVal STATIC ${GVAL_SOURCES} ${HEADER_FILES})
+set_property(TARGET GVal PROPERTY POSITION_INDEPENDENT_CODE ON)
+
 add_executable(GValTest GValTest.cpp ${HEADER_FILES})
 target_link_libraries(GValTest GVal debug Usutfd optimized Usutf )
 set_target_properties(GValTest PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
