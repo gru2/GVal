@@ -702,11 +702,11 @@ GVal GVal::keys()
 	return static_cast<GValMap *>(genericValue.get())->keys();
 }
 
-void * GVal::getData()
+void * GVal::getData() const
 {
 	if (type != GVT_MULTI_ARRAY)
 	{
-		error("type does not support shape");
+		error("type does not support getData");
 	}
 	return static_cast<GValMultiArray *>(genericValue.get())->getData();
 }

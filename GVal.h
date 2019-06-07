@@ -199,7 +199,7 @@ public:
 	const std::shared_ptr<void> &getGenericValue() const { return genericValue; }
 
 	GVal keys();
-	void *getData();
+	void *getData() const;
 protected:
 	int type;
 	union
