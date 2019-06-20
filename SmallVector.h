@@ -53,6 +53,21 @@ public:
 		return *this;
 	}
 
+	bool operator==(const SmallVector<T, N> &x) const
+	{
+		if (size_ != x.size_)
+			return false;
+		for (unsigned i =0; i < size_; i++)
+			if (data[i] != x.data[i])
+				return false;
+		return true;
+	}
+
+	bool operator!=(const SmallVector<T, N> &x) const
+	{
+		return !(*this == x);
+	}
+
 	unsigned size() const { return size_; }
 	T *begin() const
 	{
