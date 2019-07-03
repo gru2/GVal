@@ -29,6 +29,11 @@ void FileStream::open(const std::string &fileName, ModeType mode_)
 	if (mode == READ_MODE)
 	{
 		file = fopen(fileName.c_str(), "rb");
+		if (file == 0)
+		{
+			progressReporter.error("unable to open file '" + fileName +"' for reading.");
+			return;
+		}
 		fileSize = getFileSize();
 		position = 0;
 		return;
@@ -36,6 +41,11 @@ void FileStream::open(const std::string &fileName, ModeType mode_)
 	if (mode == WRITE_MODE)
 	{
 		file = fopen(fileName.c_str(), "wb");
+		if (file == 0)
+		{
+			progressReporter.error("unable to open file '" + fileName +"' for writing.");
+			return;
+		}
 		fileSize = 0;
 		position = 0;
 		return;
