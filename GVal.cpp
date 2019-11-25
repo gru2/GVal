@@ -631,6 +631,21 @@ void GVal::setMultiArray(size_t *i, size_t dim, int entryType)
 	array->resizeAndSetEntryType(i, (int)dim, entryType);
 }
 
+void GVal::setMultiArrayFromData(size_t i, int entryType, void *data, bool borrowData)
+{
+	SmallVector<size_t, 4> shape;
+	shape.push_back(i);
+	setMultiArrayFromData(shape, entryType, data, borrowData);
+}
+
+void GVal::setMultiArrayFromData(size_t i0, size_t i1, int entryType, void *data, bool borrowData)
+{
+	SmallVector<size_t, 4> shape;
+	shape.push_back(i0);
+	shape.push_back(i1);
+	setMultiArrayFromData(shape, entryType, data, borrowData);
+}
+
 void GVal::setMultiArrayFromData(const SmallVector<size_t, 4> &shape, int entryType, void *data, bool borrowData)
 {
 	if (!borrowData)
@@ -648,6 +663,27 @@ void GVal::setMultiArrayFromData(const SmallVector<size_t, 4> &shape, int entryT
 	GValMultiArray *array = new GValMultiArray;
 	genericValue = std::shared_ptr<GValMultiArray>(array);
 	array->fromBorrowedData(shape, entryType, data);
+}
+
+int GVal::getEntryType()
+{
+	if (type != GVT_MULTI_ARRAY)
+	{
+		error("type " + toString(type) + " does not support pushBack");
+		return 0;
+	}
+	return static_cast<GValMultiArray *>(genericValue.get())->getEntryType();
+}
+
+size_t GVal::getEntrySize()
+{
+	if (type != GVT_MULTI_ARRAY)
+	{
+		error("type " + toString(type) + " does not support pushBack");
+		return 0;
+	}
+	int entryType = getEntryType();
+	return static_cast<GValMultiArray *>(genericValue.get())->getEntrySize(entryType);
 }
 
 void GVal::setMap()
