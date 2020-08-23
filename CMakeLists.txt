@@ -1,6 +1,8 @@
 project(GVal)
 cmake_minimum_required(VERSION 3.1)
 
+option(GVAL_THROWS "Weather GVal will throw an excetion." OFF)
+
 set(CMAKE_DEBUG_POSTFIX "d")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -O2")
 set (CMAKE_CXX_STANDARD 11)
@@ -20,6 +22,10 @@ GVal.h GValSerializer.h MemoryStream.h MultiArraySlice.h SmallVector.h)
 
 add_library(GVal STATIC ${GVAL_SOURCES} ${HEADER_FILES})
 set_property(TARGET GVal PROPERTY POSITION_INDEPENDENT_CODE ON)
+
+if(GVAL_THROWS)
+    target_compile_definitions(GVal PUBLIC GVAL_THROWS=1)
+endif()
 
 add_executable(GValTest GValTest.cpp ${HEADER_FILES})
 target_link_libraries(GValTest GVal debug Usutfd optimized Usutf )
