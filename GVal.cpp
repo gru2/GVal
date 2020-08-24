@@ -731,13 +731,6 @@ std::string GVal::typeToString(int type_)
 	}
 }
 
-GVal GVal::keys()
-{
-	if (type != GVT_MAP)
-		error("Map type expected.");
-	return static_cast<GValMap *>(genericValue.get())->keys();
-}
-
 void * GVal::getData() const
 {
 	if (type != GVT_MULTI_ARRAY)

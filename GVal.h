@@ -204,7 +204,6 @@ public:
 	std::shared_ptr<void> &getGenericValue() { return genericValue; }
 	const std::shared_ptr<void> &getGenericValue() const { return genericValue; }
 
-	GVal keys();
 	void *getData() const;
 protected:
 	int type;
