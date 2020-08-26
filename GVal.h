@@ -157,7 +157,7 @@ public:
 	size_t getEntrySize();
 
 	void setMap();
-	void setMap(int keyType_, int valueType_);
+	//void setMap(int keyType_, int valueType_);
 
 	bool isNull() const {
 		return type == GVT_NULL;
