@@ -588,9 +588,9 @@ void GVal::setMultiArray()
 	setMultiArray(0, GVal::GVT_GENERIC);
 }
 
-void GVal::setMultiArray(size_t i, int entryType)
+void GVal::setMultiArray(size_t i0, int entryType)
 {
-	setMultiArray(&i, 1, entryType);
+	setMultiArray(&i0, 1, entryType);
 }
 void GVal::setMultiArray(size_t i0, size_t i1, int entryType)
 {
@@ -631,10 +631,10 @@ void GVal::setMultiArray(size_t *i, size_t dim, int entryType)
 	array->resizeAndSetEntryType(i, (int)dim, entryType);
 }
 
-void GVal::setMultiArrayFromData(size_t i, int entryType, void *data, bool borrowData)
+void GVal::setMultiArrayFromData(size_t i0, int entryType, void *data, bool borrowData)
 {
 	SmallVector<size_t, 4> shape;
-	shape.push_back(i);
+	shape.push_back(i0);
 	setMultiArrayFromData(shape, entryType, data, borrowData);
 }
 
@@ -643,6 +643,25 @@ void GVal::setMultiArrayFromData(size_t i0, size_t i1, int entryType, void *data
 	SmallVector<size_t, 4> shape;
 	shape.push_back(i0);
 	shape.push_back(i1);
+	setMultiArrayFromData(shape, entryType, data, borrowData);
+}
+
+void GVal::setMultiArrayFromData(size_t i0, size_t i1, size_t i2, int entryType, void *data, bool borrowData)
+{
+	SmallVector<size_t, 4> shape;
+	shape.push_back(i0);
+	shape.push_back(i1);
+	shape.push_back(i2);
+	setMultiArrayFromData(shape, entryType, data, borrowData);
+}
+
+void GVal::setMultiArrayFromData(size_t i0, size_t i1, size_t i2, size_t i3, int entryType, void *data, bool borrowData)
+{
+	SmallVector<size_t, 4> shape;
+	shape.push_back(i0);
+	shape.push_back(i1);
+	shape.push_back(i2);
+	shape.push_back(i3);
 	setMultiArrayFromData(shape, entryType, data, borrowData);
 }
 

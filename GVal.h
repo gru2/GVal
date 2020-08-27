@@ -142,14 +142,16 @@ public:
 		stringValue = x;
 	}
 	void setMultiArray();
-	void setMultiArray(size_t i, int entryType);
+	void setMultiArray(size_t i0, int entryType);
 	void setMultiArray(size_t i0, size_t i1, int entryType);
 	void setMultiArray(size_t i0, size_t i1, size_t i2, int entryType);
 	void setMultiArray(size_t i0, size_t i1, size_t i2, size_t i3, int entryType);
 	void setMultiArray(const SmallVector<size_t, 4> &x, int entryType);
 	void setMultiArray(size_t *i, size_t dim, int entryType);
-	void setMultiArrayFromData(size_t i, int entryType, void *data, bool borrowData = false);
+	void setMultiArrayFromData(size_t i0, int entryType, void *data, bool borrowData = false);
 	void setMultiArrayFromData(size_t i0, size_t i1, int entryType, void *data, bool borrowData = false);
+	void setMultiArrayFromData(size_t i0, size_t i1, size_t i2, int entryType, void *data, bool borrowData = false);
+	void setMultiArrayFromData(size_t i0, size_t i1, size_t i2, size_t i3, int entryType, void *data, bool borrowData = false);
 	void setMultiArrayFromData(const SmallVector<size_t, 4> &shape, int entryType,
 		void *data, bool borrowData = false);
 
